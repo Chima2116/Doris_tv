@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Play } from "lucide-react";
-import { Photo, PhotoCredit } from "@/components/shared/photo";
+import { Photo } from "@/components/shared/photo";
 import { formatShortDate, readingLabel } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { JournalArticle } from "@/data/types";
@@ -94,7 +94,6 @@ export function ArticleCard({
           )}
         </div>
       </Link>
-      {asset && <PhotoCredit asset={asset} className="mt-2 text-white/45" withCaption={false} />}
     </article>
   );
 }

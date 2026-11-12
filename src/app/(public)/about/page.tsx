@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { Photo, PhotoCredit } from "@/components/shared/photo";
+import { Photo } from "@/components/shared/photo";
 import { IMAGES } from "@/data/images";
 import { PageContainer } from "@/components/shared/page-container";
 import { Reveal } from "@/components/shared/reveal";
@@ -49,7 +49,6 @@ export default function AboutPage() {
         </div>
         <div className="relative min-h-[18rem] lg:col-span-5">
           <Photo asset={img} fill priority sizes="(min-width: 1024px) 42vw, 100vw" />
-          <PhotoCredit asset={img} withCaption={false} className="absolute bottom-3 left-4 right-4 text-white/80 [text-shadow:0_1px_2px_rgba(0,0,0,.7)]" />
         </div>
       </section>
 

@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselItem } from "@/components/shared/carousel";
-import { Photo, PhotoCredit } from "@/components/shared/photo";
+import { Photo } from "@/components/shared/photo";
 import { PageContainer } from "@/components/shared/page-container";
 import { Pagination } from "@/components/shared/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -94,7 +94,6 @@ async function JournalContent({ searchParams }: { searchParams: PageProps<"/jour
               <StoryCover category={featured.category} className="absolute inset-0" />
             )}
             <Link href={`/journal/${featured.slug}`} aria-label={featured.title} className="absolute inset-0" />
-            {featuredImage && <PhotoCredit asset={featuredImage} className="absolute bottom-3 left-5 right-5 max-w-[30rem] text-white/75" />}
           </div>
           <div className="flex flex-col justify-center bg-[#1c1c1c] px-6 py-12 sm:px-10 lg:col-span-5 lg:px-14">
             <p className="tag text-white/60">Cover story · {featured.category}</p>

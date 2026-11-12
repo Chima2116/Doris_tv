@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Carousel, CarouselItem } from "@/components/shared/carousel";
 import { ImageSettle, Stagger } from "@/components/shared/motion";
 import { Reveal } from "@/components/shared/reveal";
-import { Photo, PhotoCredit } from "@/components/shared/photo";
+import { Photo } from "@/components/shared/photo";
 import { IMAGES, type ImageAsset } from "@/data/images";
 import { getMemberById } from "@/data/repositories/discussions";
 import type { Discussion, Filmmaker, JournalArticle, Member } from "@/data/types";
@@ -46,7 +46,6 @@ export function Hero() {
           </Button>
         </div>
       </Stagger>
-      <PhotoCredit asset={img} withCaption={false} className="absolute right-5 top-24 hidden max-w-[22rem] text-right text-white/70 lg:block" />
     </section>
   );
 }
@@ -107,7 +106,6 @@ export function FeaturedEditorial({ story, supporting }: { story: JournalArticle
               <Photo asset={img} ratio="16/10" sizes="(min-width: 1024px) 66vw, 100vw" imgClassName="transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
               <Link href={`/journal/${story.slug}`} aria-label={story.title} className="absolute inset-0" />
             </div>
-            <PhotoCredit asset={img} className="mt-2 text-white/55" />
             <p className="tag mt-8 text-white/60">{story.category}</p>
             <h2 className="heading-feature mt-3 max-w-[24ch] text-[clamp(1.75rem,3.2vw,2.75rem)] leading-[1.1]">
               <Link href={`/journal/${story.slug}`} className={link}>{story.title}</Link>
@@ -223,7 +221,6 @@ export function FilmmakerSpotlight({ filmmaker }: { filmmaker: Filmmaker }) {
               <li key={c.id} className="flex justify-between gap-6 border-t border-white/15 pt-2 text-white/80"><span className="font-medium">{c.title}</span><span className="text-white/50">{c.year}</span></li>
             ))}
           </ul>
-          <PhotoCredit asset={IMAGES.spotlightDoc} withCaption={false} className="mt-8 text-white/45" />
           <Button asChild className="mt-4">
             <Link href={`/filmmakers/${filmmaker.slug}`}>Read the profile <ArrowRight aria-hidden="true" /></Link>
           </Button>
@@ -288,7 +285,6 @@ export async function Community({ featured, recent, topics, memberIds }: { featu
               <Photo asset={img} fill sizes="(min-width: 1024px) 58vw, 100vw" imgClassName="transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
               <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 to-transparent" />
               <Link href={`/community/${featured.id}`} aria-label={featured.title} className="absolute inset-0" />
-              <PhotoCredit asset={img} className="absolute bottom-3 left-5 right-5 max-w-[30rem] text-white/75" />
             </div>
             <div className="flex flex-col justify-center bg-[#1c1c1c] p-7 sm:p-10 lg:col-span-5 lg:p-12">
               <p className="tag text-white/60">Featured discussion · {featured.category}</p>

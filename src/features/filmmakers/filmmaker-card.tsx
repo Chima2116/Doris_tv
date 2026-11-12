@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { cn, initials } from "@/lib/utils";
 import type { Filmmaker } from "@/data/types";
+import { ILLUSTRATIVE_PORTRAITS } from "@/data/illustrative-portraits";
 
 const PLATE_TONES = ["bg-[#222]", "bg-[#2b2620]", "bg-[#1b2226]", "bg-[#241f27]", "bg-[#1f2620]"];
 const toneFor = (slug: string) => PLATE_TONES[[...slug].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 0) % PLATE_TONES.length];
@@ -26,6 +27,15 @@ export function FilmmakerPortrait({
   sizes?: string;
   labelled?: boolean;
 }) {
+  const illustrative = !filmmaker.portraitUrl ? ILLUSTRATIVE_PORTRAITS[filmmaker.slug] : undefined;
+  if (illustrative) {
+    return (
+      <div className={cn("relative overflow-hidden bg-[#161616]", aspect, className)}>
+        <Image src={illustrative.src} alt={illustrative.alt} fill priority={priority} sizes={sizes ?? "50vw"} className="object-cover" style={{ objectPosition: illustrative.focal }} />
+        {labelled && <span className="tag absolute bottom-3 left-3 bg-black/70 px-2 py-1 text-[0.6rem] text-white/85">Illustrative photograph</span>}
+      </div>
+    );
+  }
   if (filmmaker.portraitUrl) {
     return (
       <div className={cn("relative overflow-hidden bg-[#161616]", aspect, className)}>

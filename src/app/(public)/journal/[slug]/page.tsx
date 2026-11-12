@@ -13,7 +13,7 @@ import {
   getRelatedArticles,
 } from "@/data/repositories/articles";
 import { getFilmmakerBySlug } from "@/data/repositories/filmmakers";
-import { Photo, PhotoCredit } from "@/components/shared/photo";
+import { Photo } from "@/components/shared/photo";
 import { ArticleCard } from "@/features/journal/article-card";
 import { articleImage } from "@/features/journal/article-image";
 import { ArticleBody } from "@/features/journal/article-body";
@@ -103,7 +103,6 @@ async function ArticleContent({ params }: { params: PageProps<"/journal/[slug]">
             <Photo asset={asset} fill priority sizes="100vw" className="-z-20" />
             <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
             {head}
-            <PhotoCredit asset={asset} className="absolute bottom-3 right-5 hidden max-w-[24rem] text-right text-white/55 lg:block" />
           </header>
         ) : (
           <header className="bg-[#1c1c1c] pb-12 pt-14 sm:pt-20">{head}</header>
