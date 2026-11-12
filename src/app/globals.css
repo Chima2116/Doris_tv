@@ -1,26 +1,221 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
+/* DORIS TV is dark-only. The `dark` class is set on <html> in the root layout. */
+@custom-variant dark (&:is(.dark *));
+
+/* ───────────────────────────────────────────────
+   DESIGN TOKENS
+   Sources: Brand Bible v1 (black / white / gold),
+   PRD §10.1 (surface, reading text, sharp geometry),
+   master prompt §6 (muted, border, semantic colours).
+   Proportion target: 70% black / 25% white / 5% gold.
+   ─────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --doris-black: #0d0d0d;
+  --doris-white: #ffffff;
+  --doris-reading: #f0ede6; /* long-form body copy (PRD) */
+  --doris-surface: #1c1c1c;
+  --doris-elevated: #262626;
+  --doris-gold: #e8a020;
+  --doris-muted: #a3a3a3;
+  --doris-border: #333333; /* dividers and card edges (decorative) */
+  --doris-control: #737373; /* form-control borders: ~3.6:1 on surface, meets WCAG 1.4.11 */
+  --doris-success: #3e9b69;
+  --doris-warning: #d99a32;
+  --doris-danger: #d65353;
+
+  /* shadcn semantic mapping */
+  --background: var(--doris-black);
+  --foreground: var(--doris-white);
+  --card: var(--doris-surface);
+  --card-foreground: var(--doris-white);
+  --popover: var(--doris-elevated);
+  --popover-foreground: var(--doris-white);
+  --primary: var(--doris-gold);
+  --primary-foreground: var(--doris-black); /* 8.8:1 on gold. Never white on gold. */
+  --secondary: var(--doris-elevated);
+  --secondary-foreground: var(--doris-white);
+  --muted: var(--doris-surface);
+  --muted-foreground: var(--doris-muted);
+  --accent: var(--doris-elevated);
+  --accent-foreground: var(--doris-white);
+  --destructive: var(--doris-danger);
+  --border: var(--doris-border);
+  --input: var(--doris-control);
+  --ring: var(--doris-gold);
+  --chart-1: var(--doris-gold);
+  --chart-2: #ffffff;
+  --chart-3: #a3a3a3;
+  --chart-4: #3e9b69;
+  --chart-5: #666666;
+  --radius: 0rem; /* sharp, geometric. Avatars opt in with rounded-full. */
+  --sidebar: var(--doris-surface);
+  --sidebar-foreground: var(--doris-white);
+  --sidebar-primary: var(--doris-gold);
+  --sidebar-primary-foreground: var(--doris-black);
+  --sidebar-accent: var(--doris-elevated);
+  --sidebar-accent-foreground: var(--doris-white);
+  --sidebar-border: var(--doris-border);
+  --sidebar-ring: var(--doris-gold);
+
+  color-scheme: dark;
 }
 
 @theme inline {
+  --font-sans: var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: var(--font-poppins), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-heading: var(--font-display);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* DORIS-specific utilities: bg-gold, text-reading, bg-surface, bg-elevated … */
+  --color-gold: var(--doris-gold);
+  --color-reading: var(--doris-reading);
+  --color-surface: var(--doris-surface);
+  --color-elevated: var(--doris-elevated);
+  --color-success: var(--doris-success);
+  --color-warning: var(--doris-warning);
+  --color-danger: var(--doris-danger);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Motion: 150–350ms, easing tuned to feel deliberate not bouncy */
+  --ease-doris: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-fade-up: fade-up 350ms var(--ease-doris) both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    line-height: 1.6;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-black;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+  ::selection {
+    background: var(--doris-gold);
+    color: var(--doris-black);
+  }
+  /* Visible, consistent keyboard focus across the product */
+  :focus-visible {
+    outline: 2px solid var(--doris-gold);
+    outline-offset: 2px;
+  }
+}
+
+/* Film-inspired device from the concept: a gold perforated strip. Used sparingly. */
+@utility filmstrip {
+  height: 16px;
+  background-color: var(--doris-gold);
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 12px,
+    var(--doris-black) 12px,
+    var(--doris-black) 20px
+  );
+}
+
+/* Editorial type scale: deliberate hierarchy rather than ad-hoc sizes */
+@utility type-display-xl {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2.75rem, 7vw, 6rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+@utility type-display-lg {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2.25rem, 5vw, 4.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+@utility type-display-md {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+@utility type-eyebrow {
+  font-size: 0.72rem;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Respect reduced motion globally; component-level motion also checks this. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -1,0 +1,293 @@
+import type { FilmCredit, Filmmaker } from "@/data/types";
+
+/**
+ * Mock filmmaker profiles. All people, films and festivals here are fictional
+ * demonstration content. Credits are professional credits, not a film catalogue.
+ */
+let creditSeq = 0;
+const c = (
+  title: string,
+  year: number,
+  role: string,
+  format: string,
+  runtimeMinutes?: number,
+  extra: Partial<FilmCredit> = {},
+): FilmCredit => ({
+  id: `c_${++creditSeq}`,
+  title,
+  year,
+  role,
+  format,
+  runtimeMinutes,
+  ...extra,
+});
+
+export const FILMMAKERS: Filmmaker[] = [
+  {
+    id: "f_ngozi_ihejirika",
+    slug: "ngozi-ihejirika",
+    name: "Ngozi Ihejirika",
+    portraitUrl: "",
+    portraitAlt: "Portrait of Ngozi Ihejirika, documentary director",
+    country: "Nigeria",
+    location: "Lagos",
+    primaryDiscipline: "Director",
+    tagline: "Telling stories the industry keeps walking past.",
+    spotlight: true,
+    biography:
+      "Ngozi Ihejirika makes documentaries about the people Lagos depends on but rarely sees: ferry workers, market women, roadside mechanics. Her work treats the infrastructure of daily life as a subject worthy of a feature-length film.\n\nBefore film she spent four years as a photojournalist, a background that shapes how she approaches access and patience. Her debut feature Harbour Light won Best Documentary at the fictional Lagos Frame Festival in 2022, and she is now in production on a three-part series about the workers of Lagos Harbour.",
+    creativePhilosophy:
+      "The camera doesn't create intimacy. You have to earn that before you ever show up with one.",
+    yearsActive: "2016 – present",
+    activeFrom: 2016,
+    credits: [
+      c("Lagos Harbour", 2026, "Director", "Documentary series", undefined, {
+        inProduction: true,
+        description: "A three-part portrait of the people who keep the harbour moving.",
+      }),
+      c("Harbour Light", 2022, "Director, Producer", "Feature documentary", 94, {
+        description: "Three years on the ferries between Mile 2 and the Island.",
+      }),
+      c("Before the Rains Come", 2020, "Director", "Short", 22),
+      c("Yaba North", 2018, "Director, Cinematographer", "Short documentary", 18),
+    ],
+    links: [
+      { label: "Instagram", url: "https://www.instagram.com/" },
+      { label: "Vimeo", url: "https://vimeo.com/" },
+    ],
+    verificationStatus: "verified",
+    publicationStatus: "published",
+    memberId: "m_demo_filmmaker",
+  },
+  {
+    id: "f_temi_adeyemi",
+    slug: "temi-adeyemi",
+    name: "Temi Adeyemi",
+    portraitUrl: "",
+    portraitAlt: "Portrait of Temi Adeyemi, director",
+    country: "Nigeria",
+    location: "Lagos",
+    primaryDiscipline: "Director",
+    tagline: "A cinema of the crowded street.",
+    biography:
+      "Temi Adeyemi directs fiction that stays close to the street. Eko Rising, shot across five Lagos communities without a fixed budget, made her one of the most discussed new directors on the festival circuit.\n\nShe works with non-professional casts and long rehearsal periods, and writes openly about the practical politics of making independent films in Nigeria.",
+    creativePhilosophy:
+      "I didn't set out to make a political film. The story made itself political.",
+    yearsActive: "2014 – present",
+    activeFrom: 2014,
+    credits: [
+      c("Eko Rising", 2024, "Director, Writer", "Feature", 108),
+      c("Third Mainland", 2021, "Director", "Short", 17),
+      c("Danfo Hours", 2017, "Writer, Director", "Short", 14),
+    ],
+    links: [{ label: "Instagram", url: "https://www.instagram.com/" }],
+    verificationStatus: "verified",
+    publicationStatus: "published",
+  },
+  {
+    id: "f_esi_mensah_boateng",
+    slug: "esi-mensah-boateng",
+    name: "Esi Mensah-Boateng",
+    portraitUrl: "",
+    portraitAlt: "Portrait of Esi Mensah-Boateng, writer and director",
+    country: "Ghana",
+    location: "Accra",
+    primaryDiscipline: "Writer",
+    tagline: "Family, memory and the sound of a house.",
+    biography:
+      "Esi Mensah-Boateng is a screenwriter and director whose films are built from domestic spaces: kitchens, courtyards, the corridor outside a sickroom. Her scripts are known for dialogue that carries three languages at once.\n\nShe also teaches screenwriting workshops for emerging writers across West Africa.",
+    creativePhilosophy:
+      "A house has its own soundtrack. If you listen closely enough, the whole family history is in it.",
+    yearsActive: "2011 – present",
+    activeFrom: 2011,
+    credits: [
+      c("The Courtyard Season", 2025, "Writer, Director", "Feature", 97),
+      c("Ama's Radio", 2022, "Writer", "Feature", 91),
+      c("Kente Hours", 2019, "Writer, Director", "Short", 21),
+      c("Fufu on Sundays", 2015, "Writer", "Short", 12),
+    ],
+    links: [
+      { label: "Website", url: "https://example.com/" },
+      { label: "Instagram", url: "https://www.instagram.com/" },
+    ],
+    verificationStatus: "verified",
+    publicationStatus: "published",
+  },
+  {
+    id: "f_wanjiru_kamau",
+    slug: "wanjiru-kamau",
+    name: "Wanjiru Kamau",
+    portraitUrl: "",
+    portraitAlt: "Portrait of Wanjiru Kamau, cinematographer",
+    country: "Kenya",
+    location: "Nairobi",
+    primaryDiscipline: "Cinematographer",
+    tagline: "Light as a form of attention.",
+    biography:
+      "Wanjiru Kamau is a cinematographer working across fiction and documentary in East Africa. She is known for patient natural-light work and for lenses chosen to flatter the landscape rather than flatten it.\n\nShe has shot features in Kenya, Uganda and Tanzania and mentors a collective of women camera assistants in Nairobi.",
+    creativePhilosophy:
+      "Before I choose a lens I sit in the location until the light tells me what it wants.",
+    yearsActive: "2012 – present",
+    activeFrom: 2012,
+    credits: [
+      c("Savannah Static", 2025, "Director of Photography", "Feature", 102),
+      c("The Long Way to Lamu", 2023, "Director of Photography", "Feature documentary", 88),
+      c("Mama Mboga", 2018, "Cinematographer", "Short", 15),
+    ],
+    links: [{ label: "Vimeo", url: "https://vimeo.com/" }],
+    verificationStatus: "verified",
+    publicationStatus: "published",
+  },
+  {
+    id: "f_moussa_ndiaye",
+    slug: "moussa-ndiaye",
+    name: "Moussa Ndiaye",
+    portraitUrl: "",
+    portraitAlt: "Portrait of Moussa Ndiaye, director and producer",
+    country: "Senegal",
+    location: "Dakar",
+    primaryDiscipline: "Multi-hyphenate",
+    tagline: "Directing, producing, and building the room.",
+    biography:
+      "Moussa Ndiaye directs and produces, and runs a small Dakar production house that co-develops films with first-time directors from across the Sahel. His own films move between fiction and essay, often in Wolof and French.\n\nHe has been a vocal advocate for regional co-production models that keep creative control with African filmmakers.",
+    creativePhilosophy:
+      "Producing is not the opposite of directing. It is making the conditions in which a film is allowed to exist.",
+    yearsActive: "2008 – present",
+    activeFrom: 2008,
+    credits: [
+      c("Corniche", 2024, "Director, Producer", "Feature", 99),
+      c("Les Heures Bleues", 2021, "Producer", "Feature", 94),
+      c("Sable", 2016, "Director", "Short", 19),
+      c("Thieboudienne", 2011, "Director", "Short documentary", 11),
+    ],
+    links: [{ label: "Website", url: "https://example.com/" }],
+    verificationStatus: "verified",
+    publicationStatus: "published",
+  },
+  {
+    id: "f_lerato_dlamini",
+    slug: "lerato-dlamini",
+    name: "Lerato Dlamini",
+    portraitUrl: "",
+    portraitAlt: "Portrait of Lerato Dlamini, film editor",
+    country: "South Africa",
+    location: "Johannesburg",
+    primaryDiscipline: "Editor",
+    tagline: "The film is found in the cut.",
+    biography:
+      "Lerato Dlamini edits features and documentaries and is widely credited with giving several recent South African independents their distinctive rhythm. She favours long takes, deliberate silence and the courage to leave a scene alone.\n\nShe writes occasionally about editing as authorship and teaches in the Johannesburg film community.",
+    creativePhilosophy:
+      "Most of the work is deciding what to leave out, and trusting the audience to feel the gap.",
+    yearsActive: "2009 – present",
+    activeFrom: 2009,
+    credits: [
+      c("Golden City Blues", 2025, "Editor", "Feature", 112),
+      c("What the River Keeps", 2022, "Editor", "Feature documentary", 96),
+      c("Soweto Nocturne", 2018, "Editor", "Short", 20),
+    ],
+    links: [{ label: "Instagram", url: "https://www.instagram.com/" }],
+    verificationStatus: "verified",
+    publicationStatus: "published",
+  },
+  {
+    id: "f_selam_tesfaye",
+    slug: "selam-tesfaye",
+    name: "Selam Tesfaye",
+    portraitUrl: "",
+    portraitAlt: "Portrait of Selam Tesfaye, director and writer",
+    country: "Ethiopia",
+    location: "Addis Ababa",
+    primaryDiscipline: "Director",
+    tagline: "Quiet films about loud histories.",
+    biography:
+      "Selam Tesfaye writes and directs intimate dramas set against Ethiopia's recent history. Her work is restrained, formally precise, and attentive to the way public events arrive in private rooms.\n\nShe is part of a growing community of Addis-based filmmakers building new screening spaces for independent work.",
+    creativePhilosophy:
+      "History is rarely heard as a speech. It is heard through a wall, in the next room, while someone is making coffee.",
+    yearsActive: "2015 – present",
+    activeFrom: 2015,
+    credits: [
+      c("Buna", 2025, "Writer, Director", "Feature", 101),
+      c("Meskel Square, 6 a.m.", 2021, "Director", "Short", 16),
+      c("The Neighbour's Radio", 2018, "Writer, Director", "Short", 13),
+    ],
+    links: [{ label: "Vimeo", url: "https://vimeo.com/" }],
+    verificationStatus: "verified",
+    publicationStatus: "published",
+  },
+  {
+    id: "f_nadia_el_sayed",
+    slug: "nadia-el-sayed",
+    name: "Nadia El-Sayed",
+    portraitUrl: "",
+    portraitAlt: "Portrait of Nadia El-Sayed, producer",
+    country: "Egypt",
+    location: "Cairo",
+    primaryDiscipline: "Producer",
+    tagline: "Getting difficult, necessary films made.",
+    biography:
+      "Nadia El-Sayed is a Cairo-based producer who has shepherded a run of acclaimed independent features through development, financing and distribution. She is known for patient relationships with first-time directors and a clear-eyed approach to co-production.\n\nShe speaks regularly on funding structures for independent cinema across North Africa and the Middle East.",
+    creativePhilosophy:
+      "A producer's job is to protect the film from everyone, including, sometimes, the people who want to help.",
+    yearsActive: "2007 – present",
+    activeFrom: 2007,
+    credits: [
+      c("Last Tram to Heliopolis", 2025, "Producer", "Feature", 105),
+      c("The Tenant on Floor Seven", 2022, "Producer", "Feature", 98),
+      c("Delta Lullaby", 2017, "Producer", "Short", 18),
+      c("Café Matatia", 2012, "Associate Producer", "Feature", 90),
+    ],
+    links: [{ label: "Website", url: "https://example.com/" }],
+    verificationStatus: "verified",
+    publicationStatus: "published",
+  },
+  {
+    id: "f_claudine_uwase",
+    slug: "claudine-uwase",
+    name: "Claudine Uwase",
+    portraitUrl: "",
+    portraitAlt: "Portrait of Claudine Uwase, documentary filmmaker",
+    country: "Rwanda",
+    location: "Kigali",
+    primaryDiscipline: "Multi-hyphenate",
+    tagline: "Documenting what comes after.",
+    biography:
+      "Claudine Uwase directs, shoots and edits her own documentaries, most of them about memory, land and the long work of repair in post-conflict communities. Her approach is slow and collaborative, with participants shaping how they are filmed.\n\nShe runs a community screening programme in Kigali and the surrounding districts.",
+    creativePhilosophy:
+      "I show the footage back to the people in it. If they can't recognise themselves, I haven't finished.",
+    yearsActive: "2018 – present",
+    activeFrom: 2018,
+    credits: [
+      c("Hillside Voices", 2026, "Director, Editor", "Feature documentary", 84, { inProduction: true }),
+      c("Terraces", 2023, "Director, Cinematographer, Editor", "Feature documentary", 79),
+      c("The Cooperative", 2020, "Director", "Short documentary", 24),
+    ],
+    links: [{ label: "Instagram", url: "https://www.instagram.com/" }],
+    verificationStatus: "verified",
+    publicationStatus: "published",
+  },
+  {
+    id: "f_amara_kone",
+    slug: "amara-kone",
+    name: "Amara Koné",
+    portraitUrl: "",
+    portraitAlt: "Portrait of Amara Koné, composer",
+    country: "Côte d'Ivoire",
+    location: "Abidjan",
+    primaryDiscipline: "Composer",
+    tagline: "Scores that listen first.",
+    biography:
+      "Amara Koné composes for fiction and documentary, blending balafon, field recordings and electronic textures into scores that make room for dialogue and silence. Directors seek her out for her restraint.\n\nShe records frequently in Abidjan neighbourhoods and builds sound libraries from everyday acoustics.",
+    creativePhilosophy:
+      "The best score is the one you only notice when it stops.",
+    yearsActive: "2013 – present",
+    activeFrom: 2013,
+    credits: [
+      c("Lagune", 2025, "Composer", "Feature", 96),
+      c("Corniche", 2024, "Additional Music", "Feature", 99),
+      c("Maquis", 2019, "Composer", "Short", 14),
+    ],
+    links: [{ label: "Website", url: "https://example.com/" }],
+    verificationStatus: "verified",
+    publicationStatus: "published",
+  },
+];
