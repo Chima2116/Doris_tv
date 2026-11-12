@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Heart, MessageSquare } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { TimeAgo } from "@/components/shared/time-ago";
 import type { Discussion, Member } from "@/data/types";
 import { AuthorChip } from "./author-chip";
@@ -23,21 +22,21 @@ export function DiscussionCard({
   reactions: number;
 }) {
   return (
-    <article className="group relative border-t border-border py-6 transition-colors hover:bg-white/[0.02] sm:px-2">
+    <article className="group relative border-t border-white/20 py-7 transition-colors hover:bg-white/[0.03] sm:px-3">
       <div className="relative z-10 mb-3 flex flex-wrap items-center justify-between gap-2">
         <AuthorChip member={author} size="sm" />
-        <Badge variant="outline">{discussion.category}</Badge>
+        <span className="tag text-white/60">{discussion.category}</span>
       </div>
-      <h3 className="font-display text-xl font-black leading-snug">
+      <h3 className="heading-card text-[1.375rem] leading-snug">
         <Link
           href={`/community/${discussion.id}`}
-          className="after:absolute after:inset-0 group-hover:text-gold focus-visible:outline-offset-[-2px]"
+          className="after:absolute after:inset-0 group-hover:underline group-hover:decoration-white/40 group-hover:underline-offset-4 focus-visible:outline-offset-[-2px]"
         >
           {discussion.title}
         </Link>
       </h3>
-      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-reading/60">{preview(discussion.body)}</p>
-      <p className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-muted-foreground">
+      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/65">{preview(discussion.body)}</p>
+      <p className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 meta text-white/55">
         <TimeAgo iso={discussion.createdAt} />
         <span className="inline-flex items-center gap-1.5">
           <MessageSquare className="size-3.5" aria-hidden="true" />

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,16 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSession } from "@/features/auth/session-provider";
+import { initials } from "@/lib/utils";
 import { canAccessAdmin, isAdmin, isVerifiedFilmmaker } from "@/lib/permissions";
-
-export function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((p) => p[0])
-    .join("")
-    .toUpperCase();
-}
 
 /** Session-aware header actions: guest CTAs or the member menu. */
 export function UserMenu() {
@@ -30,13 +21,13 @@ export function UserMenu() {
 
   if (!user) {
     return (
-      <div className="flex items-center gap-2">
-        <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-          <Link href="/sign-in">Sign in</Link>
-        </Button>
-        <Button asChild size="sm">
-          <Link href="/waitlist">Join waitlist</Link>
-        </Button>
+      <div className="flex items-center gap-5 pl-2 text-sm">
+        <Link href="/sign-in" className="hidden text-muted-foreground transition-colors hover:text-foreground sm:inline">
+          Sign in
+        </Link>
+        <Link href="/waitlist" className="hidden underline decoration-gold decoration-[1.5px] underline-offset-[6px] transition-colors hover:text-gold sm:inline">
+          Join the waitlist
+        </Link>
       </div>
     );
   }

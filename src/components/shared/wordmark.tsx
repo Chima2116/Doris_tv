@@ -1,9 +1,11 @@
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 /**
- * Working wordmark ("DORIS. TV" is placeholder artwork in the Brand Bible).
- * Swap this component's internals when final artwork is supplied.
+ * DORIS tv logo (supplied artwork). The interface is dark, so it uses the reversed version
+ * (white letters; the colour streak is unchanged). `public/brand/doris-logo-light.png` is the
+ * original black-on-white version for light backgrounds, and `doris-mark*.png` is the D.tv mark.
  */
 export function Wordmark({
   className,
@@ -14,24 +16,21 @@ export function Wordmark({
   asLink?: boolean;
   size?: "sm" | "md" | "lg";
 }) {
-  const sizes = { sm: "text-lg", md: "text-[1.35rem]", lg: "text-3xl" };
+  const heights = { sm: "h-7", md: "h-9", lg: "h-12" };
   const inner = (
-    <span
-      className={cn(
-        "inline-flex items-baseline gap-1.5 font-display font-black leading-none tracking-[0.08em] text-foreground",
-        sizes[size],
-        className,
-      )}
-    >
-      <span>
-        DORIS<span className="text-gold">.</span>
-      </span>
-      <span className="text-[0.5em] font-bold tracking-[0.3em] text-muted-foreground">TV</span>
-    </span>
+    <Image
+      src="/brand/doris-logo.png"
+      alt={asLink ? "DORIS tv" : "DORIS tv logo"}
+      width={1600}
+      height={328}
+      priority
+      sizes="160px"
+      className={cn("w-auto", heights[size], className)}
+    />
   );
   if (!asLink) return inner;
   return (
-    <Link href="/" aria-label="DORIS TV home" className="inline-block">
+    <Link href="/" aria-label="DORIS tv home" className="inline-block">
       {inner}
     </Link>
   );

@@ -30,8 +30,8 @@ function List({ pathname, items, className, linkClassName, inactiveClassName, on
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "block text-xs font-semibold uppercase tracking-[0.08em] transition-colors",
-                active ? "text-gold" : inactiveClassName,
+                "block text-sm transition-colors",
+                active ? "text-foreground underline decoration-gold decoration-[1.5px] underline-offset-[10px]" : inactiveClassName,
                 linkClassName,
               )}
             >

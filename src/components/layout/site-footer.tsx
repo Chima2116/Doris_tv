@@ -1,88 +1,57 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/shared/wordmark";
-import { Filmstrip } from "@/components/shared/filmstrip";
-import { PageContainer } from "@/components/shared/page-container";
 
-/** Footer deliberately has no Archive, Submit-a-film or Reviews links (Stage 1 scope). */
+/** Footer is deliberately small: no Archive, Submit-a-film or Reviews links (Stage 1 scope). */
 const COLUMNS = [
-  {
-    title: "Platform",
-    links: [
-      { label: "Journal", href: "/journal" },
-      { label: "Filmmakers", href: "/filmmakers" },
-      { label: "Community", href: "/community" },
-    ],
-  },
-  {
-    title: "Company",
-    links: [
-      { label: "About", href: "/about" },
-      { label: "Join the waitlist", href: "/waitlist" },
-      { label: "Apply as a filmmaker", href: "/filmmaker-application" },
-    ],
-  },
+  { title: "Read", links: [["Journal", "/journal"], ["Filmmakers", "/filmmakers"], ["Community", "/community"]] },
+  { title: "DORIS TV", links: [["About", "/about"], ["Join the waitlist", "/waitlist"], ["Apply as a filmmaker", "/filmmaker-application"]] },
 ] as const;
 
 const SOCIAL = [
-  { label: "Instagram", href: "https://www.instagram.com/" },
-  { label: "YouTube", href: "https://www.youtube.com/" },
-  { label: "X / Twitter", href: "https://x.com/" },
+  ["Instagram", "https://www.instagram.com/"],
+  ["YouTube", "https://www.youtube.com/"],
+  ["X", "https://x.com/"],
 ] as const;
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-border bg-[#141414]">
-      <Filmstrip />
-      <PageContainer width="wide" className="py-14">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
-          <div className="max-w-xs space-y-4">
-            <Wordmark size="lg" />
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              A home for independent African cinema: editorial writing, filmmaker profiles and a
-              community of people who care about African film.
-            </p>
-          </div>
-          {COLUMNS.map((col) => (
-            <nav key={col.title} aria-label={col.title}>
-              <h2 className="mb-4 font-sans type-eyebrow text-gold">{col.title}</h2>
-              <ul className="space-y-2.5">
-                {col.links.map((l) => (
-                  <li key={l.href}>
-                    <Link
-                      href={l.href}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
-          <nav aria-label="Connect">
-            <h2 className="mb-4 font-sans type-eyebrow text-gold">Connect</h2>
-            <ul className="space-y-2.5">
-              {SOCIAL.map((l) => (
-                <li key={l.label}>
-                  <a
-                    href={l.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    {l.label}
-                    <span className="sr-only"> (opens in a new tab)</span>
-                  </a>
-                </li>
+    <footer className="mt-auto border-t border-white/10 bg-[#0a0a0a]">
+      <div className="mx-auto grid w-full max-w-[1360px] gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1.5fr_1fr_1fr_1fr] lg:px-12">
+        <div>
+          <Wordmark size="md" />
+          <p className="mt-5 max-w-[22rem] text-sm leading-relaxed text-white/60">
+            A journal, a directory and a community for independent Nigerian and African cinema.
+          </p>
+        </div>
+        {COLUMNS.map((col) => (
+          <nav key={col.title} aria-label={col.title}>
+            <h2 className="tag mb-4 text-white/45">{col.title}</h2>
+            <ul className="space-y-2.5 text-sm">
+              {col.links.map(([label, href]) => (
+                <li key={href}><Link href={href} className="text-white/80 transition-colors hover:text-white">{label}</Link></li>
               ))}
             </ul>
           </nav>
+        ))}
+        <nav aria-label="Follow">
+          <h2 className="tag mb-4 text-white/45">Follow</h2>
+          <ul className="space-y-2.5 text-sm">
+            {SOCIAL.map(([label, href]) => (
+              <li key={label}>
+                <a href={href} target="_blank" rel="noopener noreferrer" className="text-white/80 transition-colors hover:text-white">
+                  {label}<span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+      <div className="border-t border-white/10">
+        <div className="mx-auto flex w-full max-w-[1360px] flex-wrap justify-between gap-x-8 gap-y-2 px-5 py-5 text-xs text-white/40 sm:px-8 lg:px-12">
+          <p>© 2026 Doris Entertainment Networks Limited</p>
+          <p>Demonstration content: the stories, people and films shown are fictional.</p>
         </div>
-        <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6 text-xs text-muted-foreground">
-          <p>© 2026 Doris Entertainment Networks Limited. All rights reserved.</p>
-          <p>Where Independent African Film Lives.</p>
-        </div>
-      </PageContainer>
+      </div>
     </footer>
   );
 }

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Eyebrow } from "@/components/shared/eyebrow";
 import { PageContainer } from "@/components/shared/page-container";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getDiscussions, getMembers, getReplies } from "@/data/repositories/discussions";
@@ -15,10 +14,10 @@ export default async function CommunityPage() {
   const [discussions, replies, members] = await Promise.all([getDiscussions(), getReplies(), getMembers()]);
   return (
     <PageContainer width="wide" className="py-14 sm:py-20">
-      <header className="mb-12 max-w-3xl">
-        <Eyebrow>Community</Eyebrow>
-        <h1 className="type-display-lg mt-4">Talk about the work.</h1>
-        <p className="mt-5 text-lg text-reading/60">
+      <header className="mb-12 max-w-4xl">
+        <p className="tag text-white/60">Community</p>
+        <h1 className="display-name mt-4 text-[clamp(2.25rem,5.5vw,4.5rem)]">The conversation around African cinema.</h1>
+        <p className="mt-5 text-lg leading-relaxed text-white/70">
           Conversations among people who care about independent African cinema: craft, festivals,
           distribution and what to watch. Everyone can read; members take part.
         </p>

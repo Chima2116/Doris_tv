@@ -89,11 +89,11 @@ export function DiscussionThread({
             Community
           </Link>
           <span aria-hidden="true"> / </span>
-          <Link href={`/community?category=${d.category}`} className="text-gold hover:underline">
+          <Link href={`/community?category=${d.category}`} className="text-white hover:underline">
             {d.category}
           </Link>
         </nav>
-        <h1 className="type-display-md !text-[clamp(1.75rem,4vw,2.75rem)]">{d.title}</h1>
+        <h1 className="display-name text-[clamp(1.75rem,4vw,2.75rem)] leading-[1.1]">{d.title}</h1>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-y border-border py-4">
           <AuthorChip member={author} />
           <p className="text-xs text-muted-foreground">
@@ -126,7 +126,7 @@ export function DiscussionThread({
         </div>
 
         <section aria-labelledby="replies-heading" className="mt-12">
-          <h2 id="replies-heading" className="font-display text-2xl font-black">
+          <h2 id="replies-heading" className="heading-section text-2xl">
             {count} {count === 1 ? "reply" : "replies"}
           </h2>
           {thread.length === 0 ? (
@@ -153,19 +153,19 @@ export function DiscussionThread({
 
       <aside aria-label="Discussion context" className="space-y-8">
         <div className="border border-border bg-surface p-5">
-          <p className="type-eyebrow text-gold">Category</p>
-          <p className="mt-1 font-display text-xl font-black">{d.category}</p>
+          <p className="tag text-white/60">Category</p>
+          <p className="mt-1 heading-card text-xl">{d.category}</p>
           <p className="mt-3 text-sm text-muted-foreground">
             {count} {count === 1 ? "reply" : "replies"} · {reactionsFor(d.reactionCount, targetKey("discussion", d.id), state)} reactions
           </p>
         </div>
         {more.length > 0 && (
           <div>
-            <h2 className="type-eyebrow font-sans text-gold">More in {d.category}</h2>
+            <h2 className="tag text-white/60">More in {d.category}</h2>
             <ul className="mt-3 divide-y divide-border border-y border-border">
               {more.map((m) => (
                 <li key={m.id}>
-                  <Link href={`/community/${m.id}`} className="block py-3 text-sm font-semibold leading-snug hover:text-gold">
+                  <Link href={`/community/${m.id}`} className="block py-3 text-sm font-semibold leading-snug hover:underline hover:underline-offset-4">
                     {m.title}
                   </Link>
                 </li>

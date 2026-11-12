@@ -104,7 +104,7 @@ export function CommunityFeed({
       <div>
         <div className="flex flex-wrap items-end justify-between gap-4 pb-6">
           <nav aria-label="Discussion categories" className="-mx-1 overflow-x-auto">
-            <ul className="flex min-w-max gap-2 px-1">
+            <ul className="flex min-w-max gap-6 px-1">
               {["", ...DISCUSSION_CATEGORIES].map((c) => {
                 const active = c === category;
                 return (
@@ -114,14 +114,12 @@ export function CommunityFeed({
                       aria-pressed={active}
                       onClick={() => setParam("category", c || null)}
                       className={cn(
-                        "border px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.08em] transition-colors",
-                        active
-                          ? "border-gold bg-gold text-primary-foreground"
-                          : "border-border text-muted-foreground hover:border-white hover:text-foreground",
+                        "border-b-2 py-2 text-sm font-semibold transition-colors",
+                        active ? "border-gold text-white" : "border-transparent text-white/60 hover:text-white",
                       )}
                     >
                       {c || "All"}
-                      <span className={cn("ml-1.5 font-normal", active ? "text-primary-foreground/70" : "text-muted-foreground/70")}>
+                      <span className="ml-1.5 text-xs font-normal tabular-nums text-white/45">
                         {c ? (counts[c] ?? 0) : all.length}
                       </span>
                     </button>
@@ -182,9 +180,9 @@ export function CommunityFeed({
       </div>
 
       <aside className="space-y-8" aria-label="About the community">
-        <div className="border border-border bg-surface p-6">
-          <h2 className="font-display text-xl font-black">Join the conversation</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
+        <div className="bg-[#1c1c1c] p-6">
+          <h2 className="heading-card text-xl">Join the conversation</h2>
+          <p className="mt-2 text-sm leading-relaxed text-white/65">
             Anyone can read. Members on the waitlist with a verified email can start discussions,
             reply and react.
           </p>
@@ -192,16 +190,16 @@ export function CommunityFeed({
         </div>
         <dl className="grid grid-cols-2 gap-6 border-y border-border py-6">
           <div>
-            <dd className="font-display text-3xl font-black text-gold">{all.length}</dd>
-            <dt className="type-eyebrow text-muted-foreground">Discussions</dt>
+            <dd className="text-3xl font-black tabular-nums">{all.length}</dd>
+            <dt className="tag text-white/55">Discussions</dt>
           </div>
           <div>
-            <dd className="font-display text-3xl font-black text-gold">{totalReplies}</dd>
-            <dt className="type-eyebrow text-muted-foreground">Replies</dt>
+            <dd className="text-3xl font-black tabular-nums">{totalReplies}</dd>
+            <dt className="tag text-white/55">Replies</dt>
           </div>
         </dl>
         <div>
-          <h2 className="type-eyebrow font-sans text-gold">Community guidelines</h2>
+          <h2 className="tag text-white/70">Community guidelines</h2>
           <ul className="mt-3 space-y-2 text-sm text-reading/70">
             <li>Critique the work, not the person.</li>
             <li>Say what you saw. Specific beats clever.</li>
@@ -210,7 +208,7 @@ export function CommunityFeed({
               See something wrong? Use <strong className="text-foreground">Report</strong>.
             </li>
           </ul>
-          <Link href="/about" className="mt-4 inline-block text-xs font-bold uppercase tracking-[0.08em] text-gold hover:underline">
+          <Link href="/about" className="mt-4 inline-block text-sm font-semibold underline underline-offset-4 hover:text-white">
             About DORIS TV →
           </Link>
         </div>

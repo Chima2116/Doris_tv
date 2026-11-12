@@ -73,7 +73,7 @@ src/
 
 **Design system:** tokens live in `src/app/globals.css` (black `#0D0D0D`, white, gold `#E8A020`, plus
 reading text, surface, elevated, border and semantic colours). Radius is 0 (avatars are round).
-Display type is Poppins Black; body is Inter. The filmstrip is the recurring film-inspired motif.
+Typography is Poppins throughout (Black for display, Bold/SemiBold for headings, Regular/Medium for body). The filmstrip is the recurring film-inspired motif.
 Brand notes: black on gold has 8.8:1 contrast; never put white text on gold.
 
 **Rendering model:** public pages render seed data on the server. Everything mutable in the
@@ -113,9 +113,12 @@ checks are for demonstration only. **A backend must enforce every permission its
 
 ## Known limitations
 
-- **Placeholder imagery.** No photography was supplied, so `ArtImage` renders art-directed
-  duotone placeholders. Pass `src` and the UI is unchanged.
-- **Wordmark is a text placeholder** (the Brand Bible’s artwork is marked placeholder).
+- **Photography is limited to three licensed Wikimedia Commons images** (see
+  `docs/ASSET-REQUIREMENTS.md`). Journal stories and filmmakers without a photograph show clearly
+  labelled typographic plates ("Cover image to be supplied", "Portrait to be supplied"), never
+  stock faces or invented credits. Add a story image in `src/features/journal/article-image.ts`
+  and a filmmaker portrait through `portraitUrl`.
+- **Logo:** the header, footer and admin use the supplied DORIS tv artwork in `public/brand` (reversed version for the dark UI; original and D.tv mark also included). Vector artwork would be sharper than these PNG extractions.
 - Newly approved filmmakers appear in the directory and on their own page, but not in the header
   search index or the homepage spotlight (those use the original seed data).
 - Unknown community thread ids and filmmaker slugs show a “not found” panel (HTTP 200) because

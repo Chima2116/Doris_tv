@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Eyebrow } from "@/components/shared/eyebrow";
 import { PageContainer } from "@/components/shared/page-container";
 import { WaitlistForm } from "@/features/waitlist/waitlist-form";
 
@@ -19,8 +18,8 @@ export default function WaitlistPage() {
   return (
     <PageContainer width="wide" className="grid gap-14 py-16 sm:py-24 lg:grid-cols-[1.1fr_1fr] lg:gap-24">
       <div>
-        <Eyebrow>Membership</Eyebrow>
-        <h1 className="type-display-lg mt-4">Be among the first.</h1>
+        <p className="tag text-white/60">Membership</p>
+        <h1 className="display-name mt-4 text-[clamp(2.25rem,5vw,4rem)]">Be among the first.</h1>
         <p className="mt-6 max-w-lg text-lg text-reading/65">
           DORIS TV is a home for independent African cinema: a Journal, a directory of filmmakers
           and a community built around the work. Anyone can join the waitlist.
@@ -28,7 +27,7 @@ export default function WaitlistPage() {
         <ul className="mt-10 max-w-lg divide-y divide-border border-y border-border">
           {PERKS.map(([k, v]) => (
             <li key={k} className="flex gap-5 py-4">
-              <span className="w-16 shrink-0 font-display text-lg font-black text-gold">{k}</span>
+              <span className="w-16 shrink-0 text-lg font-bold">{k}</span>
               <span className="text-reading/80">{v}</span>
             </li>
           ))}

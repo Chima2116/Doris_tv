@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Eyebrow } from "@/components/shared/eyebrow";
 import { PageContainer } from "@/components/shared/page-container";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,10 +16,10 @@ export const metadata: Metadata = {
 export default function FilmmakersPage() {
   return (
     <PageContainer width="wide" className="py-14 sm:py-20">
-      <header className="mb-10 max-w-3xl">
-        <Eyebrow>Filmmaker directory</Eyebrow>
-        <h1 className="type-display-lg mt-4">The people making African cinema.</h1>
-        <p className="mt-5 text-lg text-reading/60">
+      <header className="mb-12 max-w-4xl">
+        <p className="tag text-white/60">Filmmaker directory</p>
+        <h1 className="display-name mt-4 text-[clamp(2.25rem,5.5vw,4.5rem)]">The people making African cinema.</h1>
+        <p className="mt-5 text-lg leading-relaxed text-white/70">
           Professional profiles of independent filmmakers: their work, their credits and their
           creative thinking. Not a film catalogue, but a way to find the people behind the films.
         </p>
@@ -28,10 +27,10 @@ export default function FilmmakersPage() {
       <Suspense fallback={<DirectorySkeleton />}>
         <Directory />
       </Suspense>
-      <aside className="mt-20 flex flex-col items-start justify-between gap-6 border border-border bg-surface p-8 sm:flex-row sm:items-center">
+      <aside className="mt-24 flex flex-col items-start justify-between gap-6 bg-[#1c1c1c] p-8 sm:flex-row sm:items-center sm:p-12">
         <div>
-          <h2 className="font-display text-2xl font-black">Are you a filmmaker?</h2>
-          <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+          <h2 className="heading-section">Are you a filmmaker?</h2>
+          <p className="mt-3 max-w-xl text-base leading-relaxed text-white/65">
             Join the waitlist, then apply for a profile. Applications are reviewed by the DORIS TV
             team.
           </p>

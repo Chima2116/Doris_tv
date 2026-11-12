@@ -1,19 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/components/providers";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-// Display face: Poppins Black (900) per Brand Bible. 700 kept for small headings.
+// DORIS TV typography (Brand Bible): Poppins throughout.
+// Black 900 for display moments, Bold/SemiBold for headings, Regular/Medium for body and interface.
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["700", "900"],
+  weight: ["400", "500", "600", "700", "900"],
   variable: "--font-poppins",
   display: "swap",
 });
@@ -40,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={cn("dark h-full", inter.variable, poppins.variable)}
+      className={cn("dark h-full", poppins.variable)}
     >
       <body className="flex min-h-full flex-col font-sans">
         <Providers>{children}</Providers>

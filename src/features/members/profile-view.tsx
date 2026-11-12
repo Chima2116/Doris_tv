@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { initials } from "@/components/navigation/user-menu";
+import { initials } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Eyebrow } from "@/components/shared/eyebrow";
 import { TimeAgo } from "@/components/shared/time-ago";

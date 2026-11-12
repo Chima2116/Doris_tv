@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/sheet";
 import { useSession } from "@/features/auth/session-provider";
 import { Wordmark } from "@/components/shared/wordmark";
-import { Filmstrip } from "@/components/shared/filmstrip";
 import { NavLinks } from "./nav-links";
 import { PUBLIC_NAV } from "./nav-config";
 
@@ -37,14 +36,13 @@ export function MobileMenu() {
           </SheetTitle>
           <SheetDescription className="sr-only">Site navigation</SheetDescription>
         </SheetHeader>
-        <Filmstrip />
         <nav aria-label="Primary" className="flex-1 px-6 py-6">
           <NavLinks
             items={PUBLIC_NAV}
             onNavigate={() => setOpen(false)}
             className="space-y-1"
-            inactiveClassName="text-foreground hover:text-gold"
-            linkClassName="py-3 font-display text-2xl font-black normal-case tracking-tight"
+            inactiveClassName="text-foreground/90 hover:text-foreground"
+            linkClassName="py-2 text-3xl font-bold leading-tight tracking-tight underline-offset-[10px]"
           />
         </nav>
         {!user && (
@@ -52,9 +50,9 @@ export function MobileMenu() {
             <Button asChild className="w-full" onClick={() => setOpen(false)}>
               <Link href="/waitlist">Join the waitlist</Link>
             </Button>
-            <Button asChild variant="outline" className="w-full" onClick={() => setOpen(false)}>
-              <Link href="/sign-in">Sign in</Link>
-            </Button>
+            <Link href="/sign-in" onClick={() => setOpen(false)} className="block py-2 text-center text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground">
+              Sign in
+            </Link>
           </div>
         )}
       </SheetContent>

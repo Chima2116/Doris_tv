@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { initials } from "@/components/navigation/user-menu";
+import { initials } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import type { Member } from "@/data/types";
 
