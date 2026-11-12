@@ -46,7 +46,7 @@ export function Hero() {
           </Button>
         </div>
       </Stagger>
-      <PhotoCredit asset={img} withCaption={false} className="absolute bottom-3 right-5 hidden max-w-[22rem] text-right text-white/55 lg:block" />
+      <PhotoCredit asset={img} withCaption={false} className="absolute right-5 top-24 hidden max-w-[22rem] text-right text-white/70 lg:block" />
     </section>
   );
 }
