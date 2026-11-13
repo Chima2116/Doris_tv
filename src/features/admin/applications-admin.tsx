@@ -22,7 +22,7 @@ const STATUS_OPTIONS = [
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mb-7">
-      <h3 className="type-eyebrow mb-2 font-sans text-gold">{title}</h3>
+      <h3 className="type-eyebrow mb-2 font-sans text-white/75">{title}</h3>
       {children}
     </section>
   );

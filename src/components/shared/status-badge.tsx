@@ -6,12 +6,12 @@ type Variant = React.ComponentProps<typeof Badge>["variant"];
 const STATUS: Record<string, { label: string; variant: Variant }> = {
   // applications
   draft: { label: "Draft", variant: "outline" },
-  submitted: { label: "Submitted", variant: "gold" },
-  under_review: { label: "Under review", variant: "warning" },
+  submitted: { label: "Submitted", variant: "outline" },
+  under_review: { label: "Under review", variant: "outline" },
   approved: { label: "Approved", variant: "success" },
   rejected: { label: "Rejected", variant: "destructive" },
   // revisions
-  pending: { label: "Pending review", variant: "warning" },
+  pending: { label: "Pending review", variant: "outline" },
   // accounts
   active: { label: "Active", variant: "success" },
   restricted: { label: "Restricted", variant: "warning" },
@@ -19,11 +19,11 @@ const STATUS: Record<string, { label: string; variant: Variant }> = {
   deleted: { label: "Deleted", variant: "outline" },
   // content
   published: { label: "Published", variant: "success" },
-  scheduled: { label: "Scheduled", variant: "gold" },
-  hidden: { label: "Hidden", variant: "warning" },
+  scheduled: { label: "Scheduled", variant: "outline" },
+  hidden: { label: "Hidden", variant: "outline" },
   unpublished: { label: "Unpublished", variant: "outline" },
   // reports
-  open: { label: "Open", variant: "warning" },
+  open: { label: "Open", variant: "outline" },
   cleared: { label: "Cleared", variant: "outline" },
   escalated: { label: "Escalated", variant: "destructive" },
   resolved: { label: "Resolved", variant: "success" },
@@ -32,7 +32,7 @@ const STATUS: Record<string, { label: string; variant: Variant }> = {
   unverified: { label: "Unverified", variant: "outline" },
   registered: { label: "Registered", variant: "outline" },
   linked: { label: "Linked", variant: "success" },
-  invited: { label: "Invited", variant: "gold" },
+  invited: { label: "Invited", variant: "outline" },
 };
 
 export function StatusBadge({ status, className }: { status: string; className?: string }) {

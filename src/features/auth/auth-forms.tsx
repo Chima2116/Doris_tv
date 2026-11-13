@@ -59,11 +59,11 @@ export function SignInForm() {
       footer={
         <>
           New to DORIS TV?{" "}
-          <Link href="/waitlist" className="text-gold hover:underline">
+          <Link href="/waitlist" className="text-gold underline-offset-4 transition-colors duration-200 hover:underline focus-visible:underline">
             Join the waitlist
           </Link>{" "}
           or{" "}
-          <Link href="/sign-up" className="text-gold hover:underline">
+          <Link href="/sign-up" className="text-gold underline-offset-4 transition-colors duration-200 hover:underline focus-visible:underline">
             create an account
           </Link>
           .
@@ -72,7 +72,7 @@ export function SignInForm() {
     >
       <form
         noValidate
-        className="grid gap-5"
+        className="grid gap-6"
         onSubmit={handleSubmit(async (v) => {
           setError(null);
           await wait(700);
@@ -91,12 +91,12 @@ export function SignInForm() {
           {(a) => <Input {...a} type="password" autoComplete="current-password" {...register("password")} />}
         </FormField>
         <div className="-mt-2 text-right">
-          <Link href="/reset-password" className="text-xs text-muted-foreground hover:text-foreground">
+          <Link href="/reset-password" className="text-xs font-medium text-gold underline-offset-4 transition-colors duration-200 hover:underline focus-visible:underline">
             Forgot your password?
           </Link>
         </div>
         <ServerError message={error} />
-        <Button type="submit" size="lg" disabled={isSubmitting}>
+        <Button type="submit" variant="gold" size="lg" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? "Signing in…" : "Sign in"}
         </Button>
         <p className="text-xs text-muted-foreground">
@@ -166,7 +166,7 @@ export function SignUpForm() {
     >
       <form
         noValidate
-        className="grid gap-5"
+        className="grid gap-6"
         onSubmit={handleSubmit(async (v) => {
           await wait(800);
           setSent(v.email);
@@ -184,7 +184,7 @@ export function SignUpForm() {
         <FormField id="su-confirm" label="Confirm password" error={errors.confirm?.message}>
           {(a) => <Input {...a} type="password" autoComplete="new-password" {...register("confirm")} />}
         </FormField>
-        <Button type="submit" size="lg" disabled={isSubmitting}>
+        <Button type="submit" variant="gold" size="lg" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? "Creating account…" : "Create account"}
         </Button>
       </form>
@@ -231,7 +231,7 @@ export function ResetPasswordForm() {
     >
       <form
         noValidate
-        className="grid gap-5"
+        className="grid gap-6"
         onSubmit={handleSubmit(async (v) => {
           await wait(700);
           setSent(v.email);
@@ -240,7 +240,7 @@ export function ResetPasswordForm() {
         <FormField id="rp-email" label="Email" error={errors.email?.message}>
           {(a) => <Input {...a} type="email" autoComplete="email" {...register("email")} />}
         </FormField>
-        <Button type="submit" size="lg" disabled={isSubmitting}>
+        <Button type="submit" variant="gold" size="lg" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? "Sending…" : "Send reset link"}
         </Button>
       </form>

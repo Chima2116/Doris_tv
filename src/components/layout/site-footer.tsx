@@ -15,7 +15,7 @@ const SOCIAL = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-white/10 bg-[#0a0a0a]">
+    <footer className="mt-auto border-t-2 border-gold bg-[#0a0a0a]">
       <div className="mx-auto grid w-full max-w-[1360px] gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1.5fr_1fr_1fr_1fr] lg:px-12">
         <div>
           <Wordmark size="md" />
@@ -25,20 +25,20 @@ export function SiteFooter() {
         </div>
         {COLUMNS.map((col) => (
           <nav key={col.title} aria-label={col.title}>
-            <h2 className="tag mb-4 text-white/45">{col.title}</h2>
+            <h2 className="tag mb-4 text-white/60">{col.title}</h2>
             <ul className="space-y-2.5 text-sm">
               {col.links.map(([label, href]) => (
-                <li key={href}><Link href={href} className="text-white/80 transition-colors hover:text-white">{label}</Link></li>
+                <li key={href}><Link href={href} className="text-white/80 transition-colors duration-200 hover:text-gold">{label}</Link></li>
               ))}
             </ul>
           </nav>
         ))}
         <nav aria-label="Follow">
-          <h2 className="tag mb-4 text-white/45">Follow</h2>
+          <h2 className="tag mb-4 text-white/60">Follow</h2>
           <ul className="space-y-2.5 text-sm">
             {SOCIAL.map(([label, href]) => (
               <li key={label}>
-                <a href={href} target="_blank" rel="noopener noreferrer" className="text-white/80 transition-colors hover:text-white">
+                <a href={href} target="_blank" rel="noopener noreferrer" className="text-white/80 transition-colors duration-200 hover:text-gold">
                   {label}<span className="sr-only"> (opens in a new tab)</span>
                 </a>
               </li>
@@ -46,8 +46,8 @@ export function SiteFooter() {
           </ul>
         </nav>
       </div>
-      <div className="border-t border-white/10">
-        <div className="mx-auto flex w-full max-w-[1360px] flex-wrap justify-between gap-x-8 gap-y-2 px-5 py-5 text-xs text-white/40 sm:px-8 lg:px-12">
+      <div className="border-t border-gold/30">
+        <div className="mx-auto flex w-full max-w-[1360px] flex-wrap justify-between gap-x-8 gap-y-2 px-5 py-5 text-xs text-white/60 sm:px-8 lg:px-12">
           <p>© 2026 Doris Entertainment Networks Limited</p>
           <p>Demonstration content: the stories, people and films shown are fictional.</p>
         </div>

@@ -17,7 +17,7 @@ export default function FilmmakersPage() {
   return (
     <PageContainer width="wide" className="py-14 sm:py-20">
       <header className="mb-12 max-w-4xl">
-        <p className="tag text-white/60">Filmmaker directory</p>
+        <p className="tag text-gold">Filmmaker directory</p>
         <h1 className="display-name mt-4 text-[clamp(2.25rem,5.5vw,4.5rem)]">The people making African cinema.</h1>
         <p className="mt-5 text-lg leading-relaxed text-white/70">
           Professional profiles of independent filmmakers: their work, their credits and their

@@ -54,7 +54,7 @@ function Profile({ f, articles }: { f: Filmmaker; articles: JournalArticle[] }) 
         <FilmmakerPortrait filmmaker={f} aspect="aspect-[4/5] lg:aspect-auto lg:h-full" priority sizes="(min-width: 1024px) 50vw, 100vw" className="w-full" />
         <div className="flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-16 xl:px-24">
           <Link href="/filmmakers" className="tag mb-8 w-fit text-white/60 hover:text-white">← All filmmakers</Link>
-          <p className="tag text-white/70">{f.primaryDiscipline}</p>
+          <p className="tag inline-block border border-gold/50 px-2 py-1 text-gold">{f.primaryDiscipline}</p>
           <h1 className="display-name mt-4 text-[clamp(2.5rem,5.5vw,4.5rem)]">{f.name}</h1>
           {f.tagline && <p className="mt-5 max-w-[32rem] text-xl leading-snug text-white/80">{f.tagline}</p>}
           <dl className="mt-8 grid max-w-[34rem] grid-cols-2 gap-6 border-t border-white/20 pt-6 sm:grid-cols-3">
@@ -94,7 +94,7 @@ function Profile({ f, articles }: { f: Filmmaker; articles: JournalArticle[] }) 
       {f.creativePhilosophy && (
         <section aria-label="Creative philosophy" className="bg-[#1c1c1c]">
           <PageContainer width="wide" className="py-16 sm:py-24">
-            <p className="tag text-white/60">Creative philosophy</p>
+            <p className="tag text-gold">Creative philosophy</p>
             <blockquote className="mt-6 max-w-4xl">
               <p className="text-[clamp(1.5rem,3.6vw,2.75rem)] font-bold leading-[1.15] tracking-tight text-balance">“{f.creativePhilosophy}”</p>
               <footer className="tag mt-6 text-white/60">{f.name}</footer>
@@ -117,7 +117,7 @@ function Profile({ f, articles }: { f: Filmmaker; articles: JournalArticle[] }) 
       <section aria-label="Professional credits" className="bg-[#141414]">
         <PageContainer width="wide" className="py-16">
           <div className="mb-8">
-            <p className="tag text-white/60">Filmography</p>
+            <p className="tag text-gold">Filmography</p>
             <h2 className="heading-section mt-3">Professional credits</h2>
           </div>
           <ol>
@@ -147,7 +147,7 @@ function Profile({ f, articles }: { f: Filmmaker; articles: JournalArticle[] }) 
         <section aria-label="From the Journal">
           <PageContainer width="wide" className="py-16">
             <div className="mb-8">
-              <p className="tag text-white/60">From the Journal</p>
+              <p className="tag text-gold">From the Journal</p>
               <h2 className="heading-section mt-3">{f.name} in the Journal</h2>
             </div>
             <div className="grid gap-x-8 gap-y-12 md:grid-cols-3">

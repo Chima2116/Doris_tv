@@ -27,7 +27,7 @@ function Panel({ title, action, children }: { title: string; action?: { label: s
   return (
     <section className="border border-border bg-surface">
       <header className="flex items-center justify-between border-b border-border px-4 py-3">
-        <h3 className="type-eyebrow font-sans text-gold">{title}</h3>
+        <h3 className="type-eyebrow font-sans text-white/75">{title}</h3>
         {action && (
           <Link href={action.href} className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground hover:text-gold">
             {action.label} →

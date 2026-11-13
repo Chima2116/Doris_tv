@@ -54,7 +54,7 @@ function Compare({ current, proposed }: { current: FilmmakerProfileFields; propo
     <div className="space-y-6">
       {d.rows.map((r) => (
         <div key={r.label}>
-          <h4 className="type-eyebrow mb-2 font-sans text-gold">{r.label}</h4>
+          <h4 className="type-eyebrow mb-2 font-sans text-white/75">{r.label}</h4>
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="border border-danger/40 bg-danger/5 p-3 text-sm"><p className="type-eyebrow mb-1 text-muted-foreground">Published</p><p className="whitespace-pre-line text-reading/80">{r.before || "—"}</p></div>
             <div className="border border-success/40 bg-success/5 p-3 text-sm"><p className="type-eyebrow mb-1 text-muted-foreground">Proposed</p><p className="whitespace-pre-line text-reading/90">{r.after || "—"}</p></div>
@@ -63,7 +63,7 @@ function Compare({ current, proposed }: { current: FilmmakerProfileFields; propo
       ))}
       {(d.added.length > 0 || d.removed.length > 0 || d.changed.length > 0) && (
         <div>
-          <h4 className="type-eyebrow mb-2 font-sans text-gold">Credits</h4>
+          <h4 className="type-eyebrow mb-2 font-sans text-white/75">Credits</h4>
           <ul className="divide-y divide-border border-y border-border text-sm">
             {d.added.map((c) => <li key={c.id} className="py-2 text-[#6fd09b]">+ Added: <strong>{c.title}</strong> ({c.year}, {c.role})</li>)}
             {d.removed.map((c) => <li key={c.id} className="py-2 text-[#ee8585]">− Removed: <strong>{c.title}</strong> ({c.year})</li>)}
@@ -73,7 +73,7 @@ function Compare({ current, proposed }: { current: FilmmakerProfileFields; propo
       )}
       {d.linksChanged && (
         <div>
-          <h4 className="type-eyebrow mb-2 font-sans text-gold">Links</h4>
+          <h4 className="type-eyebrow mb-2 font-sans text-white/75">Links</h4>
           <div className="grid gap-2 sm:grid-cols-2 text-sm">
             <ul className="border border-danger/40 bg-danger/5 p-3">{current.links.map((l) => <li key={l.url}>{l.label}</li>)}</ul>
             <ul className="border border-success/40 bg-success/5 p-3">{proposed.links.map((l) => <li key={l.url}>{l.label}: <span className="break-all text-muted-foreground">{l.url}</span></li>)}</ul>
@@ -211,11 +211,11 @@ export function FilmmakersAdmin({ seed, seedApplications }: { seed: Filmmaker[];
             <div className="mb-5 flex gap-2"><StatusBadge status={open.verificationStatus} /><StatusBadge status={open.publicationStatus} /></div>
             <p className="whitespace-pre-line text-sm leading-relaxed text-reading/85">{open.biography}</p>
             {open.creativePhilosophy && <p className="mt-4 border-l-4 border-gold pl-3 text-sm italic">“{open.creativePhilosophy}”</p>}
-            <h4 className="type-eyebrow mb-2 mt-6 font-sans text-gold">Credits ({open.credits.length})</h4>
+            <h4 className="type-eyebrow mb-2 mt-6 font-sans text-white/75">Credits ({open.credits.length})</h4>
             <ul className="divide-y divide-border border-y border-border text-sm">
               {open.credits.map((c) => <li key={c.id} className="flex justify-between gap-4 py-2"><span><strong>{c.title}</strong> <span className="text-muted-foreground">· {c.role}</span></span><span className="text-muted-foreground">{c.year}</span></li>)}
             </ul>
-            <h4 className="type-eyebrow mb-2 mt-6 font-sans text-gold">Revision history</h4>
+            <h4 className="type-eyebrow mb-2 mt-6 font-sans text-white/75">Revision history</h4>
             {revisionsFor(open.id, revs).length === 0 ? <p className="text-sm text-muted-foreground">No revisions yet.</p> : (
               <ul className="space-y-2 text-sm">
                 {revisionsFor(open.id, revs).map((r) => (

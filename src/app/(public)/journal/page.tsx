@@ -72,8 +72,8 @@ async function JournalContent({ searchParams }: { searchParams: PageProps<"/jour
                     scroll={false}
                     aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "-mb-px block border-b-2 py-3 text-sm font-semibold transition-colors",
-                      isActive ? "border-gold text-white" : "border-transparent text-white/60 hover:text-white",
+                      "-mb-px block border-b-2 py-3 text-sm font-semibold transition-colors duration-200",
+                      isActive ? "border-gold text-gold" : "border-transparent text-white/60 hover:border-gold/50 hover:text-gold",
                     )}
                   >
                     {c.label}
@@ -96,7 +96,7 @@ async function JournalContent({ searchParams }: { searchParams: PageProps<"/jour
             <Link href={`/journal/${featured.slug}`} aria-label={featured.title} className="absolute inset-0" />
           </div>
           <div className="flex flex-col justify-center bg-[#1c1c1c] px-6 py-12 sm:px-10 lg:col-span-5 lg:px-14">
-            <p className="tag text-white/60">Cover story · {featured.category}</p>
+            <p className="tag text-gold">Cover story · {featured.category}</p>
             <h2 className="heading-feature mt-4 text-[clamp(1.75rem,3vw,2.5rem)] leading-[1.1]">
               <Link href={`/journal/${featured.slug}`} className="hover:underline hover:decoration-white/40 hover:underline-offset-[6px]">{featured.title}</Link>
             </h2>
@@ -143,7 +143,7 @@ async function JournalContent({ searchParams }: { searchParams: PageProps<"/jour
           <PageContainer width="wide">
             <div className="mb-6 flex items-end justify-between gap-6">
               <div>
-                <p className="tag text-white/60">Video conversations</p>
+                <p className="tag text-gold">Video conversations</p>
                 <h2 className="heading-section mt-3">Conversations on film</h2>
               </div>
               <Link href="/journal?category=video" className="hidden items-center gap-2 text-sm font-semibold text-white/80 hover:text-white sm:inline-flex">

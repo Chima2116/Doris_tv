@@ -45,8 +45,8 @@ export function ArticleCard({
       <Link href={href} className={cn("group grid grid-cols-[2.25rem_1fr] gap-x-3 border-t border-white/20 py-5", className)}>
         <span className="meta tabular-nums text-white/60">[{(index ?? 0) + 1}]</span>
         <span>
-          <span className="tag block text-white/55">{article.category}</span>
-          <span className="heading-card mt-2 block text-lg leading-snug group-hover:underline group-hover:decoration-white/40 group-hover:underline-offset-4">{article.title}</span>
+          <span className="tag block text-gold">{article.category}</span>
+          <span className="heading-card mt-2 block text-lg leading-snug transition-colors duration-200 group-hover:text-gold">{article.title}</span>
           <ArticleMeta article={article} className="mt-2" />
         </span>
       </Link>
@@ -78,8 +78,8 @@ export function ArticleCard({
         <div className="pt-4">
           {asset && (
             <>
-              <p className="tag text-white/55">{article.category}</p>
-              <h3 className={cn("heading-card mt-2 leading-snug group-hover:underline group-hover:decoration-white/40 group-hover:underline-offset-4", isLead ? "text-[clamp(1.5rem,3vw,2.25rem)]" : "text-[1.1875rem]")}>
+              <p className="tag text-gold">{article.category}</p>
+              <h3 className={cn("heading-card mt-2 leading-snug transition-colors duration-200 group-hover:text-gold", isLead ? "text-[clamp(1.5rem,3vw,2.25rem)]" : "text-[1.1875rem]")}>
                 {article.title}
               </h3>
             </>

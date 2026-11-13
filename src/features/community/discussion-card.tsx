@@ -25,7 +25,7 @@ export function DiscussionCard({
     <article className="group relative border-t border-white/20 py-7 transition-colors hover:bg-white/[0.03] sm:px-3">
       <div className="relative z-10 mb-3 flex flex-wrap items-center justify-between gap-2">
         <AuthorChip member={author} size="sm" />
-        <span className="tag text-white/60">{discussion.category}</span>
+        <span className="tag text-gold">{discussion.category}</span>
       </div>
       <h3 className="heading-card text-[1.375rem] leading-snug">
         <Link

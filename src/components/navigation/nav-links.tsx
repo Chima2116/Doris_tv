@@ -54,7 +54,7 @@ function WithPath(props: Props) {
  * state streams in. This keeps dynamic routes (e.g. /community/[thread-id]) prerenderable.
  */
 export function NavLinks({
-  inactiveClassName = "text-muted-foreground hover:text-foreground",
+  inactiveClassName = "text-muted-foreground hover:text-gold",
   ...rest
 }: Props) {
   const props = { ...rest, inactiveClassName };

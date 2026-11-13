@@ -32,8 +32,8 @@ export function Hero() {
       <div aria-hidden="true" className="absolute inset-y-0 left-0 -z-10 hidden w-[55%] bg-gradient-to-r from-black/45 to-transparent lg:block" />
 
       <Stagger className={`${wrap} pt-32`}>
-        <p className="tag mb-5 text-white/80">Independent African cinema</p>
-        <h1 className="display-hero max-w-[15ch] sm:max-w-[16ch]">Where independent African film lives.</h1>
+        <p className="tag mb-5 text-gold">Independent African cinema</p>
+        <h1 className="display-hero max-w-[15ch] sm:max-w-[16ch]">Where independent African film lives<span className="text-gold">.</span></h1>
         <p className="mt-6 max-w-[38rem] text-[1.0625rem] leading-relaxed text-white/85 sm:text-lg">
           An independent home for the stories, filmmakers and creative voices shaping African cinema. Discover conversations, explore the people behind the work and join a community that cares about film.
         </p>
@@ -81,7 +81,7 @@ export function JournalRail({ stories }: { stories: JournalArticle[] }) {
                   </StoryCover>
                 )}
                 <p className="meta mt-3 text-white/55">
-                  <span className="tabular-nums text-white/80">[{i + 1}]</span> {s.author} · {readingLabel(s)}
+                  <span className="tabular-nums text-gold">[{i + 1}]</span> {s.author} · {readingLabel(s)}
                 </p>
               </Link>
             </CarouselItem>
@@ -106,7 +106,7 @@ export function FeaturedEditorial({ story, supporting }: { story: JournalArticle
               <Photo asset={img} ratio="16/10" sizes="(min-width: 1024px) 66vw, 100vw" imgClassName="transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
               <Link href={`/journal/${story.slug}`} aria-label={story.title} className="absolute inset-0" />
             </div>
-            <p className="tag mt-8 text-white/60">{story.category}</p>
+            <p className="tag mt-8 text-gold">{story.category}</p>
             <h2 className="heading-feature mt-3 max-w-[24ch] text-[clamp(1.75rem,3.2vw,2.75rem)] leading-[1.1]">
               <Link href={`/journal/${story.slug}`} className={link}>{story.title}</Link>
             </h2>
@@ -114,13 +114,13 @@ export function FeaturedEditorial({ story, supporting }: { story: JournalArticle
             <p className="meta mt-5 text-white/55">{story.author} · {readingLabel(story)}</p>
           </article>
 
-          <ol className="flex flex-col lg:col-span-4">
+          <ol className="flex flex-col border-l border-gold/40 pl-6 lg:col-span-4">
             {supporting.map((s, i) => (
-              <li key={s.slug} className="group border-t border-white/20 py-6 first:border-t-0 first:pt-0 lg:first:border-t lg:first:pt-6">
+              <li key={s.slug} className="group border-t border-white/15 py-6 first:border-t-0 first:pt-0">
                 <Link href={`/journal/${s.slug}`} className="grid grid-cols-[2.25rem_1fr] gap-x-3">
-                  <span className="meta tabular-nums text-white/60">[{i + 1}]</span>
+                  <span className="meta tabular-nums text-gold">[{i + 1}]</span>
                   <span>
-                    <span className="tag block text-white/55">{s.category}</span>
+                    <span className="tag block text-gold">{s.category}</span>
                     <span className="heading-card mt-2 block text-[1.1875rem] leading-snug group-hover:underline group-hover:decoration-white/40 group-hover:underline-offset-4">{s.title}</span>
                     <span className="meta mt-3 flex items-center gap-2 text-white/55">
                       {s.author} · {readingLabel(s)}
@@ -174,7 +174,7 @@ export function Collections({ articles }: { articles: JournalArticle[] }) {
                   <Photo asset={img} fill sizes="(min-width: 1024px) 24rem, 80vw" className="-z-20" imgClassName="transition-transform duration-700 ease-out group-hover:scale-[1.05]" />
                   <span aria-hidden="true" className="absolute inset-x-0 top-0 -z-10 h-1/4 bg-gradient-to-b from-black/60 to-transparent" />
                   <span aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-[70%] bg-gradient-to-t from-black/90 via-black/60 to-transparent" />
-                  <span className="meta tabular-nums text-white/85">[{i + 1}]</span>
+                  <span className="meta tabular-nums text-gold">[{i + 1}]</span>
                   <span>
                     <span className="heading-section block text-[clamp(1.75rem,3vw,2.25rem)] leading-[1.05]">{c.label}</span>
                     <span className="mt-3 block text-sm leading-relaxed text-white/80">{COLLECTION_BLURBS[c.category!]}</span>
@@ -209,7 +209,7 @@ export function FilmmakerSpotlight({ filmmaker }: { filmmaker: Filmmaker }) {
       </div>
       <div className="flex flex-col justify-center bg-[#0d0d0d] px-6 py-16 sm:px-12 lg:px-16 xl:px-24">
         <Reveal>
-          <p className="tag text-white/60">Filmmaker spotlight</p>
+          <p className="tag text-gold">Filmmaker spotlight</p>
           <h2 className="display-name mt-4">
             <Link href={`/filmmakers/${filmmaker.slug}`} className={link}>{filmmaker.name}</Link>
           </h2>
@@ -234,7 +234,7 @@ export function FilmmakerSpotlight({ filmmaker }: { filmmaker: Filmmaker }) {
 function Person({ member, className }: { member: Member | null; className?: string }) {
   return (
     <Avatar className={className ?? "size-8"}>
-      <AvatarFallback className="bg-white/15 text-[0.65rem] font-semibold">{initials(member?.displayName ?? "M")}</AvatarFallback>
+      <AvatarFallback className="bg-white/15 text-[0.65rem] font-semibold text-white">{initials(member?.displayName ?? "M")}</AvatarFallback>
     </Avatar>
   );
 }
@@ -244,7 +244,7 @@ async function RecentConversation({ d }: { d: Discussion }) {
   return (
     <li>
       <Link href={`/community/${d.id}`} className="group flex h-full flex-col gap-5 border-t border-white/20 pt-6">
-        <p className="tag text-white/55">{d.category}</p>
+        <p className="tag text-gold">{d.category}</p>
         <h3 className="heading-card text-[1.25rem] leading-snug group-hover:underline group-hover:decoration-white/40 group-hover:underline-offset-4">{d.title}</h3>
         <p className="meta mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 text-white/55">
           <Person member={author} className="size-6" />
@@ -266,7 +266,7 @@ export async function Community({ featured, recent, topics, memberIds }: { featu
       <div className={wrap}>
         <Reveal className="mb-12 grid gap-6 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <p className="tag text-white/60">Community</p>
+            <p className="tag text-gold">Community</p>
             <h2 className="display-name mt-4 max-w-[20ch] text-[clamp(2.25rem,5vw,4rem)]">The conversation around African cinema.</h2>
           </div>
           <div className="lg:col-span-4 lg:col-start-9">
@@ -287,7 +287,7 @@ export async function Community({ featured, recent, topics, memberIds }: { featu
               <Link href={`/community/${featured.id}`} aria-label={featured.title} className="absolute inset-0" />
             </div>
             <div className="flex flex-col justify-center bg-[#1c1c1c] p-7 sm:p-10 lg:col-span-5 lg:p-12">
-              <p className="tag text-white/60">Featured discussion · {featured.category}</p>
+              <p className="tag text-gold">Featured discussion · {featured.category}</p>
               <h3 className="heading-feature mt-4">
                 <Link href={`/community/${featured.id}`} className={link}>{featured.title}</Link>
               </h3>
@@ -313,7 +313,7 @@ export async function Community({ featured, recent, topics, memberIds }: { featu
         <Reveal className="mt-16">
           <div className="mb-8 flex items-end justify-between gap-6">
             <h3 className="heading-card text-xl">Recent conversations</h3>
-            <Link href="/community" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white">
+            <Link href="/community" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 transition-colors duration-200 hover:text-gold">
               All discussions <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
           </div>
@@ -324,7 +324,7 @@ export async function Community({ featured, recent, topics, memberIds }: { featu
 
         {/* Topics: large type, not chips */}
         <Reveal className="mt-20">
-          <p className="tag mb-5 text-white/60">Topics</p>
+          <p className="tag mb-5 text-gold">Topics</p>
           <ul className="flex flex-wrap gap-x-8 gap-y-3 sm:gap-x-12">
             {topics.map((t) => (
               <li key={t.name}>
@@ -365,7 +365,7 @@ export function Invitation() {
           <ol className="mt-14 grid gap-8 border-t border-white/20 pt-8 sm:grid-cols-3">
             {BENEFITS.map(([t, d], i) => (
               <li key={t} className="grid grid-cols-[2.25rem_1fr]">
-                <span className="meta tabular-nums text-white/60">[{i + 1}]</span>
+                <span className="meta tabular-nums text-gold">[{i + 1}]</span>
                 <span>
                   <span className="heading-card block text-lg">{t}</span>
                   <span className="mt-2 block text-sm leading-relaxed text-white/65">{d}</span>

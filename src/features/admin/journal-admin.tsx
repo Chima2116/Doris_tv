@@ -159,7 +159,7 @@ function Editor({ article, existingSlugs, onSaved }: { article?: JournalArticle;
           </FormField>
         </TabsContent>
         <TabsContent value="preview">
-          <p className="type-eyebrow text-gold">{live.category ?? "Category"}</p>
+          <p className="type-eyebrow text-muted-foreground">{live.category ?? "Category"}</p>
           <h3 className="mt-3 font-display text-3xl font-black leading-tight">{live.title || "Untitled story"}</h3>
           {live.deck && <p className="mt-3 text-reading/70">{live.deck}</p>}
           <p className="mt-3 text-xs text-muted-foreground">By {live.author || "Author"} · {live.readingTime || "—"} min</p>
@@ -258,7 +258,7 @@ export function JournalAdmin() {
       <DetailSheet open={!!preview} onOpenChange={(o) => !o && setPreviewId(null)} title="Preview" description="How the story would read.">
         {preview && (
           <>
-            <p className="type-eyebrow text-gold">{preview.category}</p>
+            <p className="type-eyebrow text-muted-foreground">{preview.category}</p>
             <h3 className="mt-3 font-display text-3xl font-black leading-tight">{preview.title}</h3>
             {preview.deck && <p className="mt-3 text-reading/70">{preview.deck}</p>}
             <p className="mt-3 text-xs text-muted-foreground">By {preview.author} · {fmt(preview.publishedAt)} · {preview.readingTime} min</p>

@@ -83,7 +83,7 @@ export function ModerationAdmin({ reports, discussions, replies, members }: { re
             return (
               <tr key={r.id} className="hover:bg-white/[0.02]">
                 <Td className="max-w-xs"><span className="line-clamp-2">{ct ? excerpt(ct.text) : "Content no longer available"}</span></Td>
-                <Td className="capitalize">{r.target.type}</Td>
+                <Td className="whitespace-nowrap capitalize">{r.target.type}</Td>
                 <Td>{REASON[r.reason]}</Td>
                 <Td>{person(r.reporterId)?.displayName ?? "Member"}</Td>
                 <Td className="whitespace-nowrap text-muted-foreground">{fmtTime(r.createdAt)}</Td>
@@ -130,7 +130,7 @@ export function ModerationAdmin({ reports, discussions, replies, members }: { re
           <>
             <div className="mb-5 flex items-center gap-3"><StatusBadge status={open.status} /><span className="text-xs text-muted-foreground">Reported {fmtTime(open.createdAt)}</span></div>
 
-            <h3 className="type-eyebrow mb-2 font-sans text-gold">Reported {open.target.type}</h3>
+            <h3 className="type-eyebrow mb-2 font-sans text-white/75">Reported {open.target.type}</h3>
             {c ? (
               <div className="mb-6 border border-border p-4">
                 <p className="text-xs text-muted-foreground">In: {c.title}</p>
@@ -145,7 +145,7 @@ export function ModerationAdmin({ reports, discussions, replies, members }: { re
               </div>
             ) : <p className="mb-6 text-sm text-muted-foreground">This content is no longer available.</p>}
 
-            <h3 className="type-eyebrow mb-2 font-sans text-gold">Report</h3>
+            <h3 className="type-eyebrow mb-2 font-sans text-white/75">Report</h3>
             <dl className="mb-6 grid grid-cols-[6rem_1fr] gap-y-1.5 text-sm">
               <dt className="text-muted-foreground">Category</dt><dd>{REASON[open.reason]}</dd>
               <dt className="text-muted-foreground">Reported by</dt><dd>{person(open.reporterId)?.displayName ?? "Member"}</dd>
@@ -153,7 +153,7 @@ export function ModerationAdmin({ reports, discussions, replies, members }: { re
               {open.resolution && (<><dt className="text-muted-foreground">Outcome</dt><dd>{open.resolution}</dd></>)}
             </dl>
 
-            <h3 className="type-eyebrow mb-2 font-sans text-gold">Moderator notes</h3>
+            <h3 className="type-eyebrow mb-2 font-sans text-white/75">Moderator notes</h3>
             {open.notes.length === 0 ? <p className="mb-4 text-sm text-muted-foreground">No notes yet.</p> : (
               <ul className="mb-4 space-y-3">
                 {open.notes.map((n) => (
