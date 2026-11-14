@@ -5,7 +5,6 @@ import {
   Clapperboard,
   ShieldAlert,
   Users,
-  ListChecks,
   BarChart3,
   type LucideIcon,
 } from "lucide-react";
@@ -40,6 +39,5 @@ export const ADMIN_NAV: AdminNavItem[] = [
   { href: "/admin/filmmakers", label: "Filmmakers", icon: Clapperboard },
   { href: "/admin/moderation", label: "Moderation", icon: ShieldAlert, moderator: true },
   { href: "/admin/members", label: "Members", icon: Users },
-  { href: "/admin/waitlist", label: "Waitlist", icon: ListChecks },
   { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
 ];

@@ -187,18 +187,15 @@ function AccountForm() {
       <dl className="mb-8 grid gap-4 sm:grid-cols-2">
         {[
           ["Email", user.emailVerified],
-          ["Waitlist", user.waitlistLinked],
         ].map(([label, ok]) => (
-          <div key={String(label)} className="flex items-start gap-3 border border-border p-4">
-            {ok ? <CheckCircle2 className="mt-0.5 size-5 text-[#6fd09b]" aria-hidden="true" /> : <CircleAlert className="mt-0.5 size-5 text-warning" aria-hidden="true" />}
-            <div>
-              <dt className="text-sm font-semibold">{label}</dt>
-              <dd className="text-xs text-muted-foreground">
-                {label === "Email"
-                  ? ok ? "Verified" : "Not verified. Verify your email to take part in the Community."
-                  : ok ? "Linked to your account" : "Not linked. Join the waitlist with your account email."}
-              </dd>
-            </div>
+          <div key={String(label)} className="grid grid-cols-[auto_1fr] gap-x-3 border border-border p-4">
+            {ok ? <CheckCircle2 className="row-span-2 mt-0.5 size-5 text-[#6fd09b]" aria-hidden="true" /> : <CircleAlert className="row-span-2 mt-0.5 size-5 text-warning" aria-hidden="true" />}
+            <dt className="text-sm font-semibold">{label}</dt>
+            <dd className="text-xs text-muted-foreground">
+              {label === "Email"
+                ? ok ? "Verified" : "Not verified. Verify your email to take part in the Community."
+                : ""}
+            </dd>
           </div>
         ))}
       </dl>

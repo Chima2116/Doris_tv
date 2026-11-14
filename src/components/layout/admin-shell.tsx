@@ -135,7 +135,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 <Menu className="size-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[min(18rem,100vw)] gap-0 bg-surface p-0">
+            <SheetContent side="left" className="w-[min(35.1rem,100vw)] gap-0 bg-surface p-0">
               <SheetHeader className="border-b border-border p-5">
                 <SheetTitle asChild>
                   <div>

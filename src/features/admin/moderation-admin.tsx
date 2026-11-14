@@ -17,7 +17,7 @@ import { useCommunityState } from "@/features/community/community-store";
 import { applyMemberPatch, useMemberStore } from "@/features/members/member-store";
 import { isAdmin } from "@/lib/permissions";
 import { moderation as actions } from "./admin-actions";
-import { AdminPageHeader, AdminSkeleton, AdminTable, DetailSheet, PrototypeNote, Td, Th, fmtTime, useAdminReady } from "./ui";
+import { DetailCallout, DetailRows, DetailSection, DetailTimeline, AdminPageHeader, AdminSkeleton, AdminTable, DetailSheet, PrototypeNote, Td, Th, fmtTime, useAdminReady } from "./ui";
 
 const TABS = [
   { value: "open", label: "Open", match: (r: ModerationReport) => r.status === "open" },
@@ -37,7 +37,7 @@ export function ModerationAdmin({ reports, discussions, replies, members }: { re
   const [openId, setOpenId] = useState<string | null>(null);
   const [noteDraft, setNoteDraft] = useState("");
   const [noteError, setNoteError] = useState<string | null>(null);
-  const [confirm, setConfirm] = useState<null | "hide" | "restore" | "remove">(null);
+  const [confirm, setConfirm] = useState<null | "dismiss" | "hide" | "escalate" | "restore" | "remove">(null);
 
   if (!ready || !actor) return <AdminSkeleton />;
   const admin = isAdmin(actor);
@@ -98,7 +98,7 @@ export function ModerationAdmin({ reports, discussions, replies, members }: { re
 
   return (
     <div>
-      <AdminPageHeader title="Moderation" description="Review reported discussions and replies. Hide content pending admin review, add notes, or escalate." />
+      <AdminPageHeader title="Moderation" description="Review reported discussions and replies. Dismiss reports that need no action, hide content until it is reviewed, or send it to an admin." />
       {!admin && <PrototypeNote>You&apos;re signed in as a moderator. You can review, add notes, hide pending admin review and escalate. Restoring or permanently deleting content needs an administrator.</PrototypeNote>}
       <Tabs defaultValue="open">
         <TabsList>
@@ -110,68 +110,82 @@ export function ModerationAdmin({ reports, discussions, replies, members }: { re
       <DetailSheet
         open={!!open}
         onOpenChange={(o) => { if (!o) { setOpenId(null); setNoteDraft(""); setNoteError(null); } }}
-        title="Report details"
-        description={open ? `${REASON[open.reason]} · ${open.target.type}` : undefined}
+        kicker={open ? `Report · ${open.target.type}` : undefined}
+        title={open ? REASON[open.reason] : "Report"}
+        subtitle={open ? `Reported by ${person(open.reporterId)?.displayName ?? "a member"}` : undefined}
+        badges={open && <><StatusBadge status={open.status} /><span className="text-xs text-white/55">Reported {fmtTime(open.createdAt)}</span></>}
+        facts={open ? [
+          { label: "Content by", value: author?.displayName ?? "Unknown" },
+          { label: "Reporter", value: person(open.reporterId)?.displayName ?? "Member" },
+          { label: "Moderator notes", value: open.notes.length },
+          { label: "Outcome", value: open.resolution ?? "Awaiting decision" },
+        ] : undefined}
         footer={
           open && canAct ? (
             <>
-              {open.status === "open" && <Button variant="outline" onClick={() => { actions.clear(actor, open); toast.success("Report cleared. Reporter notified (simulated)."); }}>Clear (no action)</Button>}
-              {open.status === "open" && <Button variant="outline" onClick={() => setConfirm("hide")}>Hide pending review</Button>}
-              {open.status !== "escalated" && <Button variant="outline" onClick={() => { actions.escalate(actor, open); toast.success("Escalated to an administrator"); }}>Escalate to admin</Button>}
-              {admin && (open.status === "hidden" || open.status === "escalated") && <Button onClick={() => setConfirm("restore")}>Restore content</Button>}
+              <div className="flex flex-wrap gap-2">
+                {open.status === "open" && <Button variant="outline" onClick={() => setConfirm("dismiss")}>Dismiss report</Button>}
+                {open.status === "open" && <Button variant="outline" onClick={() => setConfirm("hide")}>Hide until reviewed</Button>}
+                {open.status !== "escalated" && <Button variant="outline" onClick={() => setConfirm("escalate")}>Escalate to admin</Button>}
+                {admin && open.status === "escalated" && <Button variant="outline" onClick={() => setConfirm("dismiss")}>Dismiss report</Button>}
+                {admin && (open.status === "hidden" || open.status === "escalated") && <Button onClick={() => setConfirm("restore")}>Restore content</Button>}
+              </div>
               {admin && <Button variant="destructive" onClick={() => setConfirm("remove")}>Delete permanently</Button>}
-              {admin && open.status === "escalated" && <Button variant="outline" onClick={() => { actions.clear(actor, open); toast.success("Report cleared"); }}>Clear (no action)</Button>}
-              {!admin && <p className="w-full text-xs text-muted-foreground">Only administrators can restore or permanently delete content.</p>}
+              {!admin && <p className="w-full text-xs text-white/55">Only administrators can restore or permanently delete content.</p>}
             </>
           ) : undefined
         }
       >
         {open && (
           <>
-            <div className="mb-5 flex items-center gap-3"><StatusBadge status={open.status} /><span className="text-xs text-muted-foreground">Reported {fmtTime(open.createdAt)}</span></div>
-
-            <h3 className="type-eyebrow mb-2 font-sans text-white/75">Reported {open.target.type}</h3>
-            {c ? (
-              <div className="mb-6 border border-border p-4">
-                <p className="text-xs text-muted-foreground">In: {c.title}</p>
-                <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-reading">{c.text}</p>
-                <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                  <span>By <strong className="text-foreground">{author?.displayName ?? "Unknown"}</strong></span>
-                  <StatusBadge status={c.status} />
-                  <Link href={c.href} target="_blank" className="text-gold underline">View in Community</Link>
-                  {admin && author && <Link href={`/admin/members?q=${author.username}`} className="text-gold underline">Manage member</Link>}
-                </p>
-                {c.hiddenReason && <p className="mt-2 text-xs text-warning">{c.hiddenReason}</p>}
-              </div>
-            ) : <p className="mb-6 text-sm text-muted-foreground">This content is no longer available.</p>}
-
-            <h3 className="type-eyebrow mb-2 font-sans text-white/75">Report</h3>
-            <dl className="mb-6 grid grid-cols-[6rem_1fr] gap-y-1.5 text-sm">
-              <dt className="text-muted-foreground">Category</dt><dd>{REASON[open.reason]}</dd>
-              <dt className="text-muted-foreground">Reported by</dt><dd>{person(open.reporterId)?.displayName ?? "Member"}</dd>
-              {open.details && (<><dt className="text-muted-foreground">Details</dt><dd>{open.details}</dd></>)}
-              {open.resolution && (<><dt className="text-muted-foreground">Outcome</dt><dd>{open.resolution}</dd></>)}
-            </dl>
-
-            <h3 className="type-eyebrow mb-2 font-sans text-white/75">Moderator notes</h3>
-            {open.notes.length === 0 ? <p className="mb-4 text-sm text-muted-foreground">No notes yet.</p> : (
-              <ul className="mb-4 space-y-3">
-                {open.notes.map((n) => (
-                  <li key={n.id} className="border-l-2 border-border pl-3 text-sm">
-                    <p>{n.body}</p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">{person(n.authorId)?.displayName ?? "DORIS TV"} · {fmtTime(n.createdAt)}</p>
-                  </li>
-                ))}
-              </ul>
+            {c && open.status !== "open" && c.hiddenReason && (
+              <DetailCallout label="Hidden by a moderator">{c.hiddenReason}</DetailCallout>
             )}
-            {!decided && (
-              <div className="grid gap-2">
-                <Label htmlFor="mod-note">Add a note</Label>
-                <Textarea id="mod-note" rows={3} value={noteDraft} aria-invalid={!!noteError} onChange={(e) => setNoteDraft(e.target.value)} />
-                {noteError && <p role="alert" className="text-sm text-[#ee8585]">{noteError}</p>}
-                <Button size="sm" variant="outline" className="w-fit" onClick={addNote}>Add note</Button>
-              </div>
-            )}
+            <DetailSection
+              title="Reported content"
+              action={c && (
+                <span className="flex items-center gap-4 text-xs">
+                  <Link href={c.href} target="_blank" className="text-gold underline underline-offset-4 hover:text-white">View in Community</Link>
+                  {admin && author && <Link href={`/admin/members?q=${author.username}`} className="text-gold underline underline-offset-4 hover:text-white">Manage member</Link>}
+                </span>
+              )}
+            >
+              {c ? (
+                <blockquote className="border-l-2 border-white/30 pl-5">
+                  <p className="text-[1.0625rem] leading-relaxed text-white/90">{c.text}</p>
+                  <footer className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/55">
+                    <span>By <span className="font-semibold text-white">{author?.displayName ?? "Unknown"}</span></span>
+                    <span aria-hidden="true">·</span>
+                    <span>In {c.title}</span>
+                  </footer>
+                </blockquote>
+              ) : <p className="text-sm text-white/60">This content is no longer available.</p>}
+            </DetailSection>
+
+            <DetailSection title="The report">
+              <DetailRows rows={[
+                { primary: REASON[open.reason], secondary: open.details ? undefined : "No details given" },
+              ]} />
+              {open.details && <p className="mt-3 text-[0.9375rem] leading-relaxed text-white/80">“{open.details}”</p>}
+            </DetailSection>
+
+            <DetailSection title={`Moderator notes (${open.notes.length})`}>
+              {open.notes.length === 0 ? <p className="text-sm text-white/60">No notes yet.</p> : (
+                <DetailTimeline items={open.notes.map((n) => ({
+                  label: person(n.authorId)?.displayName ?? "DORIS TV",
+                  at: fmtTime(n.createdAt),
+                  note: n.body,
+                }))} />
+              )}
+              {!decided && (
+                <div className="mt-6 grid gap-2">
+                  <Label htmlFor="mod-note" className="text-white/80">Add a note</Label>
+                  <Textarea id="mod-note" rows={3} value={noteDraft} aria-invalid={!!noteError} onChange={(e) => setNoteDraft(e.target.value)} />
+                  {noteError && <p role="alert" className="text-sm text-[#ee8585]">{noteError}</p>}
+                  <Button size="sm" variant="outline" className="w-fit" onClick={addNote}>Add note</Button>
+                </div>
+              )}
+            </DetailSection>
           </>
         )}
       </DetailSheet>
@@ -179,10 +193,26 @@ export function ModerationAdmin({ reports, discussions, replies, members }: { re
       {open && (
         <>
           <ConfirmDialog
+            open={confirm === "dismiss"}
+            onOpenChange={(o) => !o && setConfirm(null)}
+            title="Dismiss this report?"
+            description="The report closes with no action. The content stays exactly as it is, and the reporter is told the report was reviewed."
+            confirmLabel="Dismiss report"
+            onConfirm={() => { actions.clear(actor, open); toast.success("Report dismissed. No action taken. Reporter notified (simulated)."); }}
+          />
+          <ConfirmDialog
+            open={confirm === "escalate"}
+            onOpenChange={(o) => !o && setConfirm(null)}
+            title="Escalate to an admin?"
+            description="The report goes to the admin queue for a decision. The content isn't hidden by this step. Only an admin can hide, restore or delete it after that."
+            confirmLabel="Escalate to admin"
+            onConfirm={() => { actions.escalate(actor, open); toast.success("Sent to an administrator for a decision"); }}
+          />
+          <ConfirmDialog
             open={confirm === "hide"}
             onOpenChange={(o) => !o && setConfirm(null)}
-            title="Hide this content pending admin review?"
-            description="It will be hidden from the public. Nothing is deleted, and an administrator can restore it."
+            title="Hide this content until it is reviewed?"
+            description="The content is hidden from the public straight away. Nothing is deleted. The report stays open until an admin decides whether to restore or delete it."
             confirmLabel="Hide content"
             onConfirm={() => { actions.hide(actor, open); toast.success("Content hidden pending admin review"); }}
           />
@@ -190,7 +220,7 @@ export function ModerationAdmin({ reports, discussions, replies, members }: { re
             open={confirm === "restore"}
             onOpenChange={(o) => !o && setConfirm(null)}
             title="Restore this content?"
-            description="It becomes visible to the public again and the report is closed."
+            description="The content becomes visible to the public again and the report is closed as resolved. The reporter is told (simulated)."
             confirmLabel="Restore content"
             onConfirm={() => { actions.restore(actor, open); toast.success("Content restored"); }}
           />

@@ -7,6 +7,7 @@ import { Eyebrow } from "@/components/shared/eyebrow";
 import { NavLinks } from "@/components/navigation/nav-links";
 import { useSession } from "@/features/auth/session-provider";
 import { isVerifiedFilmmaker } from "@/lib/permissions";
+import { FilmmakerCallout } from "@/features/members/filmmaker-callout";
 
 /**
  * Wraps member-area routes. Guests get an explanation and a next step rather than
@@ -22,7 +23,7 @@ export function MemberShell({ children }: { children: React.ReactNode }) {
         { href: "/following", label: "Following" },
         isVerifiedFilmmaker(user)
           ? { href: "/filmmaker-dashboard/profile", label: "Filmmaker profile" }
-          : { href: "/filmmaker-application", label: "Filmmaker application" },
+          : { href: "/filmmaker-application", label: "Apply as filmmaker" },
         { href: "/settings", label: "Settings" },
       ]
     : [];
@@ -42,7 +43,7 @@ export function MemberShell({ children }: { children: React.ReactNode }) {
               <Link href="/sign-in">Sign in</Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href="/waitlist">Join the waitlist</Link>
+              <Link href="/sign-up">Create a free account</Link>
             </Button>
           </div>
         </div>
@@ -54,15 +55,18 @@ export function MemberShell({ children }: { children: React.ReactNode }) {
     <>
       <div className="border-b border-border">
         <PageContainer>
-          <nav aria-label="Member" className="-mx-1 overflow-x-auto">
+          <nav aria-label="Member" className="-mx-1">
             <NavLinks
               items={items}
-              className="flex min-w-max items-center gap-6 px-1"
+              className="flex flex-wrap items-center gap-x-6 gap-y-1 px-1 sm:flex-nowrap"
               linkClassName="py-4"
             />
           </nav>
         </PageContainer>
       </div>
+      <PageContainer>
+        <FilmmakerCallout />
+      </PageContainer>
       {children}
     </>
   );

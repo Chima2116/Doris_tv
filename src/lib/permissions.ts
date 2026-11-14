@@ -18,15 +18,16 @@ export const isActive = (u: CurrentUser): u is Member =>
 const hasRole = (u: CurrentUser, role: Member["roles"][number]) =>
   isActive(u) && u.roles.includes(role);
 
-/** Authenticated + active + verified email + linked waitlist record + member role. */
+/** Signed in + active + verified email + member role. */
 export const canParticipateInCommunity = (u: CurrentUser) =>
-  isActive(u) && u.emailVerified && u.waitlistLinked && u.roles.includes("member");
+  isActive(u) && u.emailVerified && u.roles.includes("member");
 
 /** Follow / save / react / report need the same eligibility as participating. */
 export const canUseMemberActions = canParticipateInCommunity;
 
+/** Any signed-in, verified member can apply. Rejected applicants may apply again. */
 export const canApplyAsFilmmaker = (u: CurrentUser) =>
-  isActive(u) && u.emailVerified && u.waitlistLinked;
+  isActive(u) && u.emailVerified;
 
 export const isVerifiedFilmmaker = (u: CurrentUser) => hasRole(u, "filmmaker");
 export const canModerate = (u: CurrentUser) => hasRole(u, "moderator") || hasRole(u, "admin");
@@ -46,7 +47,7 @@ export type GateResult =
   | { allowed: true }
   | {
       allowed: false;
-      reason: "guest" | "unverified" | "no_waitlist" | "restricted";
+      reason: "guest" | "unverified" | "not_member" | "restricted";
       title: string;
       message: string;
       cta: { label: string; href: string };
@@ -74,7 +75,7 @@ export function checkGate(u: CurrentUser, action: GateAction): GateResult {
       allowed: false,
       reason: "guest",
       title: "Sign in to continue",
-      message: `You need a DORIS TV member account to ${verb}. Sign in, or join the waitlist to get started. We'll pick up where you left off.`,
+      message: `You need a DORIS TV member account to ${verb}. Sign in, or create a free account to get started. We'll pick up where you left off.`,
       cta: { label: "Sign in", href: "/sign-in" },
     };
   }
@@ -98,9 +99,9 @@ export function checkGate(u: CurrentUser, action: GateAction): GateResult {
   }
   return {
     allowed: false,
-    reason: "no_waitlist",
-    title: "Join the waitlist first",
-    message: `Community participation is open to members on the DORIS TV waitlist. Join with the email on your account to ${verb}.`,
-    cta: { label: "Join the waitlist", href: "/waitlist" },
+    reason: "not_member",
+    title: "Create your account",
+    message: `Sign in with a verified account to ${verb}.`,
+    cta: { label: "Sign in", href: "/sign-in" },
   };
 }

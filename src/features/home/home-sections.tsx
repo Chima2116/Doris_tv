@@ -303,7 +303,7 @@ export async function Community({ featured, recent, topics, memberIds }: { featu
                 <Button asChild variant="gold">
                   <Link href={`/community/${featured.id}`}>Join the discussion</Link>
                 </Button>
-                <p className="text-sm text-white/60">Reading is open. <Link href="/waitlist" className="font-semibold text-white underline underline-offset-4">Join the waitlist</Link> to reply.</p>
+                <p className="text-sm text-white/60">Reading is open. <Link href="/sign-up" className="font-semibold text-white underline underline-offset-4">Create a free account</Link> to reply.</p>
               </div>
             </div>
           </article>
@@ -350,15 +350,15 @@ const BENEFITS = [
 
 export function Invitation() {
   return (
-    <section aria-label="Join the waitlist" className="bg-[#1c1c1c]">
+    <section aria-label="Create a free account" className="bg-[#1c1c1c]">
       <div className={`${wrap} py-20 sm:py-28`}>
         <Reveal>
           <div className="grid gap-x-12 gap-y-10 lg:grid-cols-12 lg:items-end">
             <h2 className="display-name text-[clamp(2.25rem,5vw,4rem)] lg:col-span-7">Join the DORIS&nbsp;TV community.</h2>
             <div className="lg:col-span-4 lg:col-start-9">
-              <p className="text-base leading-relaxed text-white/70">Free to join the waitlist. Be there from the start.</p>
+              <p className="text-base leading-relaxed text-white/70">Free to join. Be there from the start.</p>
               <Button asChild variant="gold" size="lg" className="mt-6">
-                <Link href="/waitlist">Join the waitlist</Link>
+                <Link href="/sign-up">Create a free account</Link>
               </Button>
             </div>
           </div>

@@ -27,14 +27,14 @@ export function DiscussionCard({
         <AuthorChip member={author} size="sm" />
         <span className="tag text-gold">{discussion.category}</span>
       </div>
-      <h3 className="heading-card text-[1.375rem] leading-snug">
+      <h2 className="heading-card text-[1.375rem] leading-snug">
         <Link
           href={`/community/${discussion.id}`}
           className="after:absolute after:inset-0 group-hover:underline group-hover:decoration-white/40 group-hover:underline-offset-4 focus-visible:outline-offset-[-2px]"
         >
           {discussion.title}
         </Link>
-      </h3>
+      </h2>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/65">{preview(discussion.body)}</p>
       <p className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 meta text-white/55">
         <TimeAgo iso={discussion.createdAt} />

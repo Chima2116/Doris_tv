@@ -61,8 +61,8 @@ async function JournalContent({ searchParams }: { searchParams: PageProps<"/jour
   return (
     <>
       <PageContainer width="wide" className="pb-8">
-        <nav aria-label="Journal categories" className="-mx-1 overflow-x-auto">
-          <ul className="flex min-w-max items-center gap-7 border-b border-white/15 px-1">
+        <nav aria-label="Journal categories" className="-mx-1">
+          <ul className="flex flex-wrap items-center gap-x-7 gap-y-1 border-b border-white/15 px-1">
             {JOURNAL_CATEGORIES.map((c) => {
               const isActive = c.value === active.value;
               return (

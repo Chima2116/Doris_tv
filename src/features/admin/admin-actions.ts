@@ -142,6 +142,8 @@ export const members = {
     auditStore.log(actor, "member.reactivated", `${member.displayName} reactivated`);
   },
   setModerator(actor: Actor, member: Member, on: boolean) {
+    // Rule: a moderator must have a verified email. Enforced here as well as in the UI.
+    if (on && !member.emailVerified) return;
     const roles = on ? [...new Set([...member.roles, "moderator" as const])] : member.roles.filter((r) => r !== "moderator");
     memberStore.patch(member.id, { roles });
     auditStore.log(actor, on ? "member.moderator_added" : "member.moderator_removed", `${member.displayName}: moderator role ${on ? "granted" : "removed"}`);

@@ -7,14 +7,14 @@ import { mergeApplications, useApplicationsState } from "@/features/applications
 import { mergeDiscussions, mergeReplies } from "@/features/community/community-data";
 import { useCommunityState } from "@/features/community/community-store";
 import { useFilmmakers } from "@/features/filmmakers/use-public-filmmakers";
-import { mergeArticles, mergeWaitlist, useCmsState, useWaitlistState } from "./admin-stores";
+import { mergeArticles, useCmsState } from "./admin-stores";
 import { AdminPageHeader, AdminSkeleton, PrototypeNote, StatCard, useAdminReady } from "./ui";
 import { REPLIES } from "@/data/mock/replies";
 
 /* ───── Demonstration series (clearly labelled as demo data) ───── */
 const WEEKS = ["Sep 7", "Sep 14", "Sep 21", "Sep 28", "Oct 5", "Oct 12", "Oct 19", "Oct 26", "Nov 2", "Nov 9"];
 const MEMBERS_CUM = [4, 11, 19, 27, 38, 52, 61, 74, 89, 104];
-const WAITLIST_WEEKLY = [6, 9, 12, 8, 15, 18, 14, 21, 26, 31];
+const SIGNUPS_WEEKLY = [6, 9, 12, 8, 15, 18, 14, 21, 26, 31];
 const DISCUSSIONS_WEEKLY = [1, 2, 2, 3, 4, 3, 5, 6, 7, 9];
 const TOP_STORIES = [
   ["Temi Adeyemi: “The story made itself political”", 2410],
@@ -123,7 +123,6 @@ export function AnalyticsAdmin({ members, applications, filmmakers, discussions 
   const { ready } = useAdminReady();
   const appsState = useApplicationsState();
   const cms = useCmsState();
-  const wl = useWaitlistState();
   const comm = useCommunityState();
   const { published } = useFilmmakers(filmmakers, applications);
   if (!ready) return <AdminSkeleton />;
@@ -133,11 +132,9 @@ export function AnalyticsAdmin({ members, applications, filmmakers, discussions 
   const reps = mergeReplies(REPLIES, comm).filter((r) => r.status === "published");
   const posters = new Set([...discs.map((d) => d.authorId), ...reps.map((r) => r.authorId)]);
   const participation = Math.round((posters.size / members.length) * 100);
-  const waitlistTotal = mergeWaitlist(wl).length;
   const publishedArticles = mergeArticles(cms).filter((a) => a.status === "published").length;
 
   const funnel = [
-    ["Joined the waitlist", waitlistTotal],
     ["Created an account", members.length],
     ["Verified email", members.filter((m) => m.emailVerified).length],
     ["Applied as a filmmaker", apps.length],
@@ -151,7 +148,7 @@ export function AnalyticsAdmin({ members, applications, filmmakers, discussions 
 
       <section aria-label="Key figures" className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard label="Members" value={members.length} />
-        <StatCard label="Waitlist registrations" value={waitlistTotal} />
+        <StatCard label="Accounts created" value={members.length} />
         <StatCard label="Published stories" value={publishedArticles} />
         <StatCard label="Filmmaker applications" value={apps.length} />
         <StatCard label="Approved filmmakers" value={published.length} hint="Published profiles" />
@@ -164,13 +161,13 @@ export function AnalyticsAdmin({ members, applications, filmmakers, discussions 
         <ChartCard title="Member growth" subtitle="Total members at the start of each week (demo data)" table={{ head: ["Week of", "Members"], rows: WEEKS.map((w, i) => [w, MEMBERS_CUM[i]]) }}>
           <LineChart labels={WEEKS} values={MEMBERS_CUM} unit="members" ariaLabel="Line chart: total members rising from 4 to 104 between 7 September and 9 November" />
         </ChartCard>
-        <ChartCard title="Waitlist registrations per week" subtitle="New sign-ups each week (demo data)" table={{ head: ["Week of", "Registrations"], rows: WEEKS.map((w, i) => [w, WAITLIST_WEEKLY[i]]) }}>
-          <LineChart labels={WEEKS} values={WAITLIST_WEEKLY} unit="registrations" ariaLabel="Line chart: weekly waitlist registrations rising from 6 to 31" />
+        <ChartCard title="Sign-ups per week" subtitle="New accounts each week (demo data)" table={{ head: ["Week of", "Sign-ups"], rows: WEEKS.map((w, i) => [w, SIGNUPS_WEEKLY[i]]) }}>
+          <LineChart labels={WEEKS} values={SIGNUPS_WEEKLY} unit="sign-ups" ariaLabel="Line chart: weekly sign-ups rising from 6 to 31" />
         </ChartCard>
         <ChartCard title="New discussions per week" subtitle="Community threads started (demo data)" table={{ head: ["Week of", "Discussions"], rows: WEEKS.map((w, i) => [w, DISCUSSIONS_WEEKLY[i]]) }}>
           <LineChart labels={WEEKS} values={DISCUSSIONS_WEEKLY} unit="discussions" ariaLabel="Line chart: weekly new discussions rising from 1 to 9" />
         </ChartCard>
-        <ChartCard title="From waitlist to approved filmmaker" subtitle="Current counts at each step" table={{ head: ["Step", "People"], rows: funnel.map((f) => [f[0], f[1]]) }}>
+        <ChartCard title="From sign-up to approved filmmaker" subtitle="Current counts at each step" table={{ head: ["Step", "People"], rows: funnel.map((f) => [f[0], f[1]]) }}>
           <BarList rows={funnel} unit="people" />
         </ChartCard>
         <ChartCard title="Most-read stories" subtitle="Page views, last 30 days (demo data)" table={{ head: ["Story", "Views"], rows: TOP_STORIES.map((s) => [s[0], s[1]]) }}>

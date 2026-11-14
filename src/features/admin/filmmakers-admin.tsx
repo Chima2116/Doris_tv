@@ -12,7 +12,7 @@ import type { Filmmaker, FilmmakerApplication, FilmmakerProfileFields, ProfileRe
 import { useFilmmakers } from "@/features/filmmakers/use-public-filmmakers";
 import { mergeRevisions, revisionsFor, useRevisionsState } from "@/features/filmmakers/revisions-store";
 import { filmmakers as actions } from "./admin-actions";
-import { AdminPageHeader, AdminSkeleton, AdminTable, DetailSheet, FilterBar, FilterSelect, ReasonDialog, SearchBox, Td, Th, fmt, fmtTime, useAdminReady } from "./ui";
+import { DetailRows, DetailSection, DetailTimeline, AdminPageHeader, AdminSkeleton, AdminTable, DetailSheet, FilterBar, FilterSelect, ReasonDialog, SearchBox, Td, Th, fmt, fmtTime, useAdminReady } from "./ui";
 
 const toFields = (f: Filmmaker): FilmmakerProfileFields => ({
   name: f.name,
@@ -173,7 +173,9 @@ export function FilmmakersAdmin({ seed, seedApplications }: { seed: Filmmaker[];
       <DetailSheet
         open={!!rev}
         onOpenChange={(o) => !o && setRevId(null)}
-        title={revFm ? `Revision: ${revFm.name}` : "Revision"}
+        kicker="Pending revision"
+        title={revFm ? revFm.name : "Revision"}
+        subtitle="Compare the published profile with the proposed changes."
         description="Compare the published profile with the proposed changes."
         footer={rev?.status === "pending" ? (<><Button onClick={() => setApproveOpen(true)}>Approve and publish</Button><Button variant="destructive" onClick={() => setRejectOpen(true)}>Reject</Button></>) : undefined}
       >
@@ -190,10 +192,18 @@ export function FilmmakersAdmin({ seed, seedApplications }: { seed: Filmmaker[];
       <DetailSheet
         open={!!open}
         onOpenChange={(o) => !o && setOpenId(null)}
+        kicker="Filmmaker profile"
         title={open?.name ?? "Filmmaker"}
-        description={open ? `${open.primaryDiscipline} · ${open.country}` : undefined}
+        subtitle={open ? `${open.primaryDiscipline} · ${[open.location, open.country].filter(Boolean).join(", ")}` : undefined}
+        badges={open && <><StatusBadge status={open.verificationStatus} /><StatusBadge status={open.publicationStatus} /></>}
+        facts={open ? [
+          { label: "Years active", value: open.yearsActive ?? "—" },
+          { label: "Credits", value: open.credits.length },
+          { label: "Revisions", value: revisionsFor(open.id, revs).length },
+          { label: "Pending", value: revisionsFor(open.id, revs).filter((r) => r.status === "pending").length },
+        ] : undefined}
         footer={open ? (
-          <>
+          <div className="flex flex-wrap items-center gap-2">
             {open.publicationStatus === "published" ? (
               <Button variant="outline" onClick={() => setUnpublishOpen(true)}>Unpublish profile</Button>
             ) : (
@@ -203,26 +213,27 @@ export function FilmmakersAdmin({ seed, seedApplications }: { seed: Filmmaker[];
               {open.verificationStatus === "verified" ? "Remove verification" : "Verify"}
             </Button>
             <Button asChild variant="ghost"><Link href={`/filmmakers/${open.slug}`} target="_blank">View public page</Link></Button>
-          </>
+          </div>
         ) : undefined}
       >
         {open && (
           <>
-            <div className="mb-5 flex gap-2"><StatusBadge status={open.verificationStatus} /><StatusBadge status={open.publicationStatus} /></div>
-            <p className="whitespace-pre-line text-sm leading-relaxed text-reading/85">{open.biography}</p>
-            {open.creativePhilosophy && <p className="mt-4 border-l-4 border-gold pl-3 text-sm italic">“{open.creativePhilosophy}”</p>}
-            <h4 className="type-eyebrow mb-2 mt-6 font-sans text-white/75">Credits ({open.credits.length})</h4>
-            <ul className="divide-y divide-border border-y border-border text-sm">
-              {open.credits.map((c) => <li key={c.id} className="flex justify-between gap-4 py-2"><span><strong>{c.title}</strong> <span className="text-muted-foreground">· {c.role}</span></span><span className="text-muted-foreground">{c.year}</span></li>)}
-            </ul>
-            <h4 className="type-eyebrow mb-2 mt-6 font-sans text-white/75">Revision history</h4>
-            {revisionsFor(open.id, revs).length === 0 ? <p className="text-sm text-muted-foreground">No revisions yet.</p> : (
-              <ul className="space-y-2 text-sm">
-                {revisionsFor(open.id, revs).map((r) => (
-                  <li key={r.id} className="flex flex-wrap items-center gap-2"><StatusBadge status={r.status} /><span className="text-xs text-muted-foreground">{fmt(r.submittedAt)}</span>{r.decisionReason && <span className="text-xs text-muted-foreground">· {r.decisionReason}</span>}</li>
-                ))}
-              </ul>
-            )}
+            <DetailSection title="Biography">
+              <p className="whitespace-pre-line text-[0.9375rem] leading-relaxed text-white/80">{open.biography}</p>
+              {open.creativePhilosophy && <blockquote className="mt-5 border-l-2 border-white/30 pl-4 text-[0.9375rem] italic text-white/85">“{open.creativePhilosophy}”</blockquote>}
+            </DetailSection>
+            <DetailSection title={`Credits (${open.credits.length})`}>
+              <DetailRows rows={open.credits.map((c) => ({ primary: c.title, secondary: c.role, end: c.year }))} />
+            </DetailSection>
+            <DetailSection title="Revision history">
+              {revisionsFor(open.id, revs).length === 0 ? <p className="text-sm text-white/60">No revisions yet.</p> : (
+                <DetailTimeline items={revisionsFor(open.id, revs).map((r) => ({
+                  label: r.status.replace("_", " ").replace(/^\w/, (c) => c.toUpperCase()),
+                  at: fmt(r.submittedAt),
+                  note: r.decisionReason,
+                }))} />
+              )}
+            </DetailSection>
           </>
         )}
       </DetailSheet>

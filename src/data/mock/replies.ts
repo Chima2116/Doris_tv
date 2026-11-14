@@ -23,7 +23,7 @@ export const REPLIES: Reply[] = [
   // d_03 film school
   r("r_07", "d_03", "m_kofi", "In Kumasi we spent a semester on European new waves and one lecture on African cinema. Most of what I know came from film clubs.", "2026-11-10T09:15:00Z", 21),
   r("r_08", "d_03", "m_fatou", "Same experience in Dakar, except our film clubs were the curriculum. It would be great to compare syllabi across schools.", "2026-11-10T10:40:00Z", 14),
-  r("r_09", "d_03", "m_demo_waitlisted", "I'd happily share mine. It would be interesting to see where the gaps are by country.", "2026-11-10T12:00:00Z", 6),
+  r("r_09", "d_03", "m_demo_new_member", "I'd happily share mine. It would be interesting to see where the gaps are by country.", "2026-11-10T12:00:00Z", 6),
   r("r_10", "d_03", "m_obinna", "That's exactly the kind of thing I'm hoping to collect. I'll start a shared list in the thread.", "2026-11-10T13:30:00Z", 8),
   // d_04 long takes
   r("r_11", "d_04", "m_demo_member", "For me it's whether the shot gives the audience something to do. If the camera is just holding, it's style. If I'm reading faces and spaces, it's craft.", "2026-11-09T20:30:00Z", 15),
@@ -31,11 +31,11 @@ export const REPLIES: Reply[] = [
   r("r_13", "d_04", "m_tolu", "Fair point on the practical side. I'll count those separately next time.", "2026-11-09T22:00:00Z", 2, { status: "hidden", hiddenReason: "Hidden by a moderator pending admin review." }),
   // d_05 single location
   r("r_14", "d_05", "m_demo_filmmaker", "Map the space before you shoot: where light comes from at each hour, which doorways give you depth. A compound has more angles than you think.", "2026-11-08T13:00:00Z", 17),
-  r("r_15", "d_05", "m_demo_waitlisted", "Sound helps too. Different rooms and surfaces make a single location feel like several places.", "2026-11-08T14:30:00Z", 8),
+  r("r_15", "d_05", "m_demo_new_member", "Sound helps too. Different rooms and surfaces make a single location feel like several places.", "2026-11-08T14:30:00Z", 8),
   r("r_16", "d_05", "m_kofi", "Great tips. The lighting-by-hour idea is going straight into my shot list.", "2026-11-08T15:45:00Z", 4),
   // d_06 film club
   r("r_17", "d_06", "m_demo_member", "A regular slot matters more than the programming. People came back because they knew when it was on.", "2026-11-07T16:00:00Z", 13),
-  r("r_18", "d_06", "m_demo_waitlisted", "We invited a filmmaker or writer for a short conversation after each screening, and that built the regular audience faster than anything else.", "2026-11-07T17:20:00Z", 16),
+  r("r_18", "d_06", "m_demo_new_member", "We invited a filmmaker or writer for a short conversation after each screening, and that built the regular audience faster than anything else.", "2026-11-07T17:20:00Z", 16),
   r("r_19", "d_06", "m_fatou", "Both very helpful. A fixed slot and a guest conversation: noted.", "2026-11-07T18:00:00Z", 5),
   // d_07 distribution
   r("r_20", "d_07", "m_zainab", "Community screenings sound the most promising for documentaries. Did you find audiences came for the topic or the filmmaker?", "2026-11-06T11:15:00Z", 6),

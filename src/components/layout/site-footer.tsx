@@ -4,7 +4,7 @@ import { Wordmark } from "@/components/shared/wordmark";
 /** Footer is deliberately small: no Archive, Submit-a-film or Reviews links (Stage 1 scope). */
 const COLUMNS = [
   { title: "Read", links: [["Journal", "/journal"], ["Filmmakers", "/filmmakers"], ["Community", "/community"]] },
-  { title: "DORIS TV", links: [["About", "/about"], ["Join the waitlist", "/waitlist"], ["Apply as a filmmaker", "/filmmaker-application"]] },
+  { title: "DORIS TV", links: [["About", "/about"], ["Create a free account", "/sign-up"], ["Apply as a filmmaker", "/filmmaker-application"]] },
 ] as const;
 
 const SOCIAL = [

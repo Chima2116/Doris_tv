@@ -27,7 +27,7 @@ export function MobileMenu() {
           <Menu className="size-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[min(22rem,100vw)] gap-0 p-0">
+      <SheetContent side="right" className="w-[min(42.9rem,100vw)] gap-0 p-0">
         <SheetHeader className="p-6 pb-4">
           <SheetTitle asChild>
             <div>
@@ -48,7 +48,7 @@ export function MobileMenu() {
         {!user && (
           <div className="space-y-2 border-t border-border p-6">
             <Button asChild className="w-full" onClick={() => setOpen(false)}>
-              <Link href="/waitlist">Join the waitlist</Link>
+              <Link href="/sign-up">Create a free account</Link>
             </Button>
             <Link href="/sign-in" onClick={() => setOpen(false)} className="block py-2 text-center text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground">
               Sign in

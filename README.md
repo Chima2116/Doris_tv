@@ -23,10 +23,10 @@ Requires Node 20+ (developed on Node 24). Next.js 16 with **Cache Components** e
 | **Editorial** — the Journal | `/journal`, `/journal/[slug]` |
 | **Filmmakers** — a professional directory | `/filmmakers`, `/filmmakers/[slug]` |
 | **Community** — public reading, member participation | `/community`, `/community/[thread-id]` |
-| **Membership** — waitlist, accounts, applications | `/waitlist`, `/sign-in`, `/sign-up`, `/profile/[username]`, `/settings`, `/saved`, `/following`, `/filmmaker-application`, `/filmmaker-dashboard/profile` |
+| **Membership** — accounts, applications | `/sign-in`, `/sign-up`, `/profile/[username]`, `/settings`, `/saved`, `/following`, `/filmmaker-application`, `/filmmaker-dashboard/profile` |
 
 Plus `/about` and the admin area (`/admin/*`: overview, journal, applications, filmmakers,
-moderation, members, waitlist, analytics).
+moderation, members, analytics).
 
 ### Stage 1 scope (non-negotiable)
 
@@ -43,7 +43,7 @@ hidden in production builds and is **not authentication or security**.
 |---|---|
 | Guest | Public reading; every gated action shows a prompt and keeps the intended action |
 | Unverified member | Signed in but gated (“Verify your email”) |
-| Waitlisted member | Verified + waitlist-linked: can take part in Community, can apply as a filmmaker |
+| New member | Verified email, no profile yet: can take part in Community, can apply as a filmmaker |
 | Approved member | Standard member |
 | Filmmaker applicant | Application under review |
 | Rejected applicant | Rejection reason, can start a new application, history retained |
@@ -63,7 +63,7 @@ and make the explicit keep/hide decision about their discussions.
 src/
 ├── app/                 Next.js App Router. Route groups: (public) (auth) (member), plus admin/
 ├── components/          ui/ (shadcn, restyled) · layout/ · navigation/ · shared/
-├── features/            auth · community · journal · filmmakers · members · applications · admin · waitlist
+├── features/            auth · community · journal · filmmakers · members · applications · admin
 ├── data/
 │   ├── types/           Domain types (Member, JournalArticle, Filmmaker, Discussion, …)
 │   ├── mock/            Typed seed data (articles, filmmakers, discussions, replies, applications, …)
@@ -78,14 +78,14 @@ Brand notes: black on gold has 8.8:1 contrast; never put white text on gold.
 
 **Rendering model:** public pages render seed data on the server. Everything mutable in the
 prototype (session, follows, saves, community posts, applications, revisions, admin decisions,
-waitlist) lives in small **client stores persisted to `localStorage`**
+) lives in small **client stores persisted to `localStorage`**
 (`lib/persisted-store.ts`). Pages that depend on that state resolve it on the client; an overlay
 (`features/filmmakers/filmmaker-overlay.ts`) merges approved revisions and approved applications
 into the public filmmaker pages. Pages gated on the client export `instant = false`
 (Next 16 Cache Components validation).
 
 **Permissions:** all rules live in `src/lib/permissions.ts` (account status beats role; community
-eligibility = authenticated + active + verified email + waitlist-linked + member role). The UI
+eligibility = authenticated + active + verified email + member role). The UI
 checks are for demonstration only. **A backend must enforce every permission itself.**
 
 ## What is simulated vs real
@@ -93,7 +93,6 @@ checks are for demonstration only. **A backend must enforce every permission its
 | Simulated in the browser | Real in a future backend |
 |---|---|
 | Sign-in/up/reset, email verification | Authentication, sessions, verification email |
-| Waitlist storage and CSV export | Persistence and delivery |
 | Discussions, replies, reactions, reports | Database, moderation tooling |
 | Application and revision decisions | Admin-only operations with authorisation |
 | Journal CMS (does not change the public Journal) | Headless CMS |

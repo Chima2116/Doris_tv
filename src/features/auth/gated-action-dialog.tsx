@@ -41,7 +41,7 @@ export function GatedActionDialog() {
           )}
           {result?.reason === "guest" && (
             <Button asChild variant="outline" onClick={deferGate}>
-              <Link href="/waitlist">Join the waitlist</Link>
+              <Link href="/sign-up">Create a free account</Link>
             </Button>
           )}
           {IS_DEV && result?.reason === "guest" && (

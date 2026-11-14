@@ -1,9 +1,8 @@
 "use client";
 
 import { ARTICLES } from "@/data/mock/articles";
-import { WAITLIST } from "@/data/mock/waitlist";
 import { createPersistedStore, makeId } from "@/lib/persisted-store";
-import type { AuditEntry, JournalArticle, WaitlistEntry } from "@/data/types";
+import type { AuditEntry, JournalArticle } from "@/data/types";
 import type { FilmmakerAdminPatch } from "@/features/filmmakers/filmmaker-overlay";
 
 /* ───── Audit log: every admin/moderator action is recorded (PRD §8.3) ───── */
@@ -26,22 +25,6 @@ export const filmmakerAdminStore = {
     fm.store.update((s) => ({ patches: { ...s.patches, [id]: { ...s.patches[id], ...patch } } }));
   },
 };
-
-/* ───── Waitlist: seeded entries plus any submitted through the public form ───── */
-const wl = createPersistedStore<{ created: WaitlistEntry[]; patches: Record<string, Partial<WaitlistEntry>> }>("doris.waitlist", { created: [], patches: {} });
-export const useWaitlistState = wl.useStore;
-export const waitlistStore = {
-  ...wl.store,
-  add(entry: Pick<WaitlistEntry, "name" | "email" | "interest">) {
-    const e: WaitlistEntry = { id: makeId("w"), ...entry, registeredAt: new Date().toISOString(), status: "registered" };
-    wl.store.update((s) => ({ ...s, created: [e, ...s.created] }));
-  },
-  patch(id: string, patch: Partial<WaitlistEntry>) {
-    wl.store.update((s) => ({ ...s, patches: { ...s.patches, [id]: { ...s.patches[id], ...patch } } }));
-  },
-};
-export const mergeWaitlist = (s: { created: WaitlistEntry[]; patches: Record<string, Partial<WaitlistEntry>> }) =>
-  [...s.created, ...WAITLIST].map((e) => ({ ...e, ...s.patches[e.id] })).sort((a, b) => b.registeredAt.localeCompare(a.registeredAt));
 
 /* ───── Journal CMS (simulation: does not change the public Journal) ───── */
 const cms = createPersistedStore<{ created: JournalArticle[]; patches: Record<string, Partial<JournalArticle>> }>("doris.cms", { created: [], patches: {} });

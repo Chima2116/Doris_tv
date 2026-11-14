@@ -31,8 +31,7 @@ export default function FilmmakersPage() {
         <div>
           <h2 className="heading-section">Are you a filmmaker?</h2>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-white/65">
-            Join the waitlist, then apply for a profile. Applications are reviewed by the DORIS TV
-            team.
+            Sign in, then apply for a profile. Applications are reviewed by the DORIS TV team.
           </p>
         </div>
         <Button asChild variant="outline">

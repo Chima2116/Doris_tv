@@ -59,10 +59,6 @@ export function SignInForm() {
       footer={
         <>
           New to DORIS TV?{" "}
-          <Link href="/waitlist" className="text-gold underline-offset-4 transition-colors duration-200 hover:underline focus-visible:underline">
-            Join the waitlist
-          </Link>{" "}
-          or{" "}
           <Link href="/sign-up" className="text-gold underline-offset-4 transition-colors duration-200 hover:underline focus-visible:underline">
             create an account
           </Link>
@@ -140,7 +136,7 @@ export function SignUpForm() {
         <Button
           className="mt-6 w-full"
           onClick={() => {
-            const back = signInAs("waitlisted");
+            const back = signInAs("newMember");
             router.push(back ?? "/");
           }}
         >
@@ -154,11 +150,11 @@ export function SignUpForm() {
   return (
     <Shell
       title="Create an account"
-      intro="Join the waitlist first, then use the same email here to unlock the Community."
+      intro="Create a free account to read, join the conversation and apply as a filmmaker."
       footer={
         <>
           Already a member?{" "}
-          <Link href="/sign-in" className="text-gold hover:underline">
+          <Link href="/sign-in" className="text-gold underline underline-offset-4 transition-colors duration-200 hover:text-white focus-visible:text-white">
             Sign in
           </Link>
         </>
@@ -224,7 +220,7 @@ export function ResetPasswordForm() {
       title="Reset your password"
       intro="Enter your email and we'll send you a link to choose a new one."
       footer={
-        <Link href="/sign-in" className="text-gold hover:underline">
+        <Link href="/sign-in" className="text-gold underline underline-offset-4 transition-colors duration-200 hover:text-white focus-visible:text-white">
           Back to sign in
         </Link>
       }

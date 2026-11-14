@@ -25,8 +25,8 @@ export function UserMenu() {
         <Link href="/sign-in" className="hidden text-muted-foreground transition-colors hover:text-foreground sm:inline">
           Sign in
         </Link>
-        <Link href="/waitlist" className="hidden underline decoration-gold decoration-[1.5px] underline-offset-[6px] transition-colors hover:text-gold sm:inline">
-          Join the waitlist
+        <Link href="/sign-up" className="hidden underline decoration-gold decoration-[1.5px] underline-offset-[6px] transition-colors hover:text-gold sm:inline">
+          Create a free account
         </Link>
       </div>
     );
@@ -72,7 +72,7 @@ export function UserMenu() {
           </DropdownMenuItem>
         ) : (
           <DropdownMenuItem asChild>
-            <Link href="/filmmaker-application">Filmmaker application</Link>
+            <Link href="/filmmaker-application">Apply as filmmaker</Link>
           </DropdownMenuItem>
         )}
         {canAccessAdmin(user) && (

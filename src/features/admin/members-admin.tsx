@@ -17,7 +17,7 @@ import { mergeDiscussions } from "@/features/community/community-data";
 import { useCommunityState } from "@/features/community/community-store";
 import { applyMemberPatch, useMemberStore } from "@/features/members/member-store";
 import { members as actions } from "./admin-actions";
-import { AdminPageHeader, AdminSkeleton, AdminTable, DetailSheet, FilterBar, FilterSelect, SearchBox, Td, Th, fmt, fmtTime, useAdminReady } from "./ui";
+import { DetailCallout, DetailRows, DetailSection, AdminPageHeader, AdminSkeleton, AdminTable, DetailSheet, FilterBar, FilterSelect, SearchBox, Td, Th, fmt, fmtTime, useAdminReady } from "./ui";
 
 export function MembersAdmin({ members, discussions }: { members: Member[]; discussions: Discussion[] }) {
   const { ready, actor } = useAdminReady();
@@ -73,7 +73,7 @@ export function MembersAdmin({ members, discussions }: { members: Member[]; disc
             {rows.map((m) => (
               <tr key={m.id} className="hover:bg-white/[0.02]">
                 <Td><span className="font-semibold">{m.displayName}</span><span className="block text-xs text-muted-foreground">@{m.username}</span></Td>
-                <Td><span className="flex flex-wrap gap-1">{m.roles.map((r) => <Badge key={r} variant={r === "admin" ? "gold" : "outline"}>{r}</Badge>)}</span></Td>
+                <Td><span className="flex flex-wrap gap-1">{m.roles.filter((r) => r !== "member").map((r) => <Badge key={r} variant={r === "admin" ? "gold" : "outline"}>{r}</Badge>)}{m.roles.every((r) => r === "member") && <span className="text-xs text-white/55">Member</span>}</span></Td>
                 <Td><StatusBadge status={m.accountStatus} /></Td>
                 <Td><StatusBadge status={m.emailVerified ? "verified" : "unverified"} /></Td>
                 <Td className="whitespace-nowrap text-muted-foreground">{fmt(m.memberSince)}</Td>
@@ -87,8 +87,16 @@ export function MembersAdmin({ members, discussions }: { members: Member[]; disc
       <DetailSheet
         open={!!open}
         onOpenChange={(o) => !o && setOpenId(null)}
+        kicker="Member"
         title={open?.displayName ?? "Member"}
-        description={open ? `@${open.username}` : undefined}
+        subtitle={open ? `@${open.username}` : undefined}
+        badges={open && <><StatusBadge status={open.accountStatus} />{open.roles.filter((r) => r !== "member").map((r) => <Badge key={r} variant="outline" className="capitalize">{r}</Badge>)}</>}
+        facts={open ? [
+          { label: "Location", value: open.location ?? "—" },
+          { label: "Joined", value: fmt(open.memberSince) },
+          { label: "Public discussions", value: pubCount },
+          { label: "Email", value: open.emailVerified ? "Verified" : "Not verified" },
+        ] : undefined}
         footer={
           open && !isAdminAccount && !isSelf ? (
             <>
@@ -97,31 +105,36 @@ export function MembersAdmin({ members, discussions }: { members: Member[]; disc
               ) : (
                 <Button variant="destructive" onClick={() => setSuspendOpen(true)}>Suspend account</Button>
               )}
-              <Button variant="outline" onClick={() => setModOpen(true)}>{open.roles.includes("moderator") ? "Remove moderator role" : "Make moderator"}</Button>
+              <div className="flex flex-col gap-1.5">
+                <Button variant="outline" disabled={!open.roles.includes("moderator") && !open.emailVerified} onClick={() => setModOpen(true)}>{open.roles.includes("moderator") ? "Remove moderator role" : "Make moderator"}</Button>
+                {!open.roles.includes("moderator") && !open.emailVerified && <p className="text-xs text-white/60">Needs a verified email first.</p>}
+              </div>
             </>
           ) : undefined
         }
       >
         {open && (
           <>
-            <div className="mb-5 flex flex-wrap gap-2"><StatusBadge status={open.accountStatus} />{open.roles.map((r) => <Badge key={r} variant="outline">{r}</Badge>)}</div>
-            {(isAdminAccount || isSelf) && <p className="mb-5 border border-dashed border-border p-3 text-xs text-muted-foreground">{isSelf ? "You can't change your own account here." : "Administrator accounts can't be suspended or changed from this screen."}</p>}
             {open.accountStatus === "suspended" && open.suspension && (
-              <div className="mb-6 border border-danger/40 bg-danger/5 p-4 text-sm">
-                <p className="type-eyebrow mb-1 text-[#ee8585]">Suspended {fmtTime(open.suspension.at)}</p>
+              <DetailCallout tone="danger" label={`Suspended ${fmtTime(open.suspension.at)}`}>
                 {open.suspension.reason && <p>{open.suspension.reason}</p>}
-                <p className="mt-2 text-xs text-muted-foreground">Existing public discussions at the time: <strong className="text-foreground">{open.suspension.discussions === "hide" ? "hidden" : "kept visible"}</strong></p>
-              </div>
+                <p className="mt-2 text-xs text-white/60">Existing public discussions: <span className="font-semibold text-white">{open.suspension.discussions === "hide" ? "hidden" : "kept visible"}</span></p>
+              </DetailCallout>
             )}
-            <dl className="grid grid-cols-[8rem_1fr] gap-y-2 text-sm">
-              <dt className="text-muted-foreground">Location</dt><dd>{open.location ?? "—"}</dd>
-              <dt className="text-muted-foreground">Joined</dt><dd>{fmt(open.memberSince)}</dd>
-              <dt className="text-muted-foreground">Email</dt><dd>{open.emailVerified ? "Verified" : "Not verified"}</dd>
-              <dt className="text-muted-foreground">Waitlist</dt><dd>{open.waitlistLinked ? "Linked" : "Not linked"}</dd>
-              <dt className="text-muted-foreground">Profile</dt><dd className="capitalize">{open.profileVisibility}</dd>
-              <dt className="text-muted-foreground">Public discussions</dt><dd>{pubCount}</dd>
-            </dl>
-            {open.bio && <p className="mt-5 text-sm leading-relaxed text-reading/80">{open.bio}</p>}
+            {(isAdminAccount || isSelf) && (
+              <p className="mb-7 border border-dashed border-white/15 p-4 text-xs text-white/60">{isSelf ? "You can't change your own account here." : "Administrator accounts can't be suspended or changed here."}</p>
+            )}
+            <DetailSection title="Profile">
+              {open.bio ? <p className="text-[0.9375rem] leading-relaxed text-white/80">{open.bio}</p> : <p className="text-sm text-white/60">No bio yet.</p>}
+              <p className="mt-4 text-xs capitalize text-white/55">Profile visibility: <span className="text-white/85">{open.profileVisibility}</span></p>
+            </DetailSection>
+            <DetailSection title="Account standing">
+              <DetailRows rows={[
+                { primary: "Base role", end: "Member (every account)" },
+                { primary: "Email", end: open.emailVerified ? "Verified" : "Not verified" },
+                { primary: "Public discussions", end: pubCount },
+              ]} />
+            </DetailSection>
           </>
         )}
       </DetailSheet>

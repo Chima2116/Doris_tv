@@ -6,18 +6,17 @@ import type { Member } from "@/data/types";
  */
 const base: Pick<
   Member,
-  "accountStatus" | "emailVerified" | "waitlistLinked" | "profileVisibility" | "privacy"
+  "accountStatus" | "emailVerified" | "profileVisibility" | "privacy"
 > = {
   accountStatus: "active",
   emailVerified: true,
-  waitlistLinked: true,
   profileVisibility: "public",
   privacy: { visibility: "public", hiddenSections: [] },
 };
 
 export type DemoIdentityKey =
   | "guest"
-  | "waitlisted"
+  | "newMember"
   | "member"
   | "filmmaker"
   | "moderator"
@@ -36,7 +35,7 @@ export const DEMO_IDENTITIES: {
   {
     key: "guest",
     label: "Guest",
-    description: "Browse public content and join the waitlist.",
+    description: "Browse public content and create a free account.",
     member: null,
   },
   {
@@ -55,12 +54,12 @@ export const DEMO_IDENTITIES: {
     },
   },
   {
-    key: "waitlisted",
-    label: "Waitlisted member",
-    description: "Verified email and linked waitlist record. Can participate.",
+    key: "newMember",
+    label: "New member",
+    description: "Verified email, no profile yet. Can take part in the Community and apply as a filmmaker.",
     member: {
       ...base,
-      id: "m_demo_waitlisted",
+      id: "m_demo_new_member",
       username: "amina_diallo",
       displayName: "Amina Diallo",
       bio: "Film student in Dakar. Mostly watching, slowly writing.",

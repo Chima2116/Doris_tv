@@ -7,7 +7,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [articles, filmmakers, discussions] = await Promise.all([getArticleSlugs(), getFilmmakerSlugs(), getDiscussions()]);
-  const fixed = ["", "/about", "/journal", "/filmmakers", "/community", "/waitlist"];
+  const fixed = ["", "/about", "/journal", "/filmmakers", "/community", "/sign-up"];
   return [
     ...fixed.map((p) => ({ url: `${SITE_URL}${p}`, priority: p === "" ? 1 : 0.8 })),
     ...articles.map((s) => ({ url: `${SITE_URL}/journal/${s}`, priority: 0.7 })),

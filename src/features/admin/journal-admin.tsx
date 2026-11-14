@@ -255,14 +255,12 @@ export function JournalAdmin() {
         )}
       </DetailSheet>
 
-      <DetailSheet open={!!preview} onOpenChange={(o) => !o && setPreviewId(null)} title="Preview" description="How the story would read.">
+      <DetailSheet open={!!preview} onOpenChange={(o) => !o && setPreviewId(null)} kicker="Preview" title={preview?.title ?? "Preview"} subtitle={preview ? `By ${preview.author} · ${fmt(preview.publishedAt)} · ${preview.readingTime} min` : undefined} description="How the story would read.">
         {preview && (
           <>
-            <p className="type-eyebrow text-muted-foreground">{preview.category}</p>
-            <h3 className="mt-3 font-display text-3xl font-black leading-tight">{preview.title}</h3>
-            {preview.deck && <p className="mt-3 text-reading/70">{preview.deck}</p>}
-            <p className="mt-3 text-xs text-muted-foreground">By {preview.author} · {fmt(preview.publishedAt)} · {preview.readingTime} min</p>
-            <div className="mt-8">{preview.body && <ArticleBody blocks={preview.body} />}</div>
+            <p className="tag mb-5 text-white/60">{preview.category}</p>
+            {preview.deck && <p className="mb-8 text-lg leading-relaxed text-white/75">{preview.deck}</p>}
+            <div className="pb-10">{preview.body && <ArticleBody blocks={preview.body} />}</div>
           </>
         )}
       </DetailSheet>

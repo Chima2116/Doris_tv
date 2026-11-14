@@ -106,7 +106,7 @@ export function ApplicationWizard({ seed }: { seed: FilmmakerApplication[] }) {
     return (
       <EmptyState
         title={gate.title}
-        description={`${gate.message} Filmmaker applications are open to signed-in members on the waitlist.`}
+        description={`${gate.message} Filmmaker applications are open to signed-in members with a verified email.`}
         action={{ label: gate.cta.label, href: gate.cta.href }}
       />
     );
@@ -283,7 +283,7 @@ function WizardForm({ userId, userName, draft, onSubmitted }: { userId: string; 
               <FormField id="ap-name" label="Full name" error={errors.fullName?.message}>
                 {(a) => <Input {...a} autoComplete="name" {...register("fullName")} />}
               </FormField>
-              <FormField id="ap-email" label="Email address" hint="Use the email you joined the waitlist with." error={errors.email?.message}>
+              <FormField id="ap-email" label="Email address" hint="Use the email on your DORIS TV account." error={errors.email?.message}>
                 {(a) => <Input {...a} type="email" autoComplete="email" {...register("email")} />}
               </FormField>
               <FormField id="ap-country" label="Country" error={errors.country?.message}>

@@ -35,7 +35,6 @@ export type Member = {
   roles: MemberRole[];
   accountStatus: AccountStatus;
   emailVerified: boolean;
-  waitlistLinked: boolean;
   profileVisibility: ProfileVisibility;
   privacy: PrivacySettings;
   filmmakerId?: string;
@@ -218,16 +217,6 @@ export type FilmmakerApplication = {
   history: ApplicationEvent[];
   decisionReason?: string;
   decidedAt?: string;
-};
-
-export type WaitlistEntry = {
-  id: string;
-  name?: string;
-  email: string;
-  registeredAt: string;
-  memberId?: string; // linked once the person creates an account
-  status: "registered" | "linked" | "invited";
-  interest?: "reader" | "filmmaker" | "writer" | "other";
 };
 
 export type Notification = {

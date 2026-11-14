@@ -12,7 +12,7 @@ import { useCommunityState } from "@/features/community/community-store";
 import { useFilmmakers } from "@/features/filmmakers/use-public-filmmakers";
 import { mergeRevisions, useRevisionsState } from "@/features/filmmakers/revisions-store";
 import { applyMemberPatch, useMemberStore } from "@/features/members/member-store";
-import { mergeArticles, mergeWaitlist, useAuditState, useCmsState, useWaitlistState } from "./admin-stores";
+import { mergeArticles, useAuditState, useCmsState } from "./admin-stores";
 import { AdminPageHeader, AdminSkeleton, PrototypeNote, StatCard, useAdminReady } from "./ui";
 
 type Props = {
@@ -47,7 +47,6 @@ export function AdminOverview({ members, applications, filmmakers, discussions, 
   const commState = useCommunityState();
   const memberState = useMemberStore();
   const cmsState = useCmsState();
-  const wlState = useWaitlistState();
   const audit = useAuditState();
   const { published } = useFilmmakers(filmmakers, applications);
 
@@ -62,9 +61,9 @@ export function AdminOverview({ members, applications, filmmakers, discussions, 
   const escalated = allReports.filter((r) => r.status === "escalated");
   const mem = members.map((m) => applyMemberPatch(m, memberState.patches));
   const suspended = mem.filter((m) => m.accountStatus === "suspended").length;
-  const wl = mergeWaitlist(wlState);
   const weekAgo = now.getTime() - 7 * 86_400_000;
-  const wlWeek = wl.filter((e) => new Date(e.registeredAt).getTime() > weekAgo).length;
+  const newSignUps = mem.filter((m) => new Date(m.memberSince).getTime() > weekAgo);
+  const unverified = mem.filter((m) => !m.emailVerified).length;
   const articles = mergeArticles(cmsState);
   const publishedArticles = articles.filter((a) => a.status === "published").length;
   const discs = mergeDiscussions(discussions, commState).filter((d) => d.status === "published");
@@ -75,7 +74,7 @@ export function AdminOverview({ members, applications, filmmakers, discussions, 
     ...apps.flatMap((a) => a.history.filter((h) => h.status !== "draft").map((h) => ({ at: h.at, text: `${a.details.fullName}: application ${h.status.replace("_", " ")}`, href: "/admin/applications" }))),
     ...allReports.map((r) => ({ at: r.createdAt, text: `${nameOf(r.reporterId)} reported a ${r.target.type}`, href: "/admin/moderation" })),
     ...revs.map((r) => ({ at: r.submittedAt, text: `Profile revision submitted for review`, href: "/admin/filmmakers" })),
-    ...wl.slice(0, 6).map((e) => ({ at: e.registeredAt, text: `${e.name ?? e.email} joined the waitlist`, href: "/admin/waitlist" })),
+    ...[...mem].sort((a, b) => b.memberSince.localeCompare(a.memberSince)).slice(0, 6).map((m) => ({ at: m.memberSince, text: `${m.displayName} created an account`, href: "/admin/members" })),
     ...audit.entries.map((e) => ({ at: e.at, text: `${e.actorName}: ${e.detail}`, href: "/admin" })),
   ]
     .sort((a, b) => b.at.localeCompare(a.at))
@@ -97,8 +96,8 @@ export function AdminOverview({ members, applications, filmmakers, discussions, 
       <PrototypeNote>Prototype: figures come from demo data plus anything you change in this session.</PrototypeNote>
 
       <section aria-label="Key metrics" className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <StatCard label="Members" value={mem.length} hint={`${suspended} suspended`} href="/admin/members" />
-        <StatCard label="Waitlist" value={wl.length} hint={`${wlWeek} in the last 7 days`} href="/admin/waitlist" />
+        <StatCard label="Members" value={mem.length} hint={`${newSignUps.length} new in the last 7 days`} href="/admin/members" />
+        <StatCard label="Suspended" value={suspended} hint="Accounts currently suspended" href="/admin/members" />
         <StatCard label="Published stories" value={publishedArticles} hint={`${articles.length - publishedArticles} drafts or scheduled`} href="/admin/journal" />
         <StatCard label="Filmmakers" value={published.length} hint="Published profiles" href="/admin/filmmakers" />
         <StatCard label="Applications to review" value={pendingApps.length} tone={pendingApps.length ? "warn" : undefined} href="/admin/applications" />
@@ -170,12 +169,12 @@ export function AdminOverview({ members, applications, filmmakers, discussions, 
               ))}
             </dl>
           </Panel>
-          <Panel title="Waitlist" action={{ label: "View all", href: "/admin/waitlist" }}>
+          <Panel title="Sign-ups" action={{ label: "View all", href: "/admin/members" }}>
             <dl className="grid grid-cols-3 gap-4 text-sm">
               {[
-                ["Registered", wl.filter((e) => e.status === "registered").length],
-                ["Linked", wl.filter((e) => e.status === "linked").length],
-                ["Invited", wl.filter((e) => e.status === "invited").length],
+                ["New this week", newSignUps.length],
+                ["Not yet verified", unverified],
+                ["Applied as filmmaker", apps.length],
               ].map(([k, v]) => (
                 <div key={String(k)}>
                   <dd className="font-display text-2xl font-black">{v}</dd>

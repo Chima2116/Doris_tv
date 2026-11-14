@@ -52,7 +52,7 @@ export const REPORTS: ModerationReport[] = [
   {
     id: "rep_s5",
     target: { type: "discussion", id: "d_07" },
-    reporterId: "m_demo_waitlisted",
+    reporterId: "m_demo_new_member",
     reason: "other",
     details: "Is this promotion for the poster's own releases?",
     status: "open",

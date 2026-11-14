@@ -4,7 +4,6 @@ import { DEMO_IDENTITIES } from "./demo-users";
 const base = {
   accountStatus: "active",
   emailVerified: true,
-  waitlistLinked: true,
   profileVisibility: "public",
   privacy: { visibility: "public", hiddenSections: [] },
   roles: ["member"],

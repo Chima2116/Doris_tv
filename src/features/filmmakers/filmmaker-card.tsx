@@ -69,10 +69,10 @@ export function FilmmakerCard({ filmmaker, className }: { filmmaker: Filmmaker; 
         )}
       </div>
       <div className="pt-4">
-        <h3 className="heading-card flex items-start justify-between gap-2 text-lg leading-tight transition-colors duration-200 group-hover:text-gold">
+        <h2 className="heading-card flex items-start justify-between gap-2 text-lg leading-tight transition-colors duration-200 group-hover:text-gold">
           {filmmaker.name}
           <ArrowUpRight className="mt-1 size-4 shrink-0 -translate-x-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100" aria-hidden="true" />
-        </h3>
+        </h2>
         <p className="tag mt-2 inline-block border border-gold/50 px-2 py-1 text-gold">{filmmaker.primaryDiscipline}</p>
         <p className="meta mt-1 text-white/55">
           {filmmaker.location ? `${filmmaker.location}, ` : ""}

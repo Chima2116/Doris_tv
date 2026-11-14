@@ -111,11 +111,11 @@ export default function AboutPage() {
           <p className="tag text-white/60">Get involved</p>
           <h2 className="display-name mt-4 text-[clamp(2rem,4.5vw,3.5rem)]">Be part of it from the start.</h2>
           <p className="mt-5 max-w-lg text-white/70">
-            Anyone can join the waitlist. Filmmakers can then apply for a profile, reviewed by our team.
+            Create a free account to join the Community. Filmmakers can apply for a profile, reviewed by our team.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Button asChild size="lg" variant="gold">
-              <Link href="/waitlist">Join the waitlist</Link>
+              <Link href="/sign-up">Create a free account</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
               <Link href="/filmmaker-application">Apply as a filmmaker</Link>

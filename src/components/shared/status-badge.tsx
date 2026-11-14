@@ -27,7 +27,7 @@ const STATUS: Record<string, { label: string; variant: Variant }> = {
   cleared: { label: "Cleared", variant: "outline" },
   escalated: { label: "Escalated", variant: "destructive" },
   resolved: { label: "Resolved", variant: "success" },
-  // verification & waitlist
+  // verification & sign-up
   verified: { label: "Verified", variant: "success" },
   unverified: { label: "Unverified", variant: "outline" },
   registered: { label: "Registered", variant: "outline" },

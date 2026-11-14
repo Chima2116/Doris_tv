@@ -103,8 +103,8 @@ export function CommunityFeed({
     <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16">
       <div>
         <div className="flex flex-wrap items-end justify-between gap-4 pb-6">
-          <nav aria-label="Discussion categories" className="-mx-1 overflow-x-auto">
-            <ul className="flex min-w-max gap-6 px-1">
+          <nav aria-label="Discussion categories" className="-mx-1">
+            <ul className="flex flex-wrap gap-x-6 gap-y-1 px-1">
               {["", ...DISCUSSION_CATEGORIES].map((c) => {
                 const active = c === category;
                 return (
@@ -154,7 +154,7 @@ export function CommunityFeed({
             description={
               eligible
                 ? "Be the first to start a conversation here."
-                : "Members can start discussions here. Join the waitlist and create an account to take part."
+                : "Members can start discussions here. Create a free account to take part."
             }
             action={category ? { label: "View all discussions", onClick: () => setParam("category", null) } : undefined}
           />
@@ -183,7 +183,7 @@ export function CommunityFeed({
         <div className="bg-[#1c1c1c] p-6">
           <h2 className="heading-card text-xl">Join the conversation</h2>
           <p className="mt-2 text-sm leading-relaxed text-white/65">
-            Anyone can read. Members on the waitlist with a verified email can start discussions,
+            Anyone can read. Members with a verified email can start discussions,
             reply and react.
           </p>
           <NewDiscussionButton className="mt-5 w-full" />
