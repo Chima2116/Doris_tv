@@ -27,6 +27,7 @@ export function FilmmakerPortrait({
   sizes?: string;
   labelled?: boolean;
 }) {
+  // A portrait uploaded in the Studio always wins over a built-in illustration for the same slug.
   const illustrative = !filmmaker.portraitUrl ? ILLUSTRATIVE_PORTRAITS[filmmaker.slug] : undefined;
   if (illustrative) {
     return (

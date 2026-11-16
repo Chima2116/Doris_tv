@@ -1,82 +1,50 @@
 import { FILMMAKERS } from "@/data/mock/filmmakers";
 import type { Filmmaker } from "@/data/types";
+import { fetchSanityFilmmakers } from "./sanity-filmmakers";
+import { filterFilmmakers, filmmakerFilterOptions, type FilmmakerFilters } from "@/data/filmmaker-filters";
 
-export type FilmmakerFilters = {
-  q?: string;
-  country?: string;
-  discipline?: string;
-  /** Decade the filmmaker became active, e.g. "2010". */
-  since?: string;
-};
+export { ACTIVE_SINCE_OPTIONS, filmmakerFilterOptions, filterFilmmakers, type FilmmakerFilters } from "@/data/filmmaker-filters";
 
-export const ACTIVE_SINCE_OPTIONS = [
-  { value: "2020", label: "2020s" },
-  { value: "2010", label: "2010s" },
-  { value: "2000", label: "2000s" },
-] as const;
-
-const published = () =>
-  FILMMAKERS.filter((f) => f.publicationStatus === "published").sort((a, b) =>
-    a.name.localeCompare(b.name),
-  );
+/**
+ * Published profiles. Studio profiles take precedence over local profiles with the same slug, and
+ * keep the local id so existing references (revisions, applications) still resolve.
+ */
+async function published(): Promise<Filmmaker[]> {
+  const remote = await fetchSanityFilmmakers();
+  const idBySlug = new Map(FILMMAKERS.map((f) => [f.slug, f.id]));
+  const remoteSlugs = new Set(remote.map((f) => f.slug));
+  const local = FILMMAKERS.filter((f) => f.publicationStatus === "published" && !remoteSlugs.has(f.slug));
+  const merged = [...remote.map((f) => ({ ...f, id: idBySlug.get(f.slug) ?? f.id })), ...local];
+  return merged.sort((a, b) => a.name.localeCompare(b.name));
+}
 
 /** Every filmmaker regardless of publication status (for admin and client-side overlays). */
 export async function getAllFilmmakers(): Promise<Filmmaker[]> {
-  return FILMMAKERS;
-}
-
-export function filterFilmmakers(list: Filmmaker[], filters: FilmmakerFilters): Filmmaker[] {
-  const q = filters.q?.trim().toLowerCase();
-  return list.filter((f) => {
-    if (q && !f.name.toLowerCase().includes(q)) return false;
-    if (filters.country && f.country !== filters.country) return false;
-    if (filters.discipline && f.primaryDiscipline !== filters.discipline) return false;
-    if (filters.since) {
-      const start = Number(filters.since);
-      const from = f.activeFrom ?? 0;
-      if (from < start || from >= start + 10) return false;
-    }
-    return true;
-  });
+  return [...(await published()), ...FILMMAKERS.filter((f) => f.publicationStatus !== "published")];
 }
 
 export async function getFilmmakers(filters: FilmmakerFilters = {}): Promise<Filmmaker[]> {
-  return filterFilmmakers(published(), filters);
-}
-
-export function filmmakerFilterOptions(list: Filmmaker[]) {
-  const uniq = (xs: string[]) => [...new Set(xs)].sort((a, b) => a.localeCompare(b));
-  return {
-    countries: uniq(list.map((f) => f.country)),
-    disciplines: uniq(list.map((f) => f.primaryDiscipline)),
-    since: ACTIVE_SINCE_OPTIONS,
-  };
+  return filterFilmmakers(await published(), filters);
 }
 
 export async function getFilmmakerBySlug(slug: string) {
-  return published().find((f) => f.slug === slug) ?? null;
+  return (await published()).find((f) => f.slug === slug) ?? null;
 }
 
 export async function getFilmmakerSlugs() {
-  return published().map((f) => f.slug);
+  return (await published()).map((f) => f.slug);
 }
 
 export async function getSpotlightFilmmaker() {
-  const all = published();
+  const all = await published();
   return all.find((f) => f.spotlight) ?? all[0] ?? null;
 }
 
 export async function getFilmmakerFilterOptions() {
-  const all = published();
-  const uniq = (xs: string[]) => [...new Set(xs)].sort((a, b) => a.localeCompare(b));
-  return {
-    countries: uniq(all.map((f) => f.country)),
-    disciplines: uniq(all.map((f) => f.primaryDiscipline)),
-    since: ACTIVE_SINCE_OPTIONS,
-  };
+  return filmmakerFilterOptions(await published());
 }
 
 export async function getFilmmakersByIds(ids: string[]) {
   const set = new Set(ids);
-  return published().filter((f) => set.has(f.id));
+  return (await published()).filter((f) => set.has(f.id));
 }

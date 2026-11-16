@@ -9,7 +9,6 @@ import { PageContainer } from "@/components/shared/page-container";
 import { SectionHeader } from "@/components/shared/section-header";
 import {
   getArticleBySlug,
-  getArticleSlugs,
   getRelatedArticles,
 } from "@/data/repositories/articles";
 import { getFilmmakerBySlug } from "@/data/repositories/filmmakers";
@@ -20,10 +19,6 @@ import { ArticleBody } from "@/features/journal/article-body";
 import { ShareButtons } from "@/features/journal/share-buttons";
 import { SaveButton } from "@/features/members/save-button";
 import { formatDate, readingLabel } from "@/lib/format";
-
-export async function generateStaticParams() {
-  return (await getArticleSlugs()).map((slug) => ({ slug }));
-}
 
 export async function generateMetadata(props: PageProps<"/journal/[slug]">): Promise<Metadata> {
   const { slug } = await props.params;

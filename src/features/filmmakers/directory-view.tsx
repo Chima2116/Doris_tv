@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/shared/pagination";
-import { filmmakerFilterOptions, filterFilmmakers } from "@/data/repositories/filmmakers";
+import { filmmakerFilterOptions, filterFilmmakers } from "@/data/filmmaker-filters";
 import type { Filmmaker, FilmmakerApplication } from "@/data/types";
 import { DirectoryFilters } from "./directory-filters";
 import { FilmmakerCard } from "./filmmaker-card";
