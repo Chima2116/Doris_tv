@@ -8,7 +8,11 @@ import { articleImage } from "@/features/journal/article-image";
 import { Collections, Community, CommunityTopics, FeaturedEditorial, FilmmakerSpotlight, Hero, Invitation, JournalRail } from "@/features/home/home-sections";
 
 async function HomeContent() {
-  const [articles, discussions, copy, collections] = await Promise.all([getArticles(), getDiscussions(), getHomeCopy(), getCollections()]);
+  const [articles, discussions, copy, allCollections] = await Promise.all([getArticles(), getDiscussions(), getHomeCopy(), getCollections()]);
+  // Collections: the ones picked in the Studio, in the order chosen; otherwise all of them.
+  const collections = copy.collectionNames.length
+    ? copy.collectionNames.map((n) => allCollections.find((c) => c.name === n)).filter((c): c is NonNullable<typeof c> => Boolean(c))
+    : allCollections;
 
   // Everything here is chosen in the Studio's Home page document. Where a choice is empty, the
   // fallback is the story flagged "Feature on the Journal front page", the newest other stories,
@@ -18,7 +22,11 @@ async function HomeContent() {
   const chosen = copy.supportingSlugs.map(bySlug).filter((a): a is NonNullable<typeof a> => Boolean(a) && a?.slug !== featured?.slug);
   const supporting = (chosen.length ? chosen : articles.filter((a) => a.slug !== featured?.slug)).slice(0, 3);
   const used = new Set([featured?.slug, ...supporting.map((s) => s.slug)]);
-  const rail = articles.filter((a) => !used.has(a.slug)).sort((a, b) => Number(!!articleImage(b)) - Number(!!articleImage(a))).slice(0, 7);
+  // Latest stories: the ones picked in the Studio, in the order chosen; otherwise the newest others.
+  const pickedLatest = copy.latestSlugs.map(bySlug).filter((a): a is NonNullable<typeof a> => Boolean(a));
+  const rail = pickedLatest.length
+    ? pickedLatest
+    : articles.filter((a) => !used.has(a.slug)).sort((a, b) => Number(!!articleImage(b)) - Number(!!articleImage(a))).slice(0, 7);
 
   const spotlight = (copy.spotlightFilmmakerSlug ? await getFilmmakerBySlug(copy.spotlightFilmmakerSlug) : null) ?? (await getSpotlightFilmmaker());
 

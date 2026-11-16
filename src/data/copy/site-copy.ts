@@ -58,5 +58,7 @@ export type HomeCopy = typeof HOME_COPY & {
   featuredSlug: string;
   supportingSlugs: string[];
   spotlightFilmmakerSlug: string;
+  latestSlugs: string[];
+  collectionNames: string[];
 };
 export type AboutCopy = typeof ABOUT_COPY;

@@ -1,5 +1,8 @@
 import { defineField, defineType } from "sanity";
 
+/** The topics members use in the Community. Pick from these rather than typing. */
+const COMMUNITY_TOPICS = ["General", "Festivals", "Craft", "Recommendations", "Distribution", "Industry"];
+
 /** Single document. Each group below is one section of the home page, in page order. */
 export const homePage = defineType({
   name: "homePage",
@@ -24,6 +27,14 @@ export const homePage = defineType({
     defineField({ name: "heroImage", title: "Background image", type: "image", options: { hotspot: true }, description: "Shown behind the hero when no video is set.", group: "hero" }),
 
     defineField({ name: "railHeading", title: "Heading", type: "string", group: "latest" }),
+    defineField({
+      name: "latestStories",
+      title: "Stories to show (drag to reorder)",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "journalStory" }] }],
+      description: "Pick published stories and drag them into order. If empty, the newest stories are shown.",
+      group: "latest",
+    }),
 
     defineField({ name: "featuredLabel", title: "Small label", type: "string", group: "featured" }),
     defineField({ name: "featuredStory", title: "Featured story", type: "reference", to: [{ type: "journalStory" }], description: "The large story. If empty, the story flagged as featured is used.", group: "featured" }),
@@ -31,12 +42,28 @@ export const homePage = defineType({
 
     defineField({ name: "collectionsHeading", title: "Heading", type: "string", group: "collections" }),
     defineField({ name: "collectionsIntro", title: "Introduction", type: "text", rows: 2, description: "The collections themselves are set up under Journal collection.", group: "collections" }),
+    defineField({
+      name: "collectionsShown",
+      title: "Collections to show (drag to reorder)",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "collection" }] }],
+      description: "Pick the collections to show and drag them into order. If empty, all collections are shown in their own order.",
+      group: "collections",
+    }),
 
     defineField({ name: "spotlightFilmmaker", title: "Filmmaker to feature", type: "reference", to: [{ type: "filmmaker" }], description: "If empty, the filmmaker ticked for the homepage spotlight is used.", group: "spotlight" }),
 
     defineField({ name: "communityHeading", title: "Heading", type: "string", group: "community" }),
     defineField({ name: "communityIntro", title: "Introduction", type: "text", rows: 2, group: "community" }),
-    defineField({ name: "communityTopics", title: "Topics (shown as large links)", type: "array", of: [{ type: "string" }], validation: (r) => r.max(10), description: "Each topic links to the Community. Type the topic name exactly as members will see it.", group: "community" }),
+    defineField({
+      name: "communityTopics",
+      title: "Topics (drag to reorder)",
+      type: "array",
+      of: [{ type: "string", options: { list: COMMUNITY_TOPICS.map((t) => ({ title: t, value: t })) } }],
+      validation: (r) => r.max(10),
+      description: "Pick from the Community topics. Each one links to the Community.",
+      group: "community",
+    }),
 
     defineField({ name: "invitationHeadline", title: "Headline", type: "string", group: "invitation" }),
     defineField({ name: "invitationText", title: "Supporting line", type: "string", group: "invitation" }),

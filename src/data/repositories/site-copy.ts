@@ -36,6 +36,8 @@ const HOME_PROJECTION = ` {
   communityHeading, communityIntro,
   invitationHeadline, invitationText,
   "spotlightFilmmakerSlug": spotlightFilmmaker->slug.current,
+  "latestSlugs": latestStories[]->slug.current,
+  "collectionNames": collectionsShown[]->name,
   communityTopics,
   invitationBenefits[] { title, body }
 }`;
@@ -75,6 +77,8 @@ export async function getHomeCopy(): Promise<HomeCopy> {
     featuredSlug: (d?.featuredSlug as string) ?? "",
     supportingSlugs: supporting,
     spotlightFilmmakerSlug: (d?.spotlightFilmmakerSlug as string) ?? "",
+    latestSlugs: ((d?.latestSlugs as string[] | undefined) ?? []).filter(Boolean),
+    collectionNames: ((d?.collectionNames as string[] | undefined) ?? []).filter(Boolean),
     communityTopics: ((d?.communityTopics as string[] | undefined) ?? []).filter((t) => typeof t === "string" && t.trim() !== ""),
     invitationBenefits: ((d?.invitationBenefits as { title?: string; body?: string }[] | undefined) ?? [])
       .filter((b) => b?.title)
