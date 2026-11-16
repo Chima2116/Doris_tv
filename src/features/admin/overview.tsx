@@ -89,7 +89,7 @@ export function AdminOverview({ members, applications, filmmakers, discussions, 
           <>
             <Button asChild size="sm"><Link href="/admin/applications">Review applications</Link></Button>
             <Button asChild size="sm" variant="outline"><Link href="/admin/moderation">Moderation queue</Link></Button>
-            <Button asChild size="sm" variant="outline"><Link href="/admin/journal?new=1">New article</Link></Button>
+            <Button asChild size="sm" variant="outline"><Link href="/studio/structure/journalStory">New article</Link></Button>
           </>
         }
       />
