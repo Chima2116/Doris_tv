@@ -1,11 +1,12 @@
 import { getArticles } from "@/data/repositories/articles";
 import { getDiscussions } from "@/data/repositories/discussions";
 import { getSpotlightFilmmaker } from "@/data/repositories/filmmakers";
+import { getHomeCopy } from "@/data/repositories/site-copy";
 import { articleImage } from "@/features/journal/article-image";
 import { Collections, Community, FeaturedEditorial, FilmmakerSpotlight, Hero, Invitation, JournalRail } from "@/features/home/home-sections";
 
 export default async function HomePage() {
-  const [articles, spotlight, discussions] = await Promise.all([getArticles(), getSpotlightFilmmaker(), getDiscussions()]);
+  const [articles, spotlight, discussions, copy] = await Promise.all([getArticles(), getSpotlightFilmmaker(), getDiscussions(), getHomeCopy()]);
   const bySlug = (slug: string) => articles.find((a) => a.slug === slug);
   const featured = bySlug("who-gets-to-see-african-films");
   const supporting = ["against-resolution-the-unfinished-frame", "dakar-film-clubs-a-short-history", "northern-voices-five-films-hausa-cinema"]
@@ -23,13 +24,13 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero />
+      <Hero copy={copy} />
       <JournalRail stories={rail} />
       {featured && <FeaturedEditorial story={featured} supporting={supporting} />}
       <Collections articles={articles} />
       {spotlight && <FilmmakerSpotlight filmmaker={spotlight} />}
       <Community featured={discussion} recent={recent} topics={topics} memberIds={memberIds} />
-      <Invitation />
+      <Invitation copy={copy} />
     </>
   );
 }

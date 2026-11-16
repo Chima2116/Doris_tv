@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { HomeCopy } from "@/data/copy/site-copy";
 import { ArrowRight, ArrowUpRight, Heart, MessageSquare } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ const link = "hover:underline hover:decoration-white/40 hover:underline-offset-[
 
 /* ─────────────────────────── 1. CINEMATIC HERO ─────────────────────────── */
 /** One photograph dominates; headline, copy and actions sit on it. The Journal rail overlaps its lower edge. */
-export function Hero() {
+export function Hero({ copy }: { copy: HomeCopy }) {
   const img = IMAGES.homeHero;
   return (
     <section aria-label="Welcome" className="relative isolate flex min-h-[max(34rem,calc(100svh-10rem))] items-end overflow-hidden pb-32 sm:pb-36 lg:pb-44">
@@ -32,11 +33,9 @@ export function Hero() {
       <div aria-hidden="true" className="absolute inset-y-0 left-0 -z-10 hidden w-[55%] bg-gradient-to-r from-black/45 to-transparent lg:block" />
 
       <Stagger className={`${wrap} pt-32`}>
-        <p className="tag mb-5 text-gold">Independent African cinema</p>
-        <h1 className="display-hero max-w-[15ch] sm:max-w-[16ch]">Where independent African film lives<span className="text-gold">.</span></h1>
-        <p className="mt-6 max-w-[38rem] text-[1.0625rem] leading-relaxed text-white/85 sm:text-lg">
-          An independent home for the stories, filmmakers and creative voices shaping African cinema. Discover conversations, explore the people behind the work and join a community that cares about film.
-        </p>
+        <p className="tag mb-5 text-gold">{copy.heroEyebrow}</p>
+        <h1 className="display-hero max-w-[15ch] sm:max-w-[16ch]">{copy.heroHeadline}<span className="text-gold">.</span></h1>
+        <p className="mt-6 max-w-[38rem] text-[1.0625rem] leading-relaxed text-white/85 sm:text-lg">{copy.heroIntro}</p>
         <div className="mt-9 flex flex-wrap items-center gap-3">
           <Button asChild variant="gold" size="lg">
             <Link href="/journal">Explore the Journal</Link>
@@ -348,15 +347,15 @@ const BENEFITS = [
   ["Join the conversation", "Reply, react and start discussions with other members."],
 ];
 
-export function Invitation() {
+export function Invitation({ copy }: { copy: HomeCopy }) {
   return (
     <section aria-label="Create a free account" className="bg-[#1c1c1c]">
       <div className={`${wrap} py-20 sm:py-28`}>
         <Reveal>
           <div className="grid gap-x-12 gap-y-10 lg:grid-cols-12 lg:items-end">
-            <h2 className="display-name text-[clamp(2.25rem,5vw,4rem)] lg:col-span-7">Join the DORIS&nbsp;TV community.</h2>
+            <h2 className="display-name text-[clamp(2.25rem,5vw,4rem)] lg:col-span-7">{copy.invitationHeadline}</h2>
             <div className="lg:col-span-4 lg:col-start-9">
-              <p className="text-base leading-relaxed text-white/70">Free to join. Be there from the start.</p>
+              <p className="text-base leading-relaxed text-white/70">{copy.invitationText}</p>
               <Button asChild variant="gold" size="lg" className="mt-6">
                 <Link href="/sign-up">Create a free account</Link>
               </Button>
