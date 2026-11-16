@@ -47,9 +47,9 @@ export function Hero({ copy }: { copy: HomeCopy }) {
 
       <Stagger className={`${wrap} pt-28`}>
         <p className="tag mb-5 text-gold">{copy.heroEyebrow}</p>
-        <h1 className="display-name max-w-[14ch] text-[clamp(1.875rem,3.6vw,3.25rem)] leading-[1.05]">{copy.heroHeadline}<span className="text-gold">.</span></h1>
-        <p className="mt-5 max-w-[22rem] text-[0.8125rem] leading-relaxed text-white/80 sm:text-sm">{copy.heroIntro}</p>
-        <div className="mt-7 flex flex-wrap items-center gap-3">
+        <h1 className="display-name max-w-[18ch] text-[clamp(2rem,3.8vw,3.5rem)] leading-[1.04]">{copy.heroHeadline}<span className="text-gold">.</span></h1>
+        <p className="mt-6 max-w-[30rem] text-[0.9375rem] leading-[1.7] text-white/80 sm:text-base">{copy.heroIntro}</p>
+        <div className="mt-8 flex flex-wrap items-center gap-3">
           <Button asChild variant="gold" size="lg">
             <Link href="/journal">{copy.heroPrimaryLabel}</Link>
           </Button>
