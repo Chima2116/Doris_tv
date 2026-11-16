@@ -1,17 +1,12 @@
-import { ARTICLES } from "@/data/mock/articles";
 import type { JournalArticle, JournalCategory } from "@/data/types";
 import { fetchSanityArticles } from "./sanity-articles";
 
 /**
- * Data access for Journal content. Components import from here, never from the mock arrays.
- * Stories published in Sanity take precedence over local stories with the same slug; local
- * stories remain visible so the site keeps its existing content.
+ * Data access for Journal content. Stories come from Sanity, the single source of truth.
  */
 async function published(): Promise<JournalArticle[]> {
   const remote = await fetchSanityArticles();
-  const remoteSlugs = new Set(remote.map((a) => a.slug));
-  const local = ARTICLES.filter((a) => a.status === "published" && !remoteSlugs.has(a.slug));
-  return [...remote, ...local].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  return remote.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }
 
 export async function getArticles(opts: { category?: JournalCategory } = {}): Promise<JournalArticle[]> {

@@ -1,6 +1,5 @@
 "use client";
 
-import { ARTICLES } from "@/data/mock/articles";
 import { createPersistedStore, makeId } from "@/lib/persisted-store";
 import type { AuditEntry, JournalArticle } from "@/data/types";
 import type { FilmmakerAdminPatch } from "@/features/filmmakers/filmmaker-overlay";
@@ -41,4 +40,4 @@ export const cmsStore = {
   },
 };
 export const mergeArticles = (s: { created: JournalArticle[]; patches: Record<string, Partial<JournalArticle>> }): JournalArticle[] =>
-  [...s.created, ...ARTICLES].map((a) => ({ ...a, ...s.patches[a.id] })).sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  [...s.created].map((a) => ({ ...a, ...s.patches[a.id] })).sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
