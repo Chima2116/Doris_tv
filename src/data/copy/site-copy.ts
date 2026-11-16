@@ -17,6 +17,13 @@ export const HOME_COPY = {
     "An independent home for the stories, filmmakers and creative voices shaping African cinema. Discover conversations, explore the people behind the work and join a community that cares about film.",
   invitationHeadline: "Join the DORIS TV community.",
   invitationText: "Free to join. Be there from the start.",
+  spotlightLabel: "Filmmaker spotlight",
+  communityTopics: [] as string[],
+  invitationBenefits: [
+    { title: "Follow filmmakers", body: "Keep up with the people whose work you want to see more of." },
+    { title: "Save stories", body: "Build a reading list from the Journal and return to it." },
+    { title: "Join the conversation", body: "Reply, react and start discussions with other members." },
+  ] as { title: string; body: string }[],
 };
 
 export const ABOUT_COPY = {
@@ -50,5 +57,6 @@ export type HomeCopy = typeof HOME_COPY & {
   heroVideoId: string;
   featuredSlug: string;
   supportingSlugs: string[];
+  spotlightFilmmakerSlug: string;
 };
 export type AboutCopy = typeof ABOUT_COPY;

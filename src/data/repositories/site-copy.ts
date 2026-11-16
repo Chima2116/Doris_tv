@@ -34,7 +34,10 @@ const HOME_PROJECTION = ` {
   "supportingSlugs": supportingStories[]->slug.current,
   collectionsHeading, collectionsIntro,
   communityHeading, communityIntro,
-  invitationHeadline, invitationText
+  invitationHeadline, invitationText,
+  "spotlightFilmmakerSlug": spotlightFilmmaker->slug.current,
+  communityTopics,
+  invitationBenefits[] { title, body }
 }`;
 
 /** Read on every visit, so a publish in the Studio shows on the home page straight away. */
@@ -66,10 +69,16 @@ export async function getHomeCopy(): Promise<HomeCopy> {
     communityIntro: pick(d?.communityIntro as string, HOME_COPY.communityIntro),
     invitationHeadline: pick(d?.invitationHeadline as string, HOME_COPY.invitationHeadline),
     invitationText: pick(d?.invitationText as string, HOME_COPY.invitationText),
+    spotlightLabel: pick(d?.spotlightLabel as string, HOME_COPY.spotlightLabel),
     heroImageUrl: d?.heroImage ? imageUrl(d.heroImage, 2400) : "",
     heroVideoId: youtubeId(d?.heroVideoUrl as string),
     featuredSlug: (d?.featuredSlug as string) ?? "",
     supportingSlugs: supporting,
+    spotlightFilmmakerSlug: (d?.spotlightFilmmakerSlug as string) ?? "",
+    communityTopics: ((d?.communityTopics as string[] | undefined) ?? []).filter((t) => typeof t === "string" && t.trim() !== ""),
+    invitationBenefits: ((d?.invitationBenefits as { title?: string; body?: string }[] | undefined) ?? [])
+      .filter((b) => b?.title)
+      .map((b) => ({ title: b.title as string, body: b.body ?? "" })),
   };
 }
 

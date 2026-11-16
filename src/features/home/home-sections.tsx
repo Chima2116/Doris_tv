@@ -191,7 +191,7 @@ export function Collections({ articles, collections, heading, intro }: { article
 }
 
 /* ─────────────────────────── 5. FILMMAKER SPOTLIGHT (split screen) ─────────────────────────── */
-export function FilmmakerSpotlight({ filmmaker }: { filmmaker: Filmmaker }) {
+export function FilmmakerSpotlight({ filmmaker, label }: { filmmaker: Filmmaker; label: string }) {
   const bio = filmmaker.biography.split("\n\n")[0];
   const recent = [...filmmaker.credits].sort((a, b) => b.year - a.year).slice(0, 3);
   return (
@@ -206,7 +206,7 @@ export function FilmmakerSpotlight({ filmmaker }: { filmmaker: Filmmaker }) {
       </div>
       <div className="flex flex-col justify-center bg-[#0d0d0d] px-6 py-16 sm:px-12 lg:px-16 xl:px-24">
         <Reveal>
-          <p className="tag text-gold">Filmmaker spotlight</p>
+          <p className="tag text-gold">{label}</p>
           <h2 className="display-name mt-4">
             <Link href={`/filmmakers/${filmmaker.slug}`} className={link}>{filmmaker.name}</Link>
           </h2>
@@ -255,7 +255,7 @@ async function RecentConversation({ d }: { d: Discussion }) {
   );
 }
 
-export async function Community({ featured, recent, topics, memberIds, heading, intro }: { featured: Discussion; recent: Discussion[]; topics: { name: string; count: number }[]; memberIds: string[]; heading: string; intro: string }) {
+export async function Community({ featured, recent, topics, memberIds, heading, intro }: { featured: Discussion; recent: Discussion[]; topics: string[]; memberIds: string[]; heading: string; intro: string }) {
   const img = IMAGES.crewNairobi;
   const [author, ...people] = await Promise.all([getMemberById(featured.authorId), ...memberIds.slice(0, 5).map((id) => getMemberById(id))]);
   return (
@@ -319,32 +319,13 @@ export async function Community({ featured, recent, topics, memberIds, heading, 
           </ul>
         </Reveal>
 
-        {/* Topics: large type, not chips */}
-        <Reveal className="mt-20">
-          <p className="tag mb-5 text-gold">Topics</p>
-          <ul className="flex flex-wrap gap-x-8 gap-y-3 sm:gap-x-12">
-            {topics.map((t) => (
-              <li key={t.name}>
-                <Link href={`/community?category=${encodeURIComponent(t.name)}`} className="group inline-flex items-baseline gap-2 text-[clamp(1.5rem,3.4vw,2.5rem)] font-bold leading-tight tracking-tight text-white/85 transition-colors hover:text-white">
-                  <span className="underline decoration-transparent decoration-2 underline-offset-[8px] transition-colors group-hover:decoration-white/60">{t.name}</span>
-                  <span className="meta tabular-nums text-white/45">{t.count}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
+        <TopicsBlock heading="Topics" topics={topics} />
       </div>
     </section>
   );
 }
 
 /* ─────────────────────────── 7. MEMBERSHIP ─────────────────────────── */
-const BENEFITS = [
-  ["Follow filmmakers", "Keep up with the people whose work you want to see more of."],
-  ["Save stories", "Build a reading list from the Journal and return to it."],
-  ["Join the conversation", "Reply, react and start discussions with other members."],
-];
-
 export function Invitation({ copy }: { copy: HomeCopy }) {
   return (
     <section aria-label="Create a free account" className="bg-[#1c1c1c]">
@@ -360,17 +341,55 @@ export function Invitation({ copy }: { copy: HomeCopy }) {
             </div>
           </div>
           <ol className="mt-14 grid gap-8 border-t border-white/20 pt-8 sm:grid-cols-3">
-            {BENEFITS.map(([t, d], i) => (
-              <li key={t} className="grid grid-cols-[2.25rem_1fr]">
+            {copy.invitationBenefits.map((b, i) => (
+              <li key={b.title} className="grid grid-cols-[2.25rem_1fr]">
                 <span className="meta tabular-nums text-gold">[{i + 1}]</span>
                 <span>
-                  <span className="heading-card block text-lg">{t}</span>
-                  <span className="mt-2 block text-sm leading-relaxed text-white/65">{d}</span>
+                  <span className="heading-card block text-lg">{b.title}</span>
+                  <span className="mt-2 block text-sm leading-relaxed text-white/65">{b.body}</span>
                 </span>
               </li>
             ))}
           </ol>
         </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/** Large topic links, as used at the bottom of the Community section. */
+function TopicsBlock({ heading, topics }: { heading: string; topics: string[] }) {
+  if (!topics.length) return null;
+  return (
+    <Reveal className="mt-20">
+      <p className="tag mb-5 text-gold">{heading}</p>
+      <ul className="flex flex-wrap gap-x-8 gap-y-3 sm:gap-x-12">
+        {topics.map((t) => (
+          <li key={t}>
+            <Link href={`/community?category=${encodeURIComponent(t)}`} className="group inline-flex items-baseline gap-2 text-[clamp(1.5rem,3.4vw,2.5rem)] font-bold leading-tight tracking-tight text-white/90 hover:text-white">
+              <span className="underline decoration-transparent decoration-2 underline-offset-[8px] transition-colors group-hover:decoration-white/60">{t}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </Reveal>
+  );
+}
+
+/** Community section when there are no discussions yet: heading, intro and topics only. */
+export function CommunityTopics({ heading, intro, topics }: { heading: string; intro: string; topics: string[] }) {
+  if (!topics.length) return null;
+  return (
+    <section aria-label="Community" className="bg-[#0d0d0d] py-20 sm:py-28">
+      <div className={wrap}>
+        <Reveal className="grid gap-6 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-7">
+            <p className="tag text-gold">Community</p>
+            <h2 className="display-name mt-4 max-w-[20ch] text-[clamp(2.25rem,5vw,4rem)]">{heading}</h2>
+          </div>
+          <p className="text-base leading-relaxed text-white/65 lg:col-span-4 lg:col-start-9">{intro}</p>
+        </Reveal>
+        <TopicsBlock heading="Topics" topics={topics} />
       </div>
     </section>
   );
