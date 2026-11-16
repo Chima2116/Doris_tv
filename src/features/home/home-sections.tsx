@@ -47,11 +47,11 @@ export function Hero({ copy }: { copy: HomeCopy }) {
       <div aria-hidden="true" className="absolute inset-y-0 left-0 -z-10 hidden w-[40%] bg-gradient-to-r from-black/50 to-transparent lg:block" />
       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-32 bg-gradient-to-b from-transparent to-background sm:h-44" />
 
-      <Stagger className={`${wrap} pt-28`}>
-        <p className="tag mb-5 flex items-center gap-3 text-gold"><span aria-hidden="true" className="h-px w-8 bg-gold" />{copy.heroEyebrow}</p>
-        <h1 className="display-name max-w-[18ch] text-[clamp(2rem,3.8vw,3.5rem)] leading-[1.04]">{copy.heroHeadline}<span className="text-gold">.</span></h1>
-        <p className="mt-6 max-w-[30rem] text-[0.9375rem] leading-[1.7] text-white/80 sm:text-base">{copy.heroIntro}</p>
-        <div className="mt-8 flex flex-wrap items-center gap-3">
+      <Stagger className={`${wrap} pt-20 sm:pt-28`}>
+        <p className="tag mb-3 flex items-center gap-3 text-gold sm:mb-5"><span aria-hidden="true" className="h-px w-8 bg-gold" />{copy.heroEyebrow}</p>
+        <h1 className="display-name max-w-[18ch] text-[clamp(1.75rem,7vw,3.5rem)] leading-[1.05]">{copy.heroHeadline}<span className="text-gold">.</span></h1>
+        <p className="mt-4 max-w-[26rem] text-[0.875rem] leading-[1.6] text-white/80 sm:mt-6 sm:text-base sm:leading-[1.7]">{copy.heroIntro}</p>
+        <div className="mt-6 flex flex-wrap items-center gap-2 sm:mt-8 sm:gap-3">
           <Button asChild variant="gold" size="lg">
             <Link href="/journal">{copy.heroPrimaryLabel}</Link>
           </Button>
