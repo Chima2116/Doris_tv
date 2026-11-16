@@ -45,7 +45,7 @@ type SanityCollection = {
  */
 export async function getCollections(): Promise<CollectionInfo[]> {
   "use cache";
-  cacheLife("minutes");
+  cacheLife({ stale: 60, revalidate: 30, expire: 3600 });
   if (!sanityConfigured) return DEFAULT_COLLECTIONS;
   try {
     const rows = await sanityClient.fetch<SanityCollection[]>(COLLECTIONS_QUERY);

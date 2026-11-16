@@ -78,7 +78,7 @@ function toFilmmaker(s: SanityFilmmaker): Filmmaker {
 /** Published filmmaker profiles from Sanity. Returns [] when Sanity is not configured or unreachable. */
 export async function fetchSanityFilmmakers(): Promise<Filmmaker[]> {
   "use cache";
-  cacheLife("minutes");
+  cacheLife({ stale: 60, revalidate: 30, expire: 3600 });
   if (!sanityConfigured) return [];
   try {
     const rows = await sanityClient.fetch<SanityFilmmaker[]>(FILMMAKERS_QUERY);

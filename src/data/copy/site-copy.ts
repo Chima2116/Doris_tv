@@ -54,6 +54,7 @@ export const ABOUT_COPY = {
 export type HomeCopy = typeof HOME_COPY & {
   heroImageUrl: string;
   heroVideoId: string;
+  heroVideoFileUrl: string;
   featuredSlug: string;
   supportingSlugs: string[];
   spotlightFilmmakerSlug: string;

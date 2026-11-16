@@ -83,7 +83,7 @@ function toArticle(s: SanityStory): JournalArticle {
 /** Published stories from Sanity. Returns [] when Sanity is not configured or unreachable. */
 export async function fetchSanityArticles(): Promise<JournalArticle[]> {
   "use cache";
-  cacheLife("minutes");
+  cacheLife({ stale: 60, revalidate: 30, expire: 3600 });
   if (!sanityConfigured) return [];
   try {
     const stories = await sanityClient.fetch<SanityStory[]>(STORIES_QUERY);

@@ -16,7 +16,7 @@ export function youtubeId(url: string | null | undefined): string {
 
 async function fetchDocument<T>(type: string, projection = ""): Promise<(Partial<T> & Record<string, unknown>) | null> {
   "use cache";
-  cacheLife("minutes");
+  cacheLife({ stale: 60, revalidate: 30, expire: 3600 });
   if (!sanityConfigured) return null;
   try {
     return await sanityClient.fetch<(Partial<T> & Record<string, unknown>) | null>(`*[_type == $type][0]${projection}`, { type });
@@ -29,6 +29,7 @@ async function fetchDocument<T>(type: string, projection = ""): Promise<(Partial
 const HOME_PROJECTION = ` {
   heroEyebrow, heroHeadline, heroIntro, heroPrimaryLabel, heroSecondaryLabel,
   heroImage, heroVideoUrl,
+  "heroVideoFileUrl": heroVideoFile.asset->url,
   railHeading, featuredLabel,
   "featuredSlug": featuredStory->slug.current,
   "supportingSlugs": supportingStories[]->slug.current,
@@ -74,6 +75,7 @@ export async function getHomeCopy(): Promise<HomeCopy> {
     spotlightLabel: pick(d?.spotlightLabel as string, HOME_COPY.spotlightLabel),
     heroImageUrl: d?.heroImage ? imageUrl(d.heroImage, 2400) : "",
     heroVideoId: youtubeId(d?.heroVideoUrl as string),
+    heroVideoFileUrl: (d?.heroVideoFileUrl as string) ?? "",
     featuredSlug: (d?.featuredSlug as string) ?? "",
     supportingSlugs: supporting,
     spotlightFilmmakerSlug: (d?.spotlightFilmmakerSlug as string) ?? "",

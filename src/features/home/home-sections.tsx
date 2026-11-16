@@ -26,7 +26,18 @@ export function Hero({ copy }: { copy: HomeCopy }) {
   const video = copy.heroVideoId;
   return (
     <section aria-label="Welcome" className="relative isolate flex min-h-[max(34rem,calc(100svh-10rem))] items-end overflow-hidden pb-6 sm:pb-8 lg:pb-10">
-      {video ? (
+      {copy.heroVideoFileUrl ? (
+        <video
+          aria-hidden="true"
+          src={copy.heroVideoFileUrl}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover"
+        />
+      ) : video ? (
         <div aria-hidden="true" className="absolute inset-0 -z-20 overflow-hidden">
           <iframe
             title="Background video"

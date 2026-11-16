@@ -24,6 +24,14 @@ export const homePage = defineType({
     defineField({ name: "heroPrimaryLabel", title: "First button label", type: "string", description: "Links to the Journal.", group: "hero" }),
     defineField({ name: "heroSecondaryLabel", title: "Second button label", type: "string", description: "Links to the filmmakers directory.", group: "hero" }),
     defineField({ name: "heroVideoUrl", title: "Background video (YouTube link)", type: "url", description: "Plays muted behind the text. Leave empty to show the image.", validation: (r) => r.uri({ scheme: ["https"] }).custom((v) => (!v || /youtu\.?be/.test(v) ? true : "Use a YouTube link")), group: "hero" }),
+    defineField({
+      name: "heroVideoFile",
+      title: "Background video file (MP4, recommended)",
+      type: "file",
+      options: { accept: "video/mp4,video/webm" },
+      description: "Plays muted and looping behind the text. Works on Safari and iPhone. If set, it is used instead of the YouTube link.",
+      group: "hero",
+    }),
     defineField({ name: "heroImage", title: "Background image", type: "image", options: { hotspot: true }, description: "Shown behind the hero when no video is set.", group: "hero" }),
 
     defineField({ name: "railHeading", title: "Heading", type: "string", group: "latest" }),
