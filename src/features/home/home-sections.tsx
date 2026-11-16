@@ -50,12 +50,12 @@ export function Hero({ copy }: { copy: HomeCopy }) {
 }
 
 /* ─────────────────────────── 2. JOURNAL RAIL (overlaps the hero) ─────────────────────────── */
-export function JournalRail({ stories }: { stories: JournalArticle[] }) {
+export function JournalRail({ stories, heading }: { stories: JournalArticle[]; heading: string }) {
   return (
     <section aria-label="Latest from the Journal" className="relative z-10 -mt-20 sm:-mt-28 lg:-mt-36">
       <div className={wrap}>
         <div className="mb-3 flex items-end justify-between gap-6">
-          <h2 className="heading-card text-xl text-white">Latest from the Journal</h2>
+          <h2 className="heading-card text-xl text-white">{heading}</h2>
           <Link href="/journal" className="hidden items-center gap-2 text-sm font-semibold text-white/80 hover:text-white sm:inline-flex">
             All stories <ArrowRight className="size-4" aria-hidden="true" />
           </Link>
@@ -93,12 +93,12 @@ export function JournalRail({ stories }: { stories: JournalArticle[] }) {
 
 /* ─────────────────────────── 3. FEATURED EDITORIAL ─────────────────────────── */
 /** One large story and three smaller ones, in clearly different proportions. */
-export function FeaturedEditorial({ story, supporting }: { story: JournalArticle; supporting: JournalArticle[] }) {
-  const img = IMAGES.fespacoEntrance;
+export function FeaturedEditorial({ story, supporting, label }: { story: JournalArticle; supporting: JournalArticle[]; label: string }) {
+  const img = articleImage(story) ?? IMAGES.fespacoEntrance;
   return (
     <section aria-label="Featured story" className={`${wrap} py-20 sm:py-28`}>
       <Reveal>
-        <p className="tag mb-6 text-white/60">Featured</p>
+        <p className="tag mb-6 text-white/60">{label}</p>
         <div className="grid gap-x-12 gap-y-12 lg:grid-cols-12">
           <article className="lg:col-span-8">
             <div className="group relative">
@@ -138,14 +138,14 @@ export function FeaturedEditorial({ story, supporting }: { story: JournalArticle
 
 /* ─────────────────────────── 4. COLLECTIONS ─────────────────────────── */
 
-export function Collections({ articles, collections }: { articles: JournalArticle[]; collections: CollectionInfo[] }) {
+export function Collections({ articles, collections, heading, intro }: { articles: JournalArticle[]; collections: CollectionInfo[]; heading: string; intro: string }) {
   return (
     <section aria-label="Journal collections" className="bg-[#141414] py-20 sm:py-28">
       <div className={wrap}>
         <Reveal className="mb-10 grid gap-6 lg:grid-cols-12 lg:items-end">
-          <h2 className="heading-section lg:col-span-6">Browse the Journal by collection.</h2>
+          <h2 className="heading-section lg:col-span-6">{heading}</h2>
           <p className="text-base leading-relaxed text-white/65 lg:col-span-5 lg:col-start-8">
-            Five ways in: conversations with filmmakers, essays on form, notes from set, retrospectives and video conversations.
+            {intro}
           </p>
         </Reveal>
         <Carousel label="Journal collections" trackClassName="-mx-5 px-5 scroll-pl-5 sm:-mx-8 sm:px-8 sm:scroll-pl-8 lg:-mx-12 lg:px-12 lg:scroll-pl-12">
@@ -242,7 +242,7 @@ async function RecentConversation({ d }: { d: Discussion }) {
   );
 }
 
-export async function Community({ featured, recent, topics, memberIds }: { featured: Discussion; recent: Discussion[]; topics: { name: string; count: number }[]; memberIds: string[] }) {
+export async function Community({ featured, recent, topics, memberIds, heading, intro }: { featured: Discussion; recent: Discussion[]; topics: { name: string; count: number }[]; memberIds: string[]; heading: string; intro: string }) {
   const img = IMAGES.crewNairobi;
   const [author, ...people] = await Promise.all([getMemberById(featured.authorId), ...memberIds.slice(0, 5).map((id) => getMemberById(id))]);
   return (
@@ -251,10 +251,10 @@ export async function Community({ featured, recent, topics, memberIds }: { featu
         <Reveal className="mb-12 grid gap-6 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
             <p className="tag text-gold">Community</p>
-            <h2 className="display-name mt-4 max-w-[20ch] text-[clamp(2.25rem,5vw,4rem)]">The conversation around African cinema.</h2>
+            <h2 className="display-name mt-4 max-w-[20ch] text-[clamp(2.25rem,5vw,4rem)]">{heading}</h2>
           </div>
           <div className="lg:col-span-4 lg:col-start-9">
-            <p className="text-base leading-relaxed text-white/65">Filmmakers, writers and film lovers on craft, funding, festivals and what to watch. Anyone can read. Members take part.</p>
+            <p className="text-base leading-relaxed text-white/65">{intro}</p>
             <div className="mt-5 flex items-center gap-3" aria-label="Members in recent conversations">
               <div className="flex -space-x-2">{people.map((m, i) => <Person key={i} member={m} className="size-8 ring-2 ring-[#0d0d0d]" />)}</div>
               <span className="meta text-white/60">{memberIds.length} members talking this week</span>

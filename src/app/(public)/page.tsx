@@ -15,10 +15,13 @@ export default async function HomePage() {
     getCollections(),
   ]);
 
-  // The featured story is the one ticked "Feature on the Journal front page" in the Studio.
-  // The supporting stories are the newest others.
-  const featured = articles.find((a) => a.featured) ?? null;
-  const supporting = articles.filter((a) => a.slug !== featured?.slug).slice(0, 3);
+  // The featured story and supporting stories come from the Studio. If none are chosen, the story
+  // flagged "Feature on the Journal front page" is used, and the supporting stories are the newest others.
+  const bySlug = (slug: string) => articles.find((a) => a.slug === slug);
+  const chosenFeatured = copy.featuredSlug ? bySlug(copy.featuredSlug) : undefined;
+  const featured = chosenFeatured ?? articles.find((a) => a.featured) ?? null;
+  const chosenSupporting = copy.supportingSlugs.map(bySlug).filter((a): a is NonNullable<typeof a> => Boolean(a) && a?.slug !== featured?.slug);
+  const supporting = (chosenSupporting.length ? chosenSupporting : articles.filter((a) => a.slug !== featured?.slug)).slice(0, 3);
   const used = new Set([featured?.slug, ...supporting.map((s) => s.slug)]);
   const rail = articles.filter((a) => !used.has(a.slug)).sort((a, b) => Number(!!articleImage(b)) - Number(!!articleImage(a))).slice(0, 7);
 
@@ -32,11 +35,11 @@ export default async function HomePage() {
   return (
     <>
       <Hero copy={copy} />
-      <JournalRail stories={rail} />
-      {featured && <FeaturedEditorial story={featured} supporting={supporting} />}
-      <Collections articles={articles} collections={collections} />
+      <JournalRail stories={rail} heading={copy.railHeading} />
+      {featured && <FeaturedEditorial story={featured} supporting={supporting} label={copy.featuredLabel} />}
+      <Collections articles={articles} collections={collections} heading={copy.collectionsHeading} intro={copy.collectionsIntro} />
       {spotlight && <FilmmakerSpotlight filmmaker={spotlight} />}
-      {discussion && <Community featured={discussion} recent={recent} topics={topics} memberIds={memberIds} />}
+      {discussion && <Community featured={discussion} recent={recent} topics={topics} memberIds={memberIds} heading={copy.communityHeading} intro={copy.communityIntro} />}
       <Invitation copy={copy} />
     </>
   );

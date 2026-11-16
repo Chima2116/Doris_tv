@@ -4,6 +4,14 @@
  */
 export const HOME_COPY = {
   heroEyebrow: "Independent African cinema",
+  heroPrimaryLabel: "Explore the Journal",
+  heroSecondaryLabel: "Discover filmmakers",
+  railHeading: "Latest from the Journal",
+  featuredLabel: "Featured",
+  collectionsHeading: "Browse the Journal by collection.",
+  collectionsIntro: "Five ways in: conversations with filmmakers, essays on form, notes from set, retrospectives and video conversations.",
+  communityHeading: "The conversation around African cinema.",
+  communityIntro: "Filmmakers, writers and film lovers on craft, funding, festivals and what to watch. Anyone can read. Members take part.",
   heroHeadline: "Where independent African film lives",
   heroIntro:
     "An independent home for the stories, filmmakers and creative voices shaping African cinema. Discover conversations, explore the people behind the work and join a community that cares about film.",
@@ -37,5 +45,10 @@ export const ABOUT_COPY = {
   involvedText: "Create a free account to join the Community. Filmmakers can apply for a profile, reviewed by our team.",
 };
 
-export type HomeCopy = typeof HOME_COPY;
+export type HomeCopy = typeof HOME_COPY & {
+  heroImageUrl: string;
+  heroVideoId: string;
+  featuredSlug: string;
+  supportingSlugs: string[];
+};
 export type AboutCopy = typeof ABOUT_COPY;
