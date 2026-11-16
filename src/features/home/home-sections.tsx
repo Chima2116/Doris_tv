@@ -41,15 +41,15 @@ export function Hero({ copy }: { copy: HomeCopy }) {
           <Photo asset={img} fill priority sizes="100vw" />
         </ImageSettle>
       )}
-      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-black/30" />
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-[85%] bg-gradient-to-t from-black/90 via-black/55 to-transparent" />
-      <div aria-hidden="true" className="absolute inset-y-0 left-0 -z-10 hidden w-[55%] bg-gradient-to-r from-black/45 to-transparent lg:block" />
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-black/15" />
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-[60%] bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+      <div aria-hidden="true" className="absolute inset-y-0 left-0 -z-10 hidden w-[40%] bg-gradient-to-r from-black/50 to-transparent lg:block" />
 
-      <Stagger className={`${wrap} pt-32`}>
+      <Stagger className={`${wrap} pt-28`}>
         <p className="tag mb-5 text-gold">{copy.heroEyebrow}</p>
-        <h1 className="display-hero max-w-[15ch] sm:max-w-[16ch]">{copy.heroHeadline}<span className="text-gold">.</span></h1>
-        <p className="mt-6 max-w-[38rem] text-[1.0625rem] leading-relaxed text-white/85 sm:text-lg">{copy.heroIntro}</p>
-        <div className="mt-9 flex flex-wrap items-center gap-3">
+        <h1 className="display-name max-w-[14ch] text-[clamp(1.875rem,3.6vw,3.25rem)] leading-[1.05]">{copy.heroHeadline}<span className="text-gold">.</span></h1>
+        <p className="mt-5 max-w-[22rem] text-[0.8125rem] leading-relaxed text-white/80 sm:text-sm">{copy.heroIntro}</p>
+        <div className="mt-7 flex flex-wrap items-center gap-3">
           <Button asChild variant="gold" size="lg">
             <Link href="/journal">{copy.heroPrimaryLabel}</Link>
           </Button>

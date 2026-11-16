@@ -7,10 +7,12 @@ const COLUMNS = [
   { title: "DORIS TV", links: [["About", "/about"], ["Create a free account", "/sign-up"], ["Apply as a filmmaker", "/filmmaker-application"]] },
 ] as const;
 
+/** DORIS TV social accounts. */
 const SOCIAL = [
-  ["Instagram", "https://www.instagram.com/"],
-  ["YouTube", "https://www.youtube.com/"],
-  ["X", "https://x.com/"],
+  ["YouTube", "https://youtube.com/@dorisentertainment-s1v"],
+  ["Instagram", "https://www.instagram.com/doris.films/"],
+  ["LinkedIn", "https://www.linkedin.com/in/doris-tv-142902432"],
+  ["X", "https://x.com/dorisfilms"],
 ] as const;
 
 export function SiteFooter() {
