@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getArticles } from "@/data/repositories/articles";
 import { getDiscussions } from "@/data/repositories/discussions";
 import { getSpotlightFilmmaker } from "@/data/repositories/filmmakers";
@@ -6,7 +7,7 @@ import { getHomeCopy } from "@/data/repositories/site-copy";
 import { articleImage } from "@/features/journal/article-image";
 import { Collections, Community, FeaturedEditorial, FilmmakerSpotlight, Hero, Invitation, JournalRail } from "@/features/home/home-sections";
 
-export default async function HomePage() {
+async function HomeContent() {
   const [articles, spotlight, discussions, copy, collections] = await Promise.all([
     getArticles(),
     getSpotlightFilmmaker(),
@@ -42,5 +43,13 @@ export default async function HomePage() {
       {discussion && <Community featured={discussion} recent={recent} topics={topics} memberIds={memberIds} heading={copy.communityHeading} intro={copy.communityIntro} />}
       <Invitation copy={copy} />
     </>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={null}>
+      <HomeContent />
+    </Suspense>
   );
 }

@@ -1,4 +1,5 @@
 import { cacheLife } from "next/cache";
+import { connection } from "next/server";
 import { sanityClient, sanityConfigured, imageUrl } from "../../../sanity/client";
 import { ABOUT_COPY, HOME_COPY, type AboutCopy, type HomeCopy } from "@/data/copy/site-copy";
 
@@ -36,8 +37,20 @@ const HOME_PROJECTION = ` {
   invitationHeadline, invitationText
 }`;
 
+/** Read on every visit, so a publish in the Studio shows on the home page straight away. */
+async function fetchHomeDocument(): Promise<(Partial<HomeCopy> & Record<string, unknown>) | null> {
+  await connection();
+  if (!sanityConfigured) return null;
+  try {
+    return await sanityClient.fetch(`*[_type == "homePage"][0]` + HOME_PROJECTION);
+  } catch (err) {
+    console.error("Sanity: could not load home page, using built-in copy", err);
+    return null;
+  }
+}
+
 export async function getHomeCopy(): Promise<HomeCopy> {
-  const d = await fetchDocument<HomeCopy>("homePage", HOME_PROJECTION);
+  const d = await fetchHomeDocument();
   const supporting = ((d?.supportingSlugs as string[] | undefined) ?? []).filter(Boolean);
   return {
     heroEyebrow: pick(d?.heroEyebrow as string, HOME_COPY.heroEyebrow),
