@@ -13,8 +13,7 @@ export const HOME_COPY = {
   communityHeading: "The conversation around African cinema.",
   communityIntro: "Filmmakers, writers and film lovers on craft, funding, festivals and what to watch. Anyone can read. Members take part.",
   heroHeadline: "Where independent African film lives",
-  heroIntro:
-    "An independent home for the stories, filmmakers and creative voices shaping African cinema. Discover conversations, explore the people behind the work and join a community that cares about film.",
+  heroIntro: "Stories, filmmakers and conversations shaping African cinema.",
   invitationHeadline: "Join the DORIS TV community.",
   invitationText: "Free to join. Be there from the start.",
   spotlightLabel: "Filmmaker spotlight",
