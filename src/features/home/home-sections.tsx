@@ -25,7 +25,7 @@ export function Hero({ copy }: { copy: HomeCopy }) {
   const img = copy.heroImageUrl ? { src: copy.heroImageUrl, alt: "", caption: "", focal: "50% 50%" } : IMAGES.homeHero;
   const video = copy.heroVideoId;
   return (
-    <section aria-label="Welcome" className="relative isolate flex min-h-[max(34rem,calc(100svh-10rem))] items-end overflow-hidden pb-32 sm:pb-36 lg:pb-44">
+    <section aria-label="Welcome" className="relative isolate flex min-h-[max(34rem,calc(100svh-10rem))] items-end overflow-hidden pb-6 sm:pb-8 lg:pb-10">
       {video ? (
         <div aria-hidden="true" className="absolute inset-0 -z-20 overflow-hidden">
           <iframe
@@ -44,9 +44,10 @@ export function Hero({ copy }: { copy: HomeCopy }) {
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-black/15" />
       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-[60%] bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
       <div aria-hidden="true" className="absolute inset-y-0 left-0 -z-10 hidden w-[40%] bg-gradient-to-r from-black/50 to-transparent lg:block" />
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-32 bg-gradient-to-b from-transparent to-background sm:h-44" />
 
       <Stagger className={`${wrap} pt-28`}>
-        <p className="tag mb-5 text-gold">{copy.heroEyebrow}</p>
+        <p className="tag mb-5 flex items-center gap-3 text-gold"><span aria-hidden="true" className="h-px w-8 bg-gold" />{copy.heroEyebrow}</p>
         <h1 className="display-name max-w-[18ch] text-[clamp(2rem,3.8vw,3.5rem)] leading-[1.04]">{copy.heroHeadline}<span className="text-gold">.</span></h1>
         <p className="mt-6 max-w-[30rem] text-[0.9375rem] leading-[1.7] text-white/80 sm:text-base">{copy.heroIntro}</p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -65,7 +66,7 @@ export function Hero({ copy }: { copy: HomeCopy }) {
 /* ─────────────────────────── 2. JOURNAL RAIL (overlaps the hero) ─────────────────────────── */
 export function JournalRail({ stories, heading }: { stories: JournalArticle[]; heading: string }) {
   return (
-    <section aria-label="Latest from the Journal" className="relative z-10 -mt-20 sm:-mt-28 lg:-mt-36">
+    <section aria-label="Latest from the Journal" className="relative z-10 bg-background py-14 sm:py-20">
       <div className={wrap}>
         <div className="mb-3 flex items-end justify-between gap-6">
           <h2 className="heading-card text-xl text-white">{heading}</h2>
