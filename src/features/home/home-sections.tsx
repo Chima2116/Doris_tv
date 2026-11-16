@@ -31,8 +31,9 @@ export function Hero({ copy }: { copy: HomeCopy }) {
           <iframe
             title="Background video"
             tabIndex={-1}
-            src={`https://www.youtube-nocookie.com/embed/${video}?autoplay=1&mute=1&loop=1&playlist=${video}&controls=0&playsinline=1&modestbranding=1&rel=0&disablekb=1`}
-            allow="autoplay; encrypted-media"
+            src={`https://www.youtube.com/embed/${video}?autoplay=1&mute=1&loop=1&playlist=${video}&controls=0&playsinline=1&modestbranding=1&rel=0&disablekb=1&iv_load_policy=3`}
+            allow="autoplay; encrypted-media; picture-in-picture"
+            referrerPolicy="strict-origin-when-cross-origin"
             className="pointer-events-none absolute left-1/2 top-1/2 h-[max(100%,56.25vw)] w-[max(100%,177.78vh)] -translate-x-1/2 -translate-y-1/2 border-0"
           />
         </div>
