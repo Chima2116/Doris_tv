@@ -4,12 +4,8 @@ import { PageContainer } from "@/components/shared/page-container";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getApplications } from "@/data/repositories/applications";
 import { getArticles } from "@/data/repositories/articles";
-import { getAllFilmmakers, getFilmmakerBySlug, getFilmmakerSlugs } from "@/data/repositories/filmmakers";
+import { getAllFilmmakers, getFilmmakerBySlug } from "@/data/repositories/filmmakers";
 import { FilmmakerProfileView } from "@/features/filmmakers/filmmaker-profile";
-
-export async function generateStaticParams() {
-  return (await getFilmmakerSlugs()).map((slug) => ({ slug }));
-}
 
 export async function generateMetadata(props: PageProps<"/filmmakers/[slug]">): Promise<Metadata> {
   const { slug } = await props.params;
