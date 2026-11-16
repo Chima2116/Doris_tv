@@ -12,7 +12,7 @@ export default async function HomePage() {
     .map(bySlug)
     .filter((a): a is NonNullable<typeof a> => Boolean(a));
   const used = new Set([featured?.slug, ...supporting.map((s) => s.slug)]);
-  const rail = articles.filter((a) => !used.has(a.slug)).sort((a, b) => Number(!!articleImage(b.slug)) - Number(!!articleImage(a.slug))).slice(0, 7);
+  const rail = articles.filter((a) => !used.has(a.slug)).sort((a, b) => Number(!!articleImage(b)) - Number(!!articleImage(a))).slice(0, 7);
 
   const discussion = discussions.find((d) => d.id === "d_04") ?? discussions[0];
   const recent = discussions.filter((d) => d.id !== discussion.id).slice(0, 4);

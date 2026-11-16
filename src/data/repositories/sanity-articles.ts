@@ -19,6 +19,9 @@ const STORIES_QUERY = groq`*[_type == "journalStory" && status == "published" &&
 
 type SanityBlock = {
   _type: string;
+  asset?: unknown;
+  alt?: string;
+  caption?: string;
   style?: string;
   children?: { text?: string }[];
 };
@@ -42,6 +45,10 @@ const CATEGORIES: JournalCategory[] = ["Interview", "Essay", "Production Notes",
 function toBlocks(body: SanityBlock[] = []): ArticleBlock[] {
   const blocks: ArticleBlock[] = [];
   for (const b of body) {
+    if (b._type === "image") {
+      if (b.asset) blocks.push({ type: "image", alt: (b.alt as string) || "", caption: (b.caption as string) || undefined, src: imageUrl(b) });
+      continue;
+    }
     if (b._type !== "block") continue;
     const text = (b.children ?? []).map((c) => c.text ?? "").join("").trim();
     if (!text) continue;

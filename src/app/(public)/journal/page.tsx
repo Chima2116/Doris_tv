@@ -56,7 +56,7 @@ async function JournalContent({ searchParams }: { searchParams: PageProps<"/jour
   const totalPages = Math.max(1, Math.ceil(list.length / JOURNAL_PAGE_SIZE));
   const page = Math.min(Math.max(1, Number.isFinite(requested) ? requested : 1), totalPages);
   const pageItems = list.slice((page - 1) * JOURNAL_PAGE_SIZE, page * JOURNAL_PAGE_SIZE);
-  const featuredImage = featured ? articleImage(featured.slug) : undefined;
+  const featuredImage = featured ? articleImage(featured) : undefined;
 
   return (
     <>

@@ -10,7 +10,8 @@ export type ImageAsset = {
   caption: string;
   /** CSS object-position, so crops keep the subject. */
   focal: string;
-  credit: {
+  /** Absent for photographs supplied through the Studio, which carry no structured licence. */
+  credit?: {
     author: string;
     license: "CC0" | "CC BY-SA 4.0" | "CC BY 4.0" | "Pexels License";
     sourceUrl: string;

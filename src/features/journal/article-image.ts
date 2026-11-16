@@ -20,6 +20,23 @@ const BY_SLUG: Record<string, ImageAsset> = {
   "moussa-ndiaye-on-co-production-video": IMAGES.eventBujumbura,
 };
 
-export function articleImage(slug: string): ImageAsset | undefined {
-  return BY_SLUG[slug];
+/** Photographs hosted by Sanity arrive as URLs on the story itself. */
+const SANITY_IMAGE_HOST = "https://cdn.sanity.io/";
+
+/**
+ * The photograph for a story: a curated licensed image for known stories, otherwise the cover
+ * supplied in the Studio. Returns undefined when the story has no photograph yet.
+ */
+export function articleImage(article: { slug: string; coverImage?: string; coverAlt?: string; title?: string }): ImageAsset | undefined {
+  const curated = BY_SLUG[article.slug];
+  if (curated) return curated;
+  if (article.coverImage?.startsWith(SANITY_IMAGE_HOST)) {
+    return {
+      src: article.coverImage,
+      alt: article.coverAlt || article.title || "",
+      caption: "",
+      focal: "50% 50%",
+    };
+  }
+  return undefined;
 }

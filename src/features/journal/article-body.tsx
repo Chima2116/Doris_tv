@@ -35,7 +35,12 @@ export function ArticleBody({ blocks }: { blocks: ArticleBlock[] }) {
           case "image":
             return (
               <figure key={i} className="-mx-5 my-10 sm:-mx-6 lg:-mx-24">
-                <Photo alt={b.alt} ratio="16/9" sizes="(min-width: 1024px) 60vw, 100vw" />
+                <Photo
+                  asset={b.src ? { src: b.src, alt: b.alt, caption: b.caption ?? "", focal: "50% 50%" } : undefined}
+                  alt={b.alt}
+                  ratio="16/9"
+                  sizes="(min-width: 1024px) 60vw, 100vw"
+                />
                 {b.caption && (
                   <figcaption className="mt-3 px-5 text-sm text-muted-foreground sm:px-6 lg:px-0">
                     {b.caption}

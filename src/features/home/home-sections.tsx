@@ -65,9 +65,9 @@ export function JournalRail({ stories }: { stories: JournalArticle[] }) {
           {stories.map((s, i) => (
             <CarouselItem key={s.slug} className="w-[68vw] sm:w-[17rem] lg:w-[18.5rem]">
               <Link href={`/journal/${s.slug}`} className="group block">
-                {articleImage(s.slug) ? (
+                {articleImage(s) ? (
                   <div className="relative">
-                    <Photo asset={articleImage(s.slug)} ratio="3/4" sizes="(min-width: 1024px) 18.5rem, 68vw" imgClassName="transition-transform duration-500 ease-out group-hover:scale-[1.04]" />
+                    <Photo asset={articleImage(s)} ratio="3/4" sizes="(min-width: 1024px) 18.5rem, 68vw" imgClassName="transition-transform duration-500 ease-out group-hover:scale-[1.04]" />
                     <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-black/60 to-transparent" />
                     <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-3/4bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
                     <div className="absolute inset-0 flex flex-col justify-between p-5">

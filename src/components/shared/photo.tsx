@@ -47,6 +47,7 @@ export function Photo({ asset, alt = "Photograph", ratio = "3/2", fill = false, 
 
 /** Credit line. Shown only from recorded data; CC BY-SA requires attribution and a licence link. */
 export function PhotoCredit({ asset, className, withCaption = true }: { asset: ImageAsset; className?: string; withCaption?: boolean }) {
+  if (!asset.credit) return withCaption && asset.caption ? <p className={cn("text-[0.6875rem] leading-snug", className)}>{asset.caption}</p> : null;
   const { author, license, sourceUrl, via = "Wikimedia Commons" } = asset.credit;
   return (
     <p className={cn("text-[0.6875rem] leading-snug", className)}>

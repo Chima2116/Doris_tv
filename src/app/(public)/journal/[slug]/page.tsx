@@ -78,7 +78,7 @@ async function ArticleContent({ params }: { params: PageProps<"/journal/[slug]">
     <article>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {(() => {
-        const asset = articleImage(article.slug);
+        const asset = articleImage(article);
         const catSlug = { Interview: "interviews", Essay: "essays", "Production Notes": "production-notes", Retrospective: "retrospectives", Video: "video" }[article.category];
         const head = (
           <div className="mx-auto w-full max-w-[1360px] px-5 sm:px-8 lg:px-12">

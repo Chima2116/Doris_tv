@@ -38,7 +38,7 @@ export function ArticleCard({
   className?: string;
 }) {
   const href = `/journal/${article.slug}`;
-  const asset = articleImage(article.slug);
+  const asset = articleImage(article);
 
   if (variant === "compact") {
     return (
