@@ -28,8 +28,7 @@ const SANITY_IMAGE_HOST = "https://cdn.sanity.io/";
  * supplied in the Studio. Returns undefined when the story has no photograph yet.
  */
 export function articleImage(article: { slug: string; coverImage?: string; coverAlt?: string; title?: string }): ImageAsset | undefined {
-  const curated = BY_SLUG[article.slug];
-  if (curated) return curated;
+  // A cover uploaded in the Studio always wins over a curated photograph for the same slug.
   if (article.coverImage?.startsWith(SANITY_IMAGE_HOST)) {
     return {
       src: article.coverImage,
@@ -38,5 +37,5 @@ export function articleImage(article: { slug: string; coverImage?: string; cover
       focal: "50% 50%",
     };
   }
-  return undefined;
+  return BY_SLUG[article.slug];
 }
