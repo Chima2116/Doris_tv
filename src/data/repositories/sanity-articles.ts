@@ -8,6 +8,7 @@ const STORIES_QUERY = groq`*[_type == "journalStory" && status == "published" &&
   title,
   "slug": slug.current,
   excerpt,
+  "collectionName": collection->name,
   category,
   author,
   featured,
@@ -32,6 +33,7 @@ type SanityStory = {
   slug: string;
   excerpt?: string;
   category?: JournalCategory;
+  collectionName?: string;
   author?: string;
   featured?: boolean;
   publishedAt?: string;
@@ -39,8 +41,6 @@ type SanityStory = {
   coverAlt?: string;
   body?: SanityBlock[];
 };
-
-const CATEGORIES: JournalCategory[] = ["Interview", "Essay", "Production Notes", "Retrospective", "Video"];
 
 function toBlocks(body: SanityBlock[] = []): ArticleBlock[] {
   const blocks: ArticleBlock[] = [];
@@ -70,7 +70,7 @@ function toArticle(s: SanityStory): JournalArticle {
     deck: s.excerpt,
     coverImage: s.coverImage ? imageUrl(s.coverImage) : "",
     coverAlt: s.coverAlt || s.title,
-    category: CATEGORIES.includes(s.category as JournalCategory) ? (s.category as JournalCategory) : "Essay",
+    category: s.collectionName || s.category || "Essay",
     author: s.author || "DORIS TV",
     publishedAt,
     readingTime: Math.max(1, Math.round(words / 220)),

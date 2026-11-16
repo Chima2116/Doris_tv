@@ -13,7 +13,8 @@ import { getArticles, getFeaturedArticle } from "@/data/repositories/articles";
 import { ArticleCard, ArticleMeta } from "@/features/journal/article-card";
 import { articleImage } from "@/features/journal/article-image";
 import { StoryCover } from "@/features/journal/story-cover";
-import { JOURNAL_CATEGORIES, JOURNAL_PAGE_SIZE } from "@/features/journal/categories";
+import { JOURNAL_PAGE_SIZE, filterOptions } from "@/features/journal/categories";
+import { getCollections } from "@/data/repositories/collections";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -42,7 +43,8 @@ export default function JournalPage(props: PageProps<"/journal">) {
 async function JournalContent({ searchParams }: { searchParams: PageProps<"/journal">["searchParams"] }) {
   const sp = await searchParams;
   const catValue = typeof sp.category === "string" ? sp.category : "";
-  const active = JOURNAL_CATEGORIES.find((c) => c.value === catValue) ?? JOURNAL_CATEGORIES[0];
+  const options = filterOptions(await getCollections());
+  const active = options.find((c) => c.value === catValue) ?? options[0];
   const requested = Number(typeof sp.page === "string" ? sp.page : "1");
   const isAll = !active.category;
 
@@ -63,7 +65,7 @@ async function JournalContent({ searchParams }: { searchParams: PageProps<"/jour
       <PageContainer width="wide" className="pb-8">
         <nav aria-label="Journal categories" className="-mx-1">
           <ul className="flex flex-wrap items-center gap-x-7 gap-y-1 border-b border-white/15 px-1">
-            {JOURNAL_CATEGORIES.map((c) => {
+            {options.map((c) => {
               const isActive = c.value === active.value;
               return (
                 <li key={c.value}>

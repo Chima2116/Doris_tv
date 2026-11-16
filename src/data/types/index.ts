@@ -47,12 +47,7 @@ export type Member = {
   };
 };
 
-export type JournalCategory =
-  | "Interview"
-  | "Essay"
-  | "Production Notes"
-  | "Retrospective"
-  | "Video";
+export type JournalCategory = string;
 
 export type ArticleStatus = "draft" | "scheduled" | "published";
 

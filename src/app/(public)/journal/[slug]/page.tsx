@@ -15,6 +15,8 @@ import { getFilmmakerBySlug } from "@/data/repositories/filmmakers";
 import { Photo } from "@/components/shared/photo";
 import { ArticleCard } from "@/features/journal/article-card";
 import { articleImage } from "@/features/journal/article-image";
+import { collectionValue } from "@/features/journal/categories";
+import { getCollections } from "@/data/repositories/collections";
 import { ArticleBody } from "@/features/journal/article-body";
 import { ShareButtons } from "@/features/journal/share-buttons";
 import { SaveButton } from "@/features/members/save-button";
@@ -53,6 +55,7 @@ async function ArticleContent({ params }: { params: PageProps<"/journal/[slug]">
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
+  const collectionsList = await getCollections();
 
   const [related, people] = await Promise.all([
     getRelatedArticles(article, 3),
@@ -74,7 +77,7 @@ async function ArticleContent({ params }: { params: PageProps<"/journal/[slug]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {(() => {
         const asset = articleImage(article);
-        const catSlug = { Interview: "interviews", Essay: "essays", "Production Notes": "production-notes", Retrospective: "retrospectives", Video: "video" }[article.category];
+        const catSlug = collectionsList.find((c) => c.name === article.category)?.value ?? collectionValue(article.category);
         const head = (
           <div className="mx-auto w-full max-w-[1360px] px-5 sm:px-8 lg:px-12">
             <nav aria-label="Breadcrumb" className="tag mb-6 text-white/70">

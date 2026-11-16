@@ -7,10 +7,10 @@ import { Carousel, CarouselItem } from "@/components/shared/carousel";
 import { ImageSettle, Stagger } from "@/components/shared/motion";
 import { Reveal } from "@/components/shared/reveal";
 import { Photo } from "@/components/shared/photo";
-import { IMAGES, type ImageAsset } from "@/data/images";
+import { IMAGES } from "@/data/images";
 import { getMemberById } from "@/data/repositories/discussions";
 import type { Discussion, Filmmaker, JournalArticle, Member } from "@/data/types";
-import { JOURNAL_CATEGORIES } from "@/features/journal/categories";
+import type { CollectionInfo } from "@/features/journal/categories";
 import { articleImage } from "@/features/journal/article-image";
 import { StoryCover } from "@/features/journal/story-cover";
 import { initials } from "@/lib/utils";
@@ -137,23 +137,8 @@ export function FeaturedEditorial({ story, supporting }: { story: JournalArticle
 }
 
 /* ─────────────────────────── 4. COLLECTIONS ─────────────────────────── */
-const COLLECTION_BLURBS: Record<string, string> = {
-  Interview: "Directors, writers and cinematographers on how the work gets made.",
-  Essay: "Longer arguments about form, language and what the films are doing.",
-  "Production Notes": "Locations, budgets and the practical side of finishing a film.",
-  Retrospective: "Looking back at movements, places and the habits of watching together.",
-  Video: "Filmed conversations, hosted on their original platforms.",
-};
-const COLLECTION_IMAGES: Record<string, ImageAsset> = {
-  Interview: IMAGES.interviewStadium,
-  Essay: IMAGES.gradingSuite,
-  "Production Notes": IMAGES.cameraSetupAbuja,
-  Retrospective: IMAGES.openAirCinema,
-  Video: IMAGES.cameraKigali,
-};
 
-export function Collections({ articles }: { articles: JournalArticle[] }) {
-  const collections = JOURNAL_CATEGORIES.filter((c) => c.category);
+export function Collections({ articles, collections }: { articles: JournalArticle[]; collections: CollectionInfo[] }) {
   return (
     <section aria-label="Journal collections" className="bg-[#141414] py-20 sm:py-28">
       <div className={wrap}>
@@ -165,8 +150,8 @@ export function Collections({ articles }: { articles: JournalArticle[] }) {
         </Reveal>
         <Carousel label="Journal collections" trackClassName="-mx-5 px-5 scroll-pl-5 sm:-mx-8 sm:px-8 sm:scroll-pl-8 lg:-mx-12 lg:px-12 lg:scroll-pl-12">
           {collections.map((c, i) => {
-            const items = articles.filter((a) => a.category === c.category);
-            const img = COLLECTION_IMAGES[c.category!];
+            const items = articles.filter((a) => a.category === c.name);
+            const img = c.image;
             return (
               <CarouselItem key={c.value} className="w-[80vw] sm:w-[22rem] lg:w-[24rem]">
                 <Link href={`/journal?category=${c.value}`} className="group relative isolate flex aspect-[4/5] flex-col justify-between overflow-hidden p-7 sm:p-8">
@@ -176,7 +161,7 @@ export function Collections({ articles }: { articles: JournalArticle[] }) {
                   <span className="meta tabular-nums text-gold">[{i + 1}]</span>
                   <span>
                     <span className="heading-section block text-[clamp(1.75rem,3vw,2.25rem)] leading-[1.05]">{c.label}</span>
-                    <span className="mt-3 block text-sm leading-relaxed text-white/80">{COLLECTION_BLURBS[c.category!]}</span>
+                    <span className="mt-3 block text-sm leading-relaxed text-white/80">{c.description}</span>
                     <span className="meta mt-5 flex items-center justify-between border-t border-white/30 pt-4 text-white/85">
                       {items.length} {items.length === 1 ? "story" : "stories"}
                       <ArrowUpRight className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />

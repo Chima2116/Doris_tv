@@ -14,8 +14,15 @@ export const journalStory = defineType({
       validation: (r) => r.required(),
     }),
     defineField({
+      name: "collection",
+      title: "Collection",
+      type: "reference",
+      to: [{ type: "collection" }],
+      description: "Choose the collection this story belongs to. Stories without one use the Category below.",
+    }),
+    defineField({
       name: "category",
-      title: "Category",
+      title: "Category (used only if no collection is chosen)",
       type: "string",
       options: {
         list: [
