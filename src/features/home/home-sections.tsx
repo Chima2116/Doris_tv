@@ -22,12 +22,25 @@ const link = "hover:underline hover:decoration-white/40 hover:underline-offset-[
 /* ─────────────────────────── 1. CINEMATIC HERO ─────────────────────────── */
 /** One photograph dominates; headline, copy and actions sit on it. The Journal rail overlaps its lower edge. */
 export function Hero({ copy }: { copy: HomeCopy }) {
-  const img = IMAGES.homeHero;
+  const img = copy.heroImageUrl ? { src: copy.heroImageUrl, alt: "", caption: "", focal: "50% 50%" } : IMAGES.homeHero;
+  const video = copy.heroVideoId;
   return (
     <section aria-label="Welcome" className="relative isolate flex min-h-[max(34rem,calc(100svh-10rem))] items-end overflow-hidden pb-32 sm:pb-36 lg:pb-44">
-      <ImageSettle className="absolute inset-0 -z-20">
-        <Photo asset={img} fill priority sizes="100vw" />
-      </ImageSettle>
+      {video ? (
+        <div aria-hidden="true" className="absolute inset-0 -z-20 overflow-hidden">
+          <iframe
+            title="Background video"
+            tabIndex={-1}
+            src={`https://www.youtube-nocookie.com/embed/${video}?autoplay=1&mute=1&loop=1&playlist=${video}&controls=0&playsinline=1&modestbranding=1&rel=0&disablekb=1`}
+            allow="autoplay; encrypted-media"
+            className="pointer-events-none absolute left-1/2 top-1/2 h-[max(100%,56.25vw)] w-[max(100%,177.78vh)] -translate-x-1/2 -translate-y-1/2 border-0"
+          />
+        </div>
+      ) : (
+        <ImageSettle className="absolute inset-0 -z-20">
+          <Photo asset={img} fill priority sizes="100vw" />
+        </ImageSettle>
+      )}
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-black/30" />
       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-[85%] bg-gradient-to-t from-black/90 via-black/55 to-transparent" />
       <div aria-hidden="true" className="absolute inset-y-0 left-0 -z-10 hidden w-[55%] bg-gradient-to-r from-black/45 to-transparent lg:block" />
@@ -38,10 +51,10 @@ export function Hero({ copy }: { copy: HomeCopy }) {
         <p className="mt-6 max-w-[38rem] text-[1.0625rem] leading-relaxed text-white/85 sm:text-lg">{copy.heroIntro}</p>
         <div className="mt-9 flex flex-wrap items-center gap-3">
           <Button asChild variant="gold" size="lg">
-            <Link href="/journal">Explore the Journal</Link>
+            <Link href="/journal">{copy.heroPrimaryLabel}</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link href="/filmmakers">Discover filmmakers</Link>
+            <Link href="/filmmakers">{copy.heroSecondaryLabel}</Link>
           </Button>
         </div>
       </Stagger>
