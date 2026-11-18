@@ -4,19 +4,10 @@ import { Suspense } from "react";
 import { PageContainer } from "@/components/shared/page-container";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getArticles } from "@/data/repositories/articles";
-import {
-  getDiscussions,
-  getMemberByUsername,
-  getMembers,
-  getReplies,
-} from "@/data/repositories/discussions";
+import { getDiscussions, getMemberByUsername, getMembers, getReplies } from "@/data/repositories/discussions";
 import { getFilmmakers } from "@/data/repositories/filmmakers";
 import { ProfileView } from "@/features/members/profile-view";
 import { getRemoteMemberByUsername } from "@/features/members/remote-profile";
-
-export async function generateStaticParams() {
-  return (await getMembers()).map((m) => ({ username: m.username }));
-}
 
 export async function generateMetadata(props: PageProps<"/profile/[username]">): Promise<Metadata> {
   const { username } = await props.params;

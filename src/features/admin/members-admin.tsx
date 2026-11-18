@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { listSupabaseMembers } from "@/features/auth/supabase-member";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -34,10 +35,14 @@ export function MembersAdmin({ members, discussions }: { members: Member[]; disc
   const [choice, setChoice] = useState<"keep" | "hide" | "">("");
   const [choiceError, setChoiceError] = useState(false);
   const [reason, setReason] = useState("");
+  const [remote, setRemote] = useState<Member[]>([]);
+  useEffect(() => {
+    listSupabaseMembers().then(setRemote);
+  }, []);
 
   if (!ready || !actor) return <AdminSkeleton />;
 
-  const all = members.map((m) => applyMemberPatch(m, ms.patches));
+  const all = [...remote, ...members].map((m) => applyMemberPatch(m, ms.patches));
   const ds = mergeDiscussions(discussions, comm);
   const publicDiscussions = (id: string) => ds.filter((d) => d.authorId === id && d.status === "published");
   const rows = all

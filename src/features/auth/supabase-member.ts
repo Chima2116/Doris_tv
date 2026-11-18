@@ -46,3 +46,37 @@ export async function loadSupabaseMember(userId: string): Promise<Member | null>
     privacy: { visibility: profile.profile_visibility, hiddenSections: [] },
   };
 }
+
+/**
+ * Every member in Supabase, for the admin Members page. Row level security only allows this for
+ * administrators and moderators; for anyone else it returns an empty list.
+ */
+export async function listSupabaseMembers(): Promise<Member[]> {
+  const supabase = getSupabase();
+  if (!supabase) return [];
+  const [profilesRes, rolesRes] = await Promise.all([
+    supabase.from("profiles").select("id, username, display_name, bio, location, profile_visibility, created_at").order("created_at", { ascending: false }),
+    supabase.from("user_roles").select("user_id, role"),
+  ]);
+  if (profilesRes.error || !profilesRes.data) return [];
+  const rolesByUser = new Map<string, MemberRole[]>();
+  for (const r of (rolesRes.data ?? []) as { user_id: string; role: string }[]) {
+    rolesByUser.set(r.user_id, [...(rolesByUser.get(r.user_id) ?? []), r.role as MemberRole]);
+  }
+  return (profilesRes.data as ProfileRow[]).map((profile) => {
+    const roleNames = rolesByUser.get(profile.id) ?? [];
+    return {
+      id: profile.id,
+      username: profile.username,
+      displayName: profile.display_name,
+      bio: profile.bio ?? undefined,
+      location: profile.location ?? undefined,
+      memberSince: profile.created_at,
+      roles: roleNames.includes("member") ? roleNames : (["member", ...roleNames] as MemberRole[]),
+      accountStatus: "active",
+      emailVerified: true,
+      profileVisibility: profile.profile_visibility,
+      privacy: { visibility: profile.profile_visibility, hiddenSections: [] },
+    };
+  });
+}
