@@ -56,6 +56,7 @@ export function WriteStoryForm({ draftId }: { draftId?: string }) {
   const { user } = useSession();
   const router = useRouter();
   const [submittedTitle, setSubmittedTitle] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const idRef = useRef<string>(draftId ?? "");
   const form = useForm<Values>({
     resolver: zodResolver(schema),
@@ -124,8 +125,13 @@ export function WriteStoryForm({ draftId }: { draftId?: string }) {
   }
 
   const onSubmit = async (values: Values) => {
-    const cover = values.coverImage?.[0];
-    await submitStory({ title: values.title, type: values.type, excerpt: values.excerpt, body: values.body, videoUrl: values.videoUrl, coverImage: cover, coverCredit: values.coverCredit });
+    setSubmitError(null);
+    try {
+      await submitStory({ title: values.title, type: values.type, excerpt: values.excerpt, body: values.body, videoUrl: values.videoUrl, coverCredit: values.coverCredit });
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Your story couldn't be sent. Please try again.");
+      return;
+    }
     if (idRef.current) deleteDraft(idRef.current);
     idRef.current = "";
     setSubmittedTitle(values.title);
@@ -199,6 +205,7 @@ export function WriteStoryForm({ draftId }: { draftId?: string }) {
       {form.formState.errors.confirmed && <p className={error}>{form.formState.errors.confirmed.message}</p>}
 
       <div className="flex flex-wrap items-center gap-4 pt-2">
+        {submitError && <p role="alert" className={error}>{submitError}</p>}
         <Button type="submit" variant="gold" size="lg" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? "Sending…" : "Send for review"}
         </Button>
