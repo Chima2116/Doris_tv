@@ -1,12 +1,13 @@
 import type { JournalArticle, JournalCategory } from "@/data/types";
 import { fetchSanityArticles } from "./sanity-articles";
+import { fetchRemoteArticles } from "./remote-stories";
 
 /**
  * Data access for Journal content. Stories come from Sanity, the single source of truth.
  */
 async function published(): Promise<JournalArticle[]> {
-  const remote = await fetchSanityArticles();
-  return remote.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  const [fromStudio, fromFilmmakers] = await Promise.all([fetchSanityArticles(), fetchRemoteArticles()]);
+  return [...fromStudio, ...fromFilmmakers].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }
 
 export async function getArticles(opts: { category?: JournalCategory } = {}): Promise<JournalArticle[]> {

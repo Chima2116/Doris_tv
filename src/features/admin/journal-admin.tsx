@@ -9,6 +9,8 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { useAdminReady, AdminPageHeader, AdminSkeleton, AdminTable, FilterBar, FilterSelect, ReasonDialog, Td, Th, fmt } from "./ui";
 import { getSupabase, sessionReady } from "@/lib/supabase/client";
 
+const storySlug = (s: Story) => `${s.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60)}-${s.id.slice(0, 6)}`;
+
 type Story = {
   id: string;
   title: string;
@@ -72,7 +74,7 @@ export function JournalAdmin() {
     if (!supabase) return;
     const { error } = await supabase
       .from("journal_stories")
-      .update({ status: next, review_note: note ?? null, decided_at: new Date().toISOString() })
+      .update({ status: next, review_note: note ?? null, decided_at: new Date().toISOString(), ...(next === "approved" ? { slug: storySlug(story) } : {}) })
       .eq("id", story.id);
     if (error) {
       toast.error(error.message);

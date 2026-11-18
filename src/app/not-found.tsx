@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/shared/eyebrow";
 import { PageContainer } from "@/components/shared/page-container";
@@ -8,7 +9,9 @@ import { SiteHeader } from "@/components/layout/site-header";
 export default function NotFound() {
   return (
     <>
-      <SiteHeader />
+      <Suspense fallback={null}>
+        <SiteHeader />
+      </Suspense>
       <main id="main" className="flex-1">
         <PageContainer width="narrow" className="py-28 text-center">
           <Eyebrow>Error 404</Eyebrow>
