@@ -10,10 +10,10 @@ import { Button } from "@/components/ui/button";
 import { useSession } from "@/features/auth/session-provider";
 import { isVerifiedFilmmaker } from "@/lib/permissions";
 import { JOURNAL_TYPES } from "./journal-types";
+import { VIDEO_HOST_PATTERN } from "@/lib/video";
 import { submitStory } from "./submit-story";
 import { deleteDraft, loadDraft, newDraftId, saveDraft } from "./drafts";
 
-const VIDEO_HOSTS = /(youtube\.com|youtu\.be|instagram\.com)/i;
 
 const schema = z
   .object({
@@ -30,8 +30,13 @@ const schema = z
     confirmed: z.literal(true, { message: "Please confirm this is your own work." }),
   })
   .superRefine((v, ctx) => {
-    if (v.type === "Video" && !(v.videoUrl && VIDEO_HOSTS.test(v.videoUrl))) {
-      ctx.addIssue({ code: "custom", path: ["videoUrl"], message: "Add a YouTube or Instagram link for a video." });
+    const hasVideo = Boolean(v.videoUrl && v.videoUrl.trim());
+    const hasCover = Boolean(v.coverImage && v.coverImage.length > 0);
+    if (hasVideo && !VIDEO_HOST_PATTERN.test(v.videoUrl!.trim())) {
+      ctx.addIssue({ code: "custom", path: ["videoUrl"], message: "Use a YouTube, Vimeo or Instagram link." });
+    }
+    if (!hasVideo && !hasCover) {
+      ctx.addIssue({ code: "custom", path: ["videoUrl"], message: "Add a video link, a cover image, or both." });
     }
   });
 
@@ -122,7 +127,6 @@ export function WriteStoryForm({ draftId }: { draftId?: string }) {
   };
 
   const bodyLength = form.watch("body")?.trim().length ?? 0;
-  const isVideo = form.watch("type") === "Video";
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-8">
@@ -165,13 +169,12 @@ export function WriteStoryForm({ draftId }: { draftId?: string }) {
         </div>
       </div>
 
-      {isVideo && (
-        <div>
-          <label htmlFor="videoUrl" className={label}>Video link</label>
-          <input id="videoUrl" className={field} placeholder="https://www.youtube.com/watch?v=…" {...form.register("videoUrl")} />
-          {form.formState.errors.videoUrl && <p className={error}>{form.formState.errors.videoUrl.message}</p>}
-        </div>
-      )}
+      <div>
+        <label htmlFor="videoUrl" className={label}>Video link <span className="font-normal text-reading/50">(optional)</span></label>
+        <input id="videoUrl" className={field} placeholder="https://www.youtube.com/watch?v=…" {...form.register("videoUrl")} />
+        <p className="mt-1.5 text-sm text-reading/50">YouTube, Vimeo or Instagram. The video opens on that platform.</p>
+        {form.formState.errors.videoUrl && <p className={error}>{form.formState.errors.videoUrl.message}</p>}
+      </div>
 
       <div>
         <label htmlFor="body" className={label}>Your story</label>

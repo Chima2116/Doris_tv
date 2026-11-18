@@ -55,7 +55,8 @@ export type ArticleBlock =
   | { type: "p"; text: string }
   | { type: "h2"; text: string }
   | { type: "quote"; text: string; cite?: string }
-  | { type: "image"; alt: string; caption?: string; seed?: string; src?: string };
+  | { type: "image"; alt: string; caption?: string; seed?: string; src?: string }
+  | { type: "video"; url: string };
 
 export type JournalArticle = {
   id: string;
@@ -63,6 +64,7 @@ export type JournalArticle = {
   title: string;
   deck?: string;
   coverImage: string;
+  videoUrl?: string;
   coverAlt: string;
   category: JournalCategory;
   author: string;

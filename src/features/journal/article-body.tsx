@@ -1,5 +1,39 @@
 import { Photo } from "@/components/shared/photo";
+import { ExternalLink } from "lucide-react";
 import type { ArticleBlock } from "@/data/types";
+import { videoEmbedUrl, videoPlatform } from "@/lib/video";
+
+/** A video that plays on the page. Links that can't be embedded fall back to opening on their platform. */
+export function VideoLinkCard({ url }: { url: string }) {
+  const embed = videoEmbedUrl(url);
+  const platform = videoPlatform(url);
+  if (!embed) {
+    return (
+      <a href={url} target="_blank" rel="noopener noreferrer" className="my-10 flex items-center justify-between gap-6 border border-white/15 bg-surface p-6 transition-colors duration-200 hover:border-gold/60">
+        <span className="font-display text-xl font-black">Watch on {platform}</span>
+        <ExternalLink className="size-5 shrink-0 text-gold" aria-hidden="true" />
+      </a>
+    );
+  }
+  return (
+    <figure className="my-10 -mx-5 sm:-mx-6 lg:-mx-24">
+      <div className="relative aspect-video w-full overflow-hidden bg-black">
+        <iframe
+          src={embed}
+          title={`Video on ${platform}`}
+          className="absolute inset-0 size-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+          allowFullScreen
+          loading="lazy"
+        />
+      </div>
+      <figcaption className="mt-3 px-5 text-sm text-muted-foreground sm:px-6 lg:px-0">
+        Video on {platform}.{" "}
+        <a href={url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-gold">Open on {platform}</a>
+      </figcaption>
+    </figure>
+  );
+}
 
 /** Reading-first body renderer: generous measure, warm reading colour, pull quotes in gold. */
 export function ArticleBody({ blocks }: { blocks: ArticleBlock[] }) {
@@ -32,6 +66,8 @@ export function ArticleBody({ blocks }: { blocks: ArticleBlock[] }) {
                 )}
               </blockquote>
             );
+          case "video":
+            return <VideoLinkCard key={i} url={b.url} />;
           case "image":
             return (
               <figure key={i} className="-mx-5 my-10 sm:-mx-6 lg:-mx-24">

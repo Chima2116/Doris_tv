@@ -15,6 +15,7 @@ const STORIES_QUERY = groq`*[_type == "journalStory" && status == "published" &&
   publishedAt,
   coverImage,
   coverAlt,
+  videoUrl,
   body
 }`;
 
@@ -23,11 +24,13 @@ type SanityBlock = {
   asset?: unknown;
   alt?: string;
   caption?: string;
+  url?: string;
   style?: string;
   children?: { text?: string }[];
 };
 
 type SanityStory = {
+  videoUrl?: string;
   id: string;
   title: string;
   slug: string;
@@ -45,6 +48,10 @@ type SanityStory = {
 function toBlocks(body: SanityBlock[] = []): ArticleBlock[] {
   const blocks: ArticleBlock[] = [];
   for (const b of body) {
+    if (b._type === "videoLink") {
+      if (b.url) blocks.push({ type: "video", url: b.url });
+      continue;
+    }
     if (b._type === "image") {
       if (b.asset) blocks.push({ type: "image", alt: (b.alt as string) || "", caption: (b.caption as string) || undefined, src: imageUrl(b) });
       continue;
@@ -69,6 +76,7 @@ function toArticle(s: SanityStory): JournalArticle {
     title: s.title,
     deck: s.excerpt,
     coverImage: s.coverImage ? imageUrl(s.coverImage) : "",
+    videoUrl: s.videoUrl || undefined,
     coverAlt: s.coverAlt || s.title,
     category: s.collectionName || s.category || "Essay",
     author: s.author || "DORIS TV",

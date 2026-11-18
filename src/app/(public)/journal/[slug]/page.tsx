@@ -17,7 +17,7 @@ import { ArticleCard } from "@/features/journal/article-card";
 import { articleImage } from "@/features/journal/article-image";
 import { collectionValue } from "@/features/journal/categories";
 import { getCollections } from "@/data/repositories/collections";
-import { ArticleBody } from "@/features/journal/article-body";
+import { ArticleBody, VideoLinkCard } from "@/features/journal/article-body";
 import { ShareButtons } from "@/features/journal/share-buttons";
 import { SaveButton } from "@/features/members/save-button";
 import { formatDate, readingLabel } from "@/lib/format";
@@ -133,6 +133,7 @@ async function ArticleContent({ params }: { params: PageProps<"/journal/[slug]">
             </Button>
           </div>
         )}
+        {article.videoUrl && <VideoLinkCard url={article.videoUrl} />}
         {article.body && <ArticleBody blocks={article.body} />}
 
         {article.authorBio && (
