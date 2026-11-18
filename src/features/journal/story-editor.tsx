@@ -136,7 +136,7 @@ export function StoryEditor({ value, onChange, invalid }: { value: string; onCha
 
   return (
     <div className={cn("border bg-[#131316]", invalid ? "border-[#ee8585]" : "border-white/20", expanded && "fixed inset-0 z-50 flex flex-col overflow-auto border-0 bg-background p-6 sm:p-10")}>
-      <div role="toolbar" aria-label="Story formatting" className="flex flex-wrap items-center gap-1 border-b border-white/15 px-3 py-2">
+      <div role="toolbar" aria-label="Story formatting" className="sticky top-0 z-10 flex flex-wrap items-center gap-1 border-b border-white/15 bg-[#131316] px-3 py-2">
         <div className="relative">
         <select
           aria-label="Text style"

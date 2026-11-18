@@ -171,8 +171,23 @@ export function WriteStoryForm({ draftId }: { draftId?: string }) {
 
       <div>
         <label htmlFor="coverImage" className={label}>Cover image <span className="font-normal text-reading/50">(optional, shown on the Journal)</span></label>
-        <input id="coverImage" type="file" accept="image/jpeg,image/png,image/webp" className="mt-2 block w-full text-sm text-reading/80 file:mr-4 file:border file:border-white/20 file:bg-transparent file:px-4 file:py-2 file:text-reading" {...form.register("coverImage")} />
-        <p className="mt-1.5 text-sm text-reading/50">JPG, PNG or WebP, up to 10 MB. Landscape works best.</p>
+        <div
+          tabIndex={0}
+          aria-describedby="coverImage-help"
+          onPaste={(e) => {
+            const file = Array.from(e.clipboardData.files).find((f) => f.type.startsWith("image/"));
+            if (!file) return;
+            e.preventDefault();
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            form.setValue("coverImage", dt.files, { shouldValidate: true });
+          }}
+          className="mt-2 flex flex-wrap items-center gap-4 border border-dashed border-white/20 p-4 focus:border-gold focus:outline-none"
+        >
+          <input id="coverImage" type="file" accept="image/jpeg,image/png,image/webp" className="block text-sm text-reading/80 file:mr-4 file:border file:border-white/20 file:bg-transparent file:px-4 file:py-2 file:text-reading" {...form.register("coverImage")} />
+          <span className="text-sm text-reading/50">or paste an image here</span>
+        </div>
+        <p id="coverImage-help" className="mt-1.5 text-sm text-reading/50">JPG, PNG or WebP, up to 10 MB. Landscape works best.</p>
         {form.formState.errors.coverImage && <p className={error}>{String(form.formState.errors.coverImage.message)}</p>}
         <div className="mt-4">
           <label htmlFor="coverCredit" className={label}>Photo credit <span className="font-normal text-reading/50">(optional)</span></label>
