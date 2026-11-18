@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ExternalLink, Menu, ShieldAlert } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { ExternalLink, LogOut, Menu, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -73,7 +73,8 @@ function Restricted({ title, body }: { title: string; body: string }) {
  * beats role, so a suspended moderator is locked out.
  */
 export function AdminShell({ children }: { children: React.ReactNode }) {
-  const { user } = useSession();
+  const { user, signOut } = useSession();
+  const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -118,6 +119,20 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <SidebarNav items={items} />
         </div>
         <div className="border-t border-border p-3">
+          <div className="px-3 pb-3">
+            <p className="truncate text-sm font-semibold">{user?.displayName}</p>
+            <p className="truncate text-xs text-muted-foreground">{roleLabel} · @{user?.username}</p>
+          </div>
+          <button
+            type="button"
+            onClick={async () => {
+              await signOut();
+              router.push("/sign-in");
+            }}
+            className="flex w-full items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <LogOut className="size-3.5" aria-hidden="true" /> Sign out
+          </button>
           <Link
             href="/"
             className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground"
