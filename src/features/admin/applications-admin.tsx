@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
 import type { FilmmakerApplication } from "@/data/types";
 import { mergeApplications, useApplicationsState } from "@/features/applications/applications-store";
+import { supabaseConfigured } from "@/lib/supabase/client";
 import { approveRemoteApplication, declineRemoteApplication, isRemoteApplication, listRemoteApplications, startRemoteReview } from "@/features/applications/remote-applications";
 import { applications as actions } from "./admin-actions";
 import { AdminPageHeader, AdminSkeleton, AdminTable, DetailCallout, DetailRows, DetailSection, DetailSheet, DetailTimeline, FilterBar, FilterSelect, ReasonDialog, SearchBox, Td, Th, fmt, fmtTime, useAdminReady } from "./ui";
@@ -38,7 +39,8 @@ export function ApplicationsAdmin({ seed }: { seed: FilmmakerApplication[] }) {
   if (!ready || !actor) return <AdminSkeleton />;
 
   // Admins review submitted work; drafts are the applicant's own. Remote (Supabase) applications come first.
-  const all = [...remote, ...mergeApplications(seed, state)].filter((a) => a.status !== "draft");
+  // Once Supabase is connected, only real applications count. Browser-only copies would show duplicates.
+  const all = [...remote, ...(supabaseConfigured ? [] : mergeApplications(seed, state))].filter((a) => a.status !== "draft");
   const rows = all
     .filter((a) => (status === "all" ? true : a.status === status))
     .filter((a) => !q.trim() || `${a.details.fullName} ${a.details.country} ${a.details.primaryDiscipline}`.toLowerCase().includes(q.trim().toLowerCase()))
