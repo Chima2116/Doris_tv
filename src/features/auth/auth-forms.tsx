@@ -9,6 +9,7 @@ import { z } from "zod";
 import { MailCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/shared/password-input";
 import { FormField } from "@/components/shared/form-field";
 import { useSession } from "./session-provider";
 import { getSupabase, supabaseConfigured } from "@/lib/supabase/client";
@@ -41,31 +42,6 @@ function ServerError({ message }: { message: string | null }) {
   );
 }
 
-/* ───────────── Test accounts ─────────────
- * Two shared accounts for testers: a member and a filmmaker. Their details come from public
- * environment variables set in Vercel, so the password is never written into the repository.
- * Admin and moderator accounts are not listed here; they are shared privately. */
-function TestAccounts({ onPick }: { onPick: (email: string, password: string) => void }) {
-  const accounts = [
-    { label: "Member", email: process.env.NEXT_PUBLIC_TEST_MEMBER_EMAIL, password: process.env.NEXT_PUBLIC_TEST_MEMBER_PASSWORD },
-    { label: "Filmmaker", email: process.env.NEXT_PUBLIC_TEST_FILMMAKER_EMAIL, password: process.env.NEXT_PUBLIC_TEST_FILMMAKER_PASSWORD },
-  ].filter((a): a is { label: string; email: string; password: string } => Boolean(a.email && a.password));
-  if (!supabaseConfigured || accounts.length === 0) return null;
-  return (
-    <div className="mt-10 border-t border-border pt-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">Test accounts</p>
-      <p className="mt-2 text-sm text-muted-foreground">Fill the form with a shared test account, then sign in.</p>
-      <div className="mt-4 flex flex-wrap gap-3">
-        {accounts.map((a) => (
-          <Button key={a.label} type="button" variant="outline" size="sm" onClick={() => onPick(a.email, a.password)}>
-            Use {a.label.toLowerCase()} test account
-          </Button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /* ───────────── Sign in ───────────── */
 const signInSchema = z.object({ email, password });
 
@@ -76,7 +52,6 @@ export function SignInForm() {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof signInSchema>>({ resolver: zodResolver(signInSchema) });
 
@@ -122,7 +97,7 @@ export function SignInForm() {
           {(a) => <Input {...a} type="email" autoComplete="email" {...register("email")} />}
         </FormField>
         <FormField id="si-password" label="Password" error={errors.password?.message}>
-          {(a) => <Input {...a} type="password" autoComplete="current-password" {...register("password")} />}
+          {(a) => <PasswordInput {...a} autoComplete="current-password" {...register("password")} />}
         </FormField>
         <div className="-mt-2 text-right">
           <Link href="/reset-password" className="text-xs font-medium text-gold underline-offset-4 transition-colors duration-200 hover:underline focus-visible:underline">
@@ -138,11 +113,6 @@ export function SignInForm() {
           {!supabaseConfigured && process.env.NODE_ENV !== "production" && " Use an @fail.test address to see the error state."}
         </p>
       </form>
-      <TestAccounts onPick={(email, password) => {
-        setValue("email", email);
-        setValue("password", password);
-        setError(null);
-      }} />
     </Shell>
   );
 }
@@ -246,10 +216,10 @@ export function SignUpForm() {
           {(a) => <Input {...a} type="email" autoComplete="email" {...register("email")} />}
         </FormField>
         <FormField id="su-password" label="Password" hint="At least 8 characters." error={errors.password?.message}>
-          {(a) => <Input {...a} type="password" autoComplete="new-password" {...register("password")} />}
+          {(a) => <PasswordInput {...a} autoComplete="new-password" {...register("password")} />}
         </FormField>
         <FormField id="su-confirm" label="Confirm password" error={errors.confirm?.message}>
-          {(a) => <Input {...a} type="password" autoComplete="new-password" {...register("confirm")} />}
+          {(a) => <PasswordInput {...a} autoComplete="new-password" {...register("confirm")} />}
         </FormField>
         <ServerError message={signUpError} />
         <Button type="submit" variant="gold" size="lg" className="w-full" disabled={isSubmitting}>
