@@ -24,6 +24,7 @@ import { checkGate, isVerifiedFilmmaker } from "@/lib/permissions";
 import { makeId } from "@/lib/persisted-store";
 import { cn } from "@/lib/utils";
 import { PhotoPicker } from "@/components/shared/photo-picker";
+import { submitRemoteApplication } from "./remote-applications";
 import { COUNTRIES, CREDIT_FORMATS, DISCIPLINES } from "./application-constants";
 import { applicationsFor, applicationsStore, emptyDetails, mergeApplications, useApplicationsState } from "./applications-store";
 
@@ -236,6 +237,13 @@ function WizardForm({ userId, userName, draft, onSubmitted }: { userId: string; 
 
   const submit = async () => {
     setSubmitting(true);
+    try {
+      await submitRemoteApplication(toDetails(getValues()));
+    } catch (err) {
+      setSubmitting(false);
+      toast.error(err instanceof Error ? err.message : "We couldn't send your application. Please try again.");
+      return;
+    }
     await new Promise((r) => setTimeout(r, 900));
     const id = persist();
     // Read back the merged application so the timeline keeps its draft event.

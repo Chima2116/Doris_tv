@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
 import type { FilmmakerApplication } from "@/data/types";
 import { mergeApplications, useApplicationsState } from "@/features/applications/applications-store";
+import { approveRemoteApplication, declineRemoteApplication, isRemoteApplication, listRemoteApplications } from "@/features/applications/remote-applications";
 import { applications as actions } from "./admin-actions";
 import { AdminPageHeader, AdminSkeleton, AdminTable, DetailCallout, DetailRows, DetailSection, DetailSheet, DetailTimeline, FilterBar, FilterSelect, ReasonDialog, SearchBox, Td, Th, fmt, fmtTime, useAdminReady } from "./ui";
 
@@ -27,11 +28,17 @@ export function ApplicationsAdmin({ seed }: { seed: FilmmakerApplication[] }) {
   const [openId, setOpenId] = useState<string | null>(null);
   const [rejectOpen, setRejectOpen] = useState(false);
   const [approveOpen, setApproveOpen] = useState(false);
+  const [remote, setRemote] = useState<FilmmakerApplication[]>([]);
+
+  const reload = () => listRemoteApplications().then(setRemote);
+  useEffect(() => {
+    reload();
+  }, []);
 
   if (!ready || !actor) return <AdminSkeleton />;
 
-  // Admins review submitted work; drafts are the applicant's own.
-  const all = mergeApplications(seed, state).filter((a) => a.status !== "draft");
+  // Admins review submitted work; drafts are the applicant's own. Remote (Supabase) applications come first.
+  const all = [...remote, ...mergeApplications(seed, state)].filter((a) => a.status !== "draft");
   const rows = all
     .filter((a) => (status === "all" ? true : a.status === status))
     .filter((a) => !q.trim() || `${a.details.fullName} ${a.details.country} ${a.details.primaryDiscipline}`.toLowerCase().includes(q.trim().toLowerCase()))
@@ -151,7 +158,19 @@ export function ApplicationsAdmin({ seed }: { seed: FilmmakerApplication[] }) {
             title={`Approve ${d?.fullName}?`}
             description="This verifies them as a filmmaker and creates their profile. The profile stays out of the Filmmakers directory until you list it."
             confirmLabel="Approve application"
-            onConfirm={() => { actions.approve(actor, open); toast.success(`${d?.fullName} verified. Profile created, not yet listed.`); }}
+            onConfirm={async () => {
+              try {
+                if (isRemoteApplication(open.id)) {
+                  await approveRemoteApplication(open.id);
+                  await reload();
+                } else {
+                  actions.approve(actor, open);
+                }
+                toast.success(`${d?.fullName} verified. Profile created, not yet listed.`);
+              } catch (err) {
+                toast.error(err instanceof Error ? err.message : "Couldn't approve this application.");
+              }
+            }}
           />
           <ReasonDialog
             open={rejectOpen}
@@ -161,7 +180,19 @@ export function ApplicationsAdmin({ seed }: { seed: FilmmakerApplication[] }) {
             label="Reason for the applicant"
             confirmLabel="Reject application"
             destructive
-            onConfirm={(reason) => { actions.reject(actor, open, reason); toast.success("Application rejected. The applicant can see your reason."); }}
+            onConfirm={async (reason) => {
+              try {
+                if (isRemoteApplication(open.id)) {
+                  await declineRemoteApplication(open.id, reason);
+                  await reload();
+                } else {
+                  actions.reject(actor, open, reason);
+                }
+                toast.success("Application rejected. The applicant can see your reason.");
+              } catch (err) {
+                toast.error(err instanceof Error ? err.message : "Couldn't decline this application.");
+              }
+            }}
           />
         </>
       )}
