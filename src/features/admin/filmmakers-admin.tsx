@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,10 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
 import type { Filmmaker, FilmmakerApplication, FilmmakerProfileFields, ProfileRevision } from "@/data/types";
 import { useFilmmakers } from "@/features/filmmakers/use-public-filmmakers";
+import { isRemoteFilmmaker, listRemoteFilmmakers, setRemoteListed, setRemoteVerified } from "@/features/filmmakers/remote-filmmakers";
+import { buildFilmmakers } from "@/features/filmmakers/filmmaker-overlay";
+import { useFilmmakerAdminState } from "@/features/admin/admin-stores";
+import { supabaseConfigured } from "@/lib/supabase/client";
 import { mergeRevisions, revisionsFor, useRevisionsState } from "@/features/filmmakers/revisions-store";
 import { filmmakers as actions } from "./admin-actions";
 import { DetailRows, DetailSection, DetailTimeline, AdminPageHeader, AdminSkeleton, AdminTable, DetailSheet, FilterBar, FilterSelect, ReasonDialog, SearchBox, Td, Th, fmt, fmtTime, useAdminReady } from "./ui";
@@ -86,7 +90,17 @@ function Compare({ current, proposed }: { current: FilmmakerProfileFields; propo
 
 export function FilmmakersAdmin({ seed, seedApplications }: { seed: Filmmaker[]; seedApplications: FilmmakerApplication[] }) {
   const { ready, actor } = useAdminReady();
-  const { all } = useFilmmakers(seed, seedApplications);
+  const local = useFilmmakers(seed, seedApplications);
+  const adminState = useFilmmakerAdminState();
+  const [remote, setRemote] = useState<Filmmaker[]>([]);
+  const reloadRemote = () => listRemoteFilmmakers().then(setRemote);
+  useEffect(() => {
+    reloadRemote();
+  }, []);
+  // Once Supabase is connected, real profiles come from there; the built-in list stays for reference.
+  const all = supabaseConfigured
+    ? [...remote, ...buildFilmmakers({ seed, applications: [], revisions: [], patches: adminState.patches })]
+    : local.all;
   const revState = useRevisionsState();
   const [q, setQ] = useState("");
   const [pub, setPub] = useState("all");
@@ -204,13 +218,26 @@ export function FilmmakersAdmin({ seed, seedApplications }: { seed: Filmmaker[];
         ] : undefined}
         footer={open ? (
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline" onClick={() => { actions.setVerification(actor, open, open.verificationStatus !== "verified"); toast.success(open.verificationStatus === "verified" ? "Verification removed, and removed from the directory" : "Verified as a filmmaker"); }}>
+            <Button variant="outline" onClick={async () => {
+              const verify = open.verificationStatus !== "verified";
+              try {
+                if (isRemoteFilmmaker(open.id)) { await setRemoteVerified(open.id, verify); await reloadRemote(); }
+                else actions.setVerification(actor, open, verify);
+                toast.success(verify ? "Verified as a filmmaker" : "Verification removed, and removed from the directory");
+              } catch (err) { toast.error(err instanceof Error ? err.message : "Couldn't update verification."); }
+            }}>
               {open.verificationStatus === "verified" ? "Remove verification" : "Verify filmmaker"}
             </Button>
             {open.publicationStatus === "published" ? (
               <Button variant="outline" onClick={() => setUnpublishOpen(true)}>Remove from directory</Button>
             ) : (
-              <Button disabled={open.verificationStatus !== "verified"} onClick={() => { actions.setPublication(actor, open, "published"); toast.success(`${open.name} is listed in the directory`); }}>List in directory</Button>
+              <Button disabled={open.verificationStatus !== "verified"} onClick={async () => {
+                try {
+                  if (isRemoteFilmmaker(open.id)) { await setRemoteListed(open.id, true); await reloadRemote(); }
+                  else actions.setPublication(actor, open, "published");
+                  toast.success(`${open.name} is listed in the directory`);
+                } catch (err) { toast.error(err instanceof Error ? err.message : "Couldn't list this profile."); }
+              }}>List in directory</Button>
             )}
             {open.verificationStatus !== "verified" && (
               <p className="w-full text-xs text-muted-foreground">Verify this filmmaker before listing them in the directory.</p>
@@ -271,7 +298,13 @@ export function FilmmakersAdmin({ seed, seedApplications }: { seed: Filmmaker[];
           description="Their profile disappears from the directory and their page. You can publish it again at any time."
           confirmLabel="Unpublish"
           destructive
-          onConfirm={() => { actions.setPublication(actor, open, "unpublished"); toast.success(`${open.name} unpublished`); }}
+          onConfirm={async () => {
+            try {
+              if (isRemoteFilmmaker(open.id)) { await setRemoteListed(open.id, false); await reloadRemote(); }
+              else actions.setPublication(actor, open, "unpublished");
+              toast.success(`${open.name} removed from the directory`);
+            } catch (err) { toast.error(err instanceof Error ? err.message : "Couldn't remove this profile."); }
+          }}
         />
       )}
     </div>
