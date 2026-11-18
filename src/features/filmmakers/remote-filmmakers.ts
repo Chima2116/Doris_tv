@@ -72,3 +72,32 @@ export async function setRemoteListed(remoteId: string, listed: boolean): Promis
   });
   if (error) throw new Error(error.message);
 }
+
+/** The signed-in person's own filmmaker profile, including one that isn't listed yet. */
+export async function getMyFilmmakerProfile(): Promise<Filmmaker | null> {
+  const supabase = await sessionReady();
+  if (!supabase) return null;
+  const { data: sessionData } = await supabase.auth.getSession();
+  const uid = sessionData.session?.user.id;
+  if (!uid) return null;
+  const { data } = await supabase.from("filmmaker_profiles").select("*").eq("owner_id", uid).maybeSingle<Row>();
+  if (!data) return null;
+  return {
+    id: data.id,
+    memberId: data.owner_id,
+    slug: data.slug,
+    name: data.name,
+    portraitUrl: data.portrait_url ?? "",
+    portraitAlt: data.name,
+    country: data.country,
+    location: data.location ?? undefined,
+    primaryDiscipline: data.primary_discipline,
+    yearsActive: data.years_active ?? undefined,
+    biography: data.biography,
+    creativePhilosophy: data.creative_philosophy ?? undefined,
+    credits: data.credits ?? [],
+    links: data.links ?? [],
+    verificationStatus: "verified",
+    publicationStatus: data.status === "published" ? "published" : "unpublished",
+  };
+}

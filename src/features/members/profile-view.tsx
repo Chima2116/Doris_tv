@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, Clock, Lock, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,6 +12,7 @@ import { TimeAgo } from "@/components/shared/time-ago";
 import { formatDate } from "@/lib/format";
 import type { Discussion, Filmmaker, JournalArticle, Member, ProfileSection, Reply } from "@/data/types";
 import { useSession } from "@/features/auth/session-provider";
+import { getMyFilmmakerProfile } from "@/features/filmmakers/remote-filmmakers";
 import { mergeDiscussions, mergeReplies } from "@/features/community/community-data";
 import { useCommunityState } from "@/features/community/community-store";
 import { FilmmakerCallout } from "./filmmaker-callout";
@@ -53,6 +54,11 @@ export function ProfileView({
   filmmakers: Filmmaker[];
 }) {
   const { user } = useSession();
+  const viewingSelf = !!user && user.id === seed.id;
+  const [ownFilmmaker, setOwnFilmmaker] = useState<Filmmaker | null>(null);
+  useEffect(() => {
+    if (viewingSelf) getMyFilmmakerProfile().then(setOwnFilmmaker);
+  }, [viewingSelf]);
   const [bioExpanded, setBioExpanded] = useState(false);
   const { patches } = useMemberStore();
   const community = useCommunityState();
@@ -84,8 +90,10 @@ export function ProfileView({
     return mine.sort((a, b) => b.at.localeCompare(a.at)).slice(0, 10);
   })();
 
-  const filmmaker = member.filmmakerId ? filmmakers.find((f) => f.id === member.filmmakerId) : undefined;
-  const isFilmmaker = !!filmmaker || member.roles.includes("filmmaker");
+  // Your own profile reads your roles and any unlisted profile from your signed-in session.
+  const ownRoles = viewingSelf && user ? user.roles : member.roles;
+  const filmmaker = ownFilmmaker ?? (member.filmmakerId ? filmmakers.find((f) => f.id === member.filmmakerId) : undefined);
+  const isFilmmaker = !!filmmaker || ownRoles.includes("filmmaker");
   const approved = !!filmmaker && filmmaker.verificationStatus === "verified" && filmmaker.publicationStatus === "published";
   const based = filmmaker?.location ? `${filmmaker.location}, ${filmmaker.country}` : filmmaker?.country;
   // The filmmaker portrait is the one profile photo, edited only in the filmmaker profile.
