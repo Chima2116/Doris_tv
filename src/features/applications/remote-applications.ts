@@ -75,3 +75,17 @@ export async function declineRemoteApplication(remoteId: string, reason: string)
   });
   if (error) throw new Error(error.message);
 }
+
+/** The signed-in person's most recent application status from Supabase, or null if there is none. */
+export async function getMyLatestApplicationStatus(): Promise<ApplicationStatus | null> {
+  const supabase = getSupabase();
+  if (!supabase) return null;
+  const { data } = await supabase
+    .from("filmmaker_applications")
+    .select("status")
+    .neq("status", "draft")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data ? toStatus((data as { status: Row["status"] }).status) : null;
+}

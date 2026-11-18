@@ -1,28 +1,37 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useSession } from "@/features/auth/session-provider";
 import { applicationsFor, mergeApplications, useApplicationsState } from "@/features/applications/applications-store";
+import { getMyLatestApplicationStatus } from "@/features/applications/remote-applications";
 import { APPLICATIONS } from "@/data/mock/applications";
+import type { ApplicationStatus } from "@/data/types";
 import { canApplyAsFilmmaker, isVerifiedFilmmaker } from "@/lib/permissions";
 import { cn } from "@/lib/utils";
 
 /**
- * The one place a member is invited to become a filmmaker, on their own profile. One quiet row:
- * a label and a sentence on the left, one action on the right. It reads the application state, so
- * the wording is "Apply", "Apply again" or "Under review" as appropriate.
+ * The one place a member is invited to become a filmmaker, on their own profile. The status comes
+ * from Supabase, so it matches what the applicant and the admin see, with the browser copy as a fallback.
  */
 export function FilmmakerCallout({ className }: { className?: string }) {
   const { user } = useSession();
   const appState = useApplicationsState();
+  const [remoteStatus, setRemoteStatus] = useState<ApplicationStatus | null>(null);
+  const userId = user?.id;
+
+  useEffect(() => {
+    if (!userId) return;
+    getMyLatestApplicationStatus().then(setRemoteStatus);
+  }, [userId]);
 
   if (!user || isVerifiedFilmmaker(user) || !canApplyAsFilmmaker(user)) return null;
 
   const mine = applicationsFor(user.id, mergeApplications(APPLICATIONS, appState));
-  const latest = mine[0];
-  const underReview = latest && (latest.status === "submitted" || latest.status === "under_review");
-  const rejected = latest?.status === "rejected";
+  const status = remoteStatus ?? mine[0]?.status;
+  const underReview = status === "submitted" || status === "under_review";
+  const rejected = status === "rejected";
 
   const copy = underReview
     ? { label: "Filmmaker profile", title: "Your application is under review", body: "We'll let you know when the team has decided.", action: "View status", href: "/filmmaker-application/status" }
