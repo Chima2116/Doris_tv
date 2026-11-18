@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSession } from "@/features/auth/session-provider";
 import { initials } from "@/lib/utils";
-import { canAccessAdmin, isAdmin, isVerifiedFilmmaker } from "@/lib/permissions";
+import { canAccessAdmin, isAdmin } from "@/lib/permissions";
 
 /** Session-aware header actions: guest CTAs or the member menu. */
 export function UserMenu() {
@@ -58,28 +58,8 @@ export function UserMenu() {
           <Link href={`/profile/${user.username}`}>Your profile</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/saved">Saved articles</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/following">Following</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
           <Link href="/settings">Settings</Link>
         </DropdownMenuItem>
-        {isVerifiedFilmmaker(user) ? (
-          <>
-            <DropdownMenuItem asChild>
-              <Link href="/filmmaker-dashboard/profile">Manage filmmaker profile</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/write">Write for the Journal</Link>
-            </DropdownMenuItem>
-          </>
-        ) : (
-          <DropdownMenuItem asChild>
-            <Link href="/filmmaker-application">Apply as filmmaker</Link>
-          </DropdownMenuItem>
-        )}
         {canAccessAdmin(user) && (
           <DropdownMenuItem asChild>
             <Link href={isAdmin(user) ? "/admin" : "/admin/moderation"}>

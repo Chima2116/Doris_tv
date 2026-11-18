@@ -26,8 +26,9 @@ export const canParticipateInCommunity = (u: CurrentUser) =>
 export const canUseMemberActions = canParticipateInCommunity;
 
 /** Any signed-in, verified member can apply. Rejected applicants may apply again. */
+// Staff accounts (moderators and admins) don’t apply for filmmaker profiles.
 export const canApplyAsFilmmaker = (u: CurrentUser) =>
-  isActive(u) && u.emailVerified;
+  isActive(u) && u.emailVerified && !hasRole(u, "moderator") && !hasRole(u, "admin");
 
 export const isVerifiedFilmmaker = (u: CurrentUser) => hasRole(u, "filmmaker");
 export const canModerate = (u: CurrentUser) => hasRole(u, "moderator") || hasRole(u, "admin");
