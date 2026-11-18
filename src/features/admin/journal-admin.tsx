@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { useAdminReady, AdminPageHeader, AdminSkeleton, AdminTable, FilterBar, FilterSelect, ReasonDialog, Td, Th, fmt } from "./ui";
+import { useAdminReady, AdminPageHeader, AdminSkeleton, AdminTable, DetailSection, DetailSheet, FilterBar, FilterSelect, ReasonDialog, Td, Th, fmt } from "./ui";
+import { ArticleBody } from "@/features/journal/article-body";
+import { docToBlocks, type Doc } from "@/features/journal/story-doc";
 import { getSupabase, sessionReady } from "@/lib/supabase/client";
 
 const storySlug = (s: Story) => `${s.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60)}-${s.id.slice(0, 6)}`;
@@ -19,6 +21,10 @@ type Story = {
   submittedAt: string;
   authorName: string;
   reviewNote?: string;
+  excerpt?: string;
+  videoUrl?: string;
+  coverCredit?: string;
+  body: Doc;
 };
 
 const STATUS_OPTIONS = [
@@ -35,15 +41,16 @@ export function JournalAdmin() {
   const [status, setStatus] = useState("pending");
   const [target, setTarget] = useState<Story | null>(null);
   const [action, setAction] = useState<"approve" | "decline" | null>(null);
+  const [preview, setPreview] = useState<Story | null>(null);
 
   async function loadStories(): Promise<Story[]> {
     const supabase = await sessionReady();
     if (!supabase) return [];
     const { data } = await supabase
       .from("journal_stories")
-      .select("id, title, type, status, submitted_at, review_note, author_id")
+      .select("id, title, type, status, submitted_at, review_note, author_id, excerpt, video_url, cover_credit, body")
       .order("submitted_at", { ascending: false });
-    const rows = (data ?? []) as { id: string; title: string; type: string; status: Story["status"]; submitted_at: string; review_note: string | null; author_id: string }[];
+    const rows = (data ?? []) as { id: string; title: string; type: string; status: Story["status"]; submitted_at: string; review_note: string | null; author_id: string; excerpt: string | null; video_url: string | null; cover_credit: string | null; body: Doc }[];
     const authorIds = [...new Set(rows.map((r) => r.author_id))];
     const names = new Map<string, string>();
     if (authorIds.length) {
@@ -58,6 +65,10 @@ export function JournalAdmin() {
       submittedAt: r.submitted_at,
       authorName: names.get(r.author_id) ?? "Filmmaker",
       reviewNote: r.review_note ?? undefined,
+      excerpt: r.excerpt ?? undefined,
+      videoUrl: r.video_url ?? undefined,
+      coverCredit: r.cover_credit ?? undefined,
+      body: r.body,
     }));
   }
 
@@ -110,20 +121,51 @@ export function JournalAdmin() {
                 <Td>{fmt(s.submittedAt)}</Td>
                 <Td><StatusBadge status={s.status === "declined" ? "rejected" : s.status === "approved" ? "approved" : "pending"} /></Td>
                 <Td className="text-right">
-                  {s.status === "pending" ? (
-                    <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="sm" onClick={() => { setTarget(s); setAction("decline"); }}>Decline</Button>
-                      <Button size="sm" onClick={() => { setTarget(s); setAction("approve"); }}>Approve</Button>
-                    </div>
-                  ) : (
-                    <span className="text-sm text-muted-foreground">{s.reviewNote ?? ""}</span>
-                  )}
+                  <div className="flex justify-end gap-2">
+                    <Button variant="ghost" size="sm" onClick={() => setPreview(s)}>Review</Button>
+                    {s.status === "pending" && (
+                      <>
+                        <Button variant="outline" size="sm" onClick={() => { setTarget(s); setAction("decline"); }}>Decline</Button>
+                        <Button size="sm" onClick={() => { setTarget(s); setAction("approve"); }}>Approve</Button>
+                      </>
+                    )}
+                  </div>
                 </Td>
               </tr>
             ))}
           </tbody>
         </AdminTable>
       )}
+
+      <DetailSheet
+        open={preview !== null}
+        onOpenChange={(v) => { if (!v) setPreview(null); }}
+        kicker="Story preview"
+        title={preview?.title ?? ""}
+        subtitle={preview ? `${preview.type} · by ${preview.authorName}` : undefined}
+        description={preview?.excerpt}
+        facts={preview ? [{ label: "Sent", value: fmt(preview.submittedAt) }, { label: "Status", value: preview.status === "pending" ? "Pending review" : preview.status === "approved" ? "Approved" : "Declined" }] : undefined}
+        footer={preview && preview.status === "pending" ? (
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" onClick={() => { setTarget(preview); setPreview(null); setAction("decline"); }}>Decline</Button>
+            <Button onClick={() => { setTarget(preview); setPreview(null); setAction("approve"); }}>Approve</Button>
+          </div>
+        ) : undefined}
+      >
+        {preview && (
+          <>
+            {preview.videoUrl && (
+              <DetailSection title="Video link"><p className="break-all text-sm text-reading/80">{preview.videoUrl}</p></DetailSection>
+            )}
+            {preview.coverCredit && (
+              <DetailSection title="Photo credit"><p className="text-sm text-reading/80">{preview.coverCredit}</p></DetailSection>
+            )}
+            <DetailSection title="Story">
+              <ArticleBody blocks={docToBlocks(preview.body)} />
+            </DetailSection>
+          </>
+        )}
+      </DetailSheet>
 
       <ConfirmDialog
         open={action === "approve"}
