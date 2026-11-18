@@ -2,19 +2,21 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { useHydrated } from "@/lib/use-hydrated";
+import { ArrowRight } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
-import { Eyebrow } from "@/components/shared/eyebrow";
 import { TimeAgo } from "@/components/shared/time-ago";
+import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { useSession } from "@/features/auth/session-provider";
+import { useHydrated } from "@/lib/use-hydrated";
 import { isVerifiedFilmmaker } from "@/lib/permissions";
 import { deleteDraft, loadDrafts, type StoryDraft } from "./drafts";
 
-/** A filmmaker's stories: unfinished drafts first, then everything they have sent and where it stands. */
+const sectionLabel = "text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground";
+
+/** A filmmaker's stories: the header, unfinished drafts, then everything they have sent. */
 export function WriteHub() {
   const { user } = useSession();
-  // Drafts live in this browser, so they are read only after the page has loaded in the browser.
   const hydrated = useHydrated();
   const [version, setVersion] = useState(0);
   const drafts: StoryDraft[] = useMemo(() => (hydrated ? loadDrafts() : []), [hydrated, version]);
@@ -30,40 +32,43 @@ export function WriteHub() {
   }
 
   // Sent stories are not stored yet, so this list stays empty until sign-in and the Studio connection exist.
-  const sent: { id: string; title: string; type: string; status: string }[] = [];
+  const sent: { id: string; title: string; type: string; status: "submitted" | "under_review" | "approved" | "rejected" }[] = [];
 
   return (
-    <section className="py-12 sm:py-16">
-      <div className="flex flex-wrap items-end justify-between gap-6">
+    <section className="py-14 sm:py-20">
+      <header className="flex flex-col gap-6 border-b border-border pb-10 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <Eyebrow>Your stories</Eyebrow>
-          <h1 className="type-display-lg mt-3">My journals</h1>
-          <p className="mt-3 text-reading/65">Your drafts, and everything you have sent to the Journal.</p>
+          <p className={sectionLabel}>Your stories</p>
+          <h1 className="mt-3 font-display text-[clamp(2.25rem,5vw,3.75rem)] font-black leading-[1.02] tracking-[-0.02em]">My journals</h1>
+          <p className="mt-3 max-w-xl text-muted-foreground">Unfinished drafts, and every story you have sent to the Journal.</p>
         </div>
-        <Button asChild variant="gold" size="lg">
+        <Button asChild size="lg" className="shrink-0">
           <Link href="/write/new">Write a new journal</Link>
         </Button>
-      </div>
+      </header>
 
       {drafts.length > 0 && (
-        <div className="mt-12">
-          <h2 className="type-eyebrow text-gold">Drafts</h2>
-          <ul className="mt-4 divide-y divide-white/15 border-y border-white/15">
+        <section aria-labelledby="drafts-heading" className="pt-10">
+          <div className="flex items-baseline justify-between">
+            <h2 id="drafts-heading" className={sectionLabel}>Drafts</h2>
+            <span className="text-sm text-muted-foreground">{drafts.length}</span>
+          </div>
+          <ul className="mt-4 divide-y divide-border border-y border-border">
             {drafts.map((d) => (
-              <li key={d.id} className="flex flex-wrap items-center justify-between gap-4 py-5">
+              <li key={d.id} className="grid gap-4 py-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-8">
                 <div className="min-w-0">
-                  <p className="font-semibold text-reading">{d.title || "Untitled draft"}</p>
-                  <p className="mt-1 text-sm text-reading/60">
-                    {d.type || "No type yet"} · saved <TimeAgo iso={d.updatedAt} />
+                  <p className="font-display text-lg font-bold">{d.title || "Untitled draft"}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {d.type || "No type yet"} · Saved <TimeAgo iso={d.updatedAt} />
                   </p>
                 </div>
-                <div className="flex gap-4 text-sm">
-                  <Link href={`/write/new?draft=${d.id}`} className="font-semibold text-gold underline underline-offset-4">
-                    Continue
+                <div className="flex items-center gap-6 text-sm">
+                  <Link href={`/write/new?draft=${d.id}`} className="group inline-flex items-center gap-1.5 font-semibold text-gold underline-offset-4 hover:underline">
+                    Continue <ArrowRight className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
                   </Link>
                   <button
                     type="button"
-                    className="text-reading/60 underline underline-offset-4 hover:text-reading"
+                    className="text-muted-foreground underline-offset-4 transition-colors duration-200 hover:text-reading hover:underline"
                     onClick={() => {
                       if (!window.confirm("Delete this draft? This can't be undone.")) return;
                       deleteDraft(d.id);
@@ -76,30 +81,35 @@ export function WriteHub() {
               </li>
             ))}
           </ul>
-        </div>
+        </section>
       )}
 
-      <div className="mt-12">
-        <h2 className="type-eyebrow text-gold">Sent to the Journal</h2>
+      <section aria-labelledby="sent-heading" className="pt-12">
+        <div className="flex items-baseline justify-between">
+          <h2 id="sent-heading" className={sectionLabel}>Sent to the Journal</h2>
+          <span className="text-sm text-muted-foreground">{sent.length}</span>
+        </div>
         {sent.length === 0 ? (
-          <div className="mt-4 border border-white/15 bg-surface p-8">
-            <p className="text-lg font-semibold text-reading">You have not sent a story yet.</p>
-            <p className="mt-2 max-w-xl text-reading/65">
-              Start with an interview, an essay, production notes, a retrospective or a video. Our editors review each story before it goes live.
+          <div className="mt-6 border border-dashed border-border px-6 py-12 text-center sm:px-12">
+            <p className="font-display text-xl font-bold">No stories sent yet</p>
+            <p className="mx-auto mt-3 max-w-md text-muted-foreground">
+              Start with an interview, an essay, production notes or a retrospective. Our editors review each story before it goes live.
             </p>
           </div>
         ) : (
-          <ul className="mt-4 divide-y divide-white/15 border-y border-white/15">
+          <ul className="mt-4 divide-y divide-border border-y border-border">
             {sent.map((s) => (
-              <li key={s.id} className="grid gap-2 py-5 sm:grid-cols-[1fr_auto_auto] sm:items-center sm:gap-8">
-                <span className="font-semibold text-reading">{s.title}</span>
-                <span className="text-sm text-reading/60">{s.type}</span>
-                <span className="text-sm font-semibold text-gold">{s.status}</span>
+              <li key={s.id} className="flex flex-wrap items-center justify-between gap-4 py-6">
+                <div className="min-w-0">
+                  <p className="font-display text-lg font-bold">{s.title}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{s.type}</p>
+                </div>
+                <StatusBadge status={s.status} />
               </li>
             ))}
           </ul>
         )}
-      </div>
+      </section>
     </section>
   );
 }
