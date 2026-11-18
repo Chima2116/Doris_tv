@@ -49,6 +49,7 @@ const toolbarButton = "inline-flex size-9 items-center justify-center border bor
 export function StoryEditor({ value, onChange, invalid }: { value: string; onChange: (value: string) => void; invalid?: boolean }) {
   const [videoOpen, setVideoOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoError, setVideoError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -60,8 +61,34 @@ export function StoryEditor({ value, onChange, invalid }: { value: string; onCha
     content: parseValue(value),
     editorProps: {
       attributes: {
-        class: cn("min-h-[18rem] px-4 py-3 text-[1.0625rem] leading-[1.8] text-reading focus:outline-none", invalid && "bg-danger/5"),
+        class: cn("story-editor-content min-h-[18rem] px-4 py-3 text-[1.0625rem] leading-[1.8] text-reading focus:outline-none", invalid && "bg-danger/5"),
         "aria-label": "Your story",
+      },
+      // Paste an image straight into the text, as well as using the Image button.
+      handlePaste: (view, event) => {
+        const files = Array.from(event.clipboardData?.files ?? []).filter((f) => f.type.startsWith("image/"));
+        if (files.length === 0) return false;
+        event.preventDefault();
+        files.forEach((file) =>
+          readImage(file, (src) => {
+            const node = view.state.schema.nodes.image?.create({ src, alt: file.name });
+            if (node) view.dispatch(view.state.tr.replaceSelectionWith(node));
+          }),
+        );
+        return true;
+      },
+      // Drag an image into the text.
+      handleDrop: (view, event) => {
+        const files = Array.from(event.dataTransfer?.files ?? []).filter((f) => f.type.startsWith("image/"));
+        if (files.length === 0) return false;
+        event.preventDefault();
+        files.forEach((file) =>
+          readImage(file, (src) => {
+            const node = view.state.schema.nodes.image?.create({ src, alt: file.name });
+            if (node) view.dispatch(view.state.tr.replaceSelectionWith(node));
+          }),
+        );
+        return true;
       },
     },
     onUpdate: ({ editor: e }) => {
@@ -84,15 +111,27 @@ export function StoryEditor({ value, onChange, invalid }: { value: string; onCha
     setVideoOpen(false);
   };
 
+  /** Reads an image file and passes it on. Unsupported or oversized files are explained, not ignored. */
+  const readImage = (file: File, onSrc: (src: string) => void) => {
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) {
+      setImageError("Use a JPG, PNG or WebP image.");
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      setImageError("Keep the image under 3 MB.");
+      return;
+    }
+    setImageError(null);
+    const reader = new FileReader();
+    reader.onload = () => onSrc(String(reader.result));
+    reader.readAsDataURL(file);
+  };
+
   const addImage = (file: File | undefined) => {
     if (!file) return;
-    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return;
-    if (file.size > MAX_IMAGE_BYTES) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      editor.chain().focus().setImage({ src: String(reader.result), alt: file.name }).run();
-    };
-    reader.readAsDataURL(file);
+    readImage(file, (src) => {
+      editor.chain().focus().setImage({ src, alt: file.name }).run();
+    });
   };
 
   return (
@@ -167,6 +206,7 @@ export function StoryEditor({ value, onChange, invalid }: { value: string; onCha
 
       <div className={cn(expanded && "mx-auto w-full max-w-3xl flex-1")}>
         <EditorContent editor={editor} />
+        {imageError && <p role="alert" className="border-t border-white/15 px-4 py-2 text-sm text-[#ee8585]">{imageError}</p>}
       </div>
     </div>
   );
