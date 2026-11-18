@@ -94,7 +94,10 @@ export function ProfileView({
   const ownRoles = viewingSelf && user ? user.roles : member.roles;
   const filmmaker = ownFilmmaker ?? (member.filmmakerId ? filmmakers.find((f) => f.id === member.filmmakerId) : undefined);
   const isFilmmaker = !!filmmaker || ownRoles.includes("filmmaker");
-  const approved = !!filmmaker && filmmaker.verificationStatus === "verified" && filmmaker.publicationStatus === "published";
+  // Verification (the filmmaker role) and listing (the public directory) are separate statuses.
+  const isVerified = viewingSelf && user ? user.roles.includes("filmmaker") : filmmaker?.verificationStatus === "verified";
+  const isListed = filmmaker?.publicationStatus === "published";
+  const approved = !!filmmaker && isVerified && isListed;
   const based = filmmaker?.location ? `${filmmaker.location}, ${filmmaker.country}` : filmmaker?.country;
   // The filmmaker portrait is the one profile photo, edited only in the filmmaker profile.
   const photo = filmmaker?.portraitUrl;
@@ -180,13 +183,17 @@ export function ProfileView({
                 <h2 id="filmmaker-heading" className="font-display text-2xl font-black tracking-[-0.01em] sm:text-3xl">
                   Filmmaker profile
                 </h2>
-                {approved ? (
+                {isVerified && isListed ? (
                   <span className="inline-flex items-center gap-2 border border-gold/50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-gold">
-                    <CheckCircle2 className="size-3.5" aria-hidden="true" /> Approved
+                    <CheckCircle2 className="size-3.5" aria-hidden="true" /> Listed in directory
+                  </span>
+                ) : isVerified ? (
+                  <span className="inline-flex items-center gap-2 border border-border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                    <CheckCircle2 className="size-3.5" aria-hidden="true" /> Verified, not listed
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-2 border border-border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-                    <Clock className="size-3.5" aria-hidden="true" /> Awaiting approval
+                    <Clock className="size-3.5" aria-hidden="true" /> Verification removed
                   </span>
                 )}
               </div>
