@@ -48,7 +48,7 @@ export function filmmakerFromApplication(app: FilmmakerApplication): Filmmaker {
     credits: d.credits,
     links: d.links,
     verificationStatus: "verified",
-    publicationStatus: "published",
+    publicationStatus: "unpublished",
     memberId: app.applicantId,
   };
 }

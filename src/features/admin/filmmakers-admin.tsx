@@ -114,7 +114,7 @@ export function FilmmakersAdmin({ seed, seedApplications }: { seed: Filmmaker[];
       <AdminPageHeader title="Filmmakers" description="Manage published profiles and review every change filmmakers propose. Nothing a filmmaker edits goes public until you approve it." />
       <Tabs defaultValue="queue">
         <TabsList>
-          <TabsTrigger value="queue">Revision queue ({pendingRevs.length})</TabsTrigger>
+          <TabsTrigger value="queue">Profile edits ({pendingRevs.length})</TabsTrigger>
           <TabsTrigger value="all">All filmmakers ({all.length})</TabsTrigger>
         </TabsList>
 

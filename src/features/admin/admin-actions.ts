@@ -23,7 +23,7 @@ export const applications = {
   },
   approve(actor: Actor, app: FilmmakerApplication, note?: string) {
     applicationsStore.setStatus(app, "approved", { note });
-    auditStore.log(actor, "application.approved", `${app.details.fullName}: approved (filmmaker profile created)`);
+    auditStore.log(actor, "application.approved", `${app.details.fullName}: approved and verified (profile created, not yet listed)`);
   },
   reject(actor: Actor, app: FilmmakerApplication, reason: string) {
     applicationsStore.setStatus(app, "rejected", { reason });

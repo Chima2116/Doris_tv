@@ -42,7 +42,7 @@ export function ApplicationsAdmin({ seed }: { seed: FilmmakerApplication[] }) {
 
   return (
     <div>
-      <AdminPageHeader title="Filmmaker applications" description="Review applications for a verified filmmaker profile. Approving creates the profile; rejecting requires a reason the applicant will see." />
+      <AdminPageHeader title="Filmmaker applications" description="Review applications to become a verified filmmaker. Approving verifies them and creates their profile, which stays out of the directory until you list it. Rejecting requires a reason the applicant will see." />
       <FilterBar>
         <SearchBox value={q} onChange={setQ} label="Search applicants" placeholder="Search name, country, discipline" />
         <FilterSelect label="Status" value={status} onChange={setStatus} options={STATUS_OPTIONS} />
@@ -149,9 +149,9 @@ export function ApplicationsAdmin({ seed }: { seed: FilmmakerApplication[] }) {
             open={approveOpen}
             onOpenChange={setApproveOpen}
             title={`Approve ${d?.fullName}?`}
-            description="This creates their public filmmaker profile and grants the filmmaker role. They'll be able to manage their profile (changes still need approval)."
+            description="This verifies them as a filmmaker and creates their profile. The profile stays out of the Filmmakers directory until you list it."
             confirmLabel="Approve application"
-            onConfirm={() => { actions.approve(actor, open); toast.success(`${d?.fullName} approved. Filmmaker profile created.`); }}
+            onConfirm={() => { actions.approve(actor, open); toast.success(`${d?.fullName} verified. Profile created, not yet listed.`); }}
           />
           <ReasonDialog
             open={rejectOpen}
