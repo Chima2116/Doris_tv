@@ -108,7 +108,8 @@ export function FilmmakersAdmin({ seed, seedApplications }: { seed: Filmmaker[];
   const [revId, setRevId] = useState<string | null>(null);
   const [approveOpen, setApproveOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
-  const [unpublishOpen, setUnpublishOpen] = useState(false);
+  type FilmmakerAction = "verify" | "unverify" | "list" | "unlist";
+  const [confirm, setConfirm] = useState<FilmmakerAction | null>(null);
 
   if (!ready || !actor) return <AdminSkeleton />;
 
@@ -218,26 +219,13 @@ export function FilmmakersAdmin({ seed, seedApplications }: { seed: Filmmaker[];
         ] : undefined}
         footer={open ? (
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline" onClick={async () => {
-              const verify = open.verificationStatus !== "verified";
-              try {
-                if (isRemoteFilmmaker(open.id)) { await setRemoteVerified(open.id, verify); await reloadRemote(); }
-                else actions.setVerification(actor, open, verify);
-                toast.success(verify ? "Verified as a filmmaker" : "Verification removed, and removed from the directory");
-              } catch (err) { toast.error(err instanceof Error ? err.message : "Couldn't update verification."); }
-            }}>
+            <Button variant="outline" onClick={() => setConfirm(open.verificationStatus === "verified" ? "unverify" : "verify")}>
               {open.verificationStatus === "verified" ? "Remove verification" : "Verify filmmaker"}
             </Button>
             {open.publicationStatus === "published" ? (
-              <Button variant="outline" onClick={() => setUnpublishOpen(true)}>Remove from directory</Button>
+              <Button variant="outline" onClick={() => setConfirm("unlist")}>Remove from directory</Button>
             ) : (
-              <Button disabled={open.verificationStatus !== "verified"} onClick={async () => {
-                try {
-                  if (isRemoteFilmmaker(open.id)) { await setRemoteListed(open.id, true); await reloadRemote(); }
-                  else actions.setPublication(actor, open, "published");
-                  toast.success(`${open.name} is listed in the directory`);
-                } catch (err) { toast.error(err instanceof Error ? err.message : "Couldn't list this profile."); }
-              }}>List in directory</Button>
+              <Button disabled={open.verificationStatus !== "verified"} onClick={() => setConfirm("list")}>List in directory</Button>
             )}
             {open.verificationStatus !== "verified" && (
               <p className="w-full text-xs text-muted-foreground">Verify this filmmaker before listing them in the directory.</p>
@@ -292,18 +280,28 @@ export function FilmmakersAdmin({ seed, seedApplications }: { seed: Filmmaker[];
       )}
       {open && (
         <ConfirmDialog
-          open={unpublishOpen}
-          onOpenChange={setUnpublishOpen}
-          title={`Unpublish ${open.name}?`}
-          description="Their profile disappears from the directory and their page. You can publish it again at any time."
-          confirmLabel="Unpublish"
-          destructive
+          open={confirm !== null}
+          onOpenChange={(v) => { if (!v) setConfirm(null); }}
+          title={confirm === "verify" ? `Verify ${open.name} as a filmmaker?` : confirm === "unverify" ? `Remove verification from ${open.name}?` : confirm === "list" ? `List ${open.name} in the directory?` : `Remove ${open.name} from the directory?`}
+          description={confirm === "verify" ? "They get the filmmaker role, so they can write journals and manage their filmmaker profile. Their profile stays out of the directory until you list it." : confirm === "unverify" ? "They lose the filmmaker role, so they can no longer write journals or edit a filmmaker profile. Their profile is also removed from the directory. Their account stays active." : confirm === "list" ? "Their profile becomes visible to everyone on the Filmmakers page." : "Their profile disappears from the public Filmmakers page. They stay verified and can still edit their profile. You can list it again at any time."}
+          confirmLabel={confirm === "verify" ? "Verify" : confirm === "unverify" ? "Remove verification" : confirm === "list" ? "List in directory" : "Remove from directory"}
+          destructive={confirm === "unverify" || confirm === "unlist"}
           onConfirm={async () => {
+            const action = confirm;
+            if (!action) return;
             try {
-              if (isRemoteFilmmaker(open.id)) { await setRemoteListed(open.id, false); await reloadRemote(); }
-              else actions.setPublication(actor, open, "unpublished");
-              toast.success(`${open.name} removed from the directory`);
-            } catch (err) { toast.error(err instanceof Error ? err.message : "Couldn't remove this profile."); }
+              if (action === "verify" || action === "unverify") {
+                const verify = action === "verify";
+                if (isRemoteFilmmaker(open.id)) { await setRemoteVerified(open.id, verify); await reloadRemote(); }
+                else actions.setVerification(actor, open, verify);
+                toast.success(verify ? "Verified as a filmmaker" : "Verification removed, and removed from the directory");
+              } else {
+                const listed = action === "list";
+                if (isRemoteFilmmaker(open.id)) { await setRemoteListed(open.id, listed); await reloadRemote(); }
+                else actions.setPublication(actor, open, listed ? "published" : "unpublished");
+                toast.success(listed ? `${open.name} is listed in the directory` : `${open.name} removed from the directory`);
+              }
+            } catch (err) { toast.error(err instanceof Error ? err.message : "That didn't work. Please try again."); }
           }}
         />
       )}
