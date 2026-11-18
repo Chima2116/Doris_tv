@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -11,6 +11,8 @@ import { useSession } from "@/features/auth/session-provider";
 import { isVerifiedFilmmaker } from "@/lib/permissions";
 import { JOURNAL_TYPES } from "./journal-types";
 import { VIDEO_HOST_PATTERN } from "@/lib/video";
+import { StoryEditor } from "./story-editor";
+import { storyText, storyVideoLinksValid } from "./story-doc";
 import { submitStory } from "./submit-story";
 import { deleteDraft, loadDraft, newDraftId, saveDraft } from "./drafts";
 
@@ -20,7 +22,10 @@ const schema = z
     title: z.string().trim().min(5, "Give the story a title of at least 5 characters.").max(120),
     type: z.enum(JOURNAL_TYPES.map((t) => t.value) as [string, ...string[]], { message: "Choose a type." }),
     excerpt: z.string().trim().max(280, "Keep the summary under 280 characters.").optional(),
-    body: z.string().trim().min(200, "The story needs at least 200 characters."),
+    body: z
+      .string()
+      .refine((b) => storyText(b).length >= 200, "The story needs at least 200 characters.")
+      .refine((b) => storyVideoLinksValid(b), "Use a YouTube, Vimeo or Instagram link."),
     coverImage: z
       .custom<FileList | undefined>()
       .optional()
@@ -126,7 +131,7 @@ export function WriteStoryForm({ draftId }: { draftId?: string }) {
     setSubmittedTitle(values.title);
   };
 
-  const bodyLength = form.watch("body")?.trim().length ?? 0;
+  const bodyLength = storyText(form.watch("body") ?? "").length;
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-8">
@@ -177,9 +182,13 @@ export function WriteStoryForm({ draftId }: { draftId?: string }) {
       </div>
 
       <div>
-        <label htmlFor="body" className={label}>Your story</label>
-        <textarea id="body" rows={14} className={`${field} leading-relaxed`} {...form.register("body")} />
-        <p className="mt-1.5 text-sm text-reading/50">{bodyLength} characters. Separate paragraphs with a blank line.</p>
+        <p className={label}>Your story</p>
+        <div className="mt-2">
+          <Controller control={form.control} name="body" render={({ field: f }) => (
+            <StoryEditor value={f.value ?? ""} onChange={f.onChange} invalid={Boolean(form.formState.errors.body)} />
+          )} />
+        </div>
+        <p className="mt-1.5 text-sm text-reading/50">{bodyLength} characters. Use the toolbar for headings, quotes, images and video links.</p>
         {form.formState.errors.body && <p className={error}>{form.formState.errors.body.message}</p>}
       </div>
 
