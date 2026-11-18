@@ -6,8 +6,8 @@ type Variant = React.ComponentProps<typeof Badge>["variant"];
 const STATUS: Record<string, { label: string; variant: Variant }> = {
   // applications
   draft: { label: "Draft", variant: "outline" },
-  submitted: { label: "Submitted", variant: "outline" },
-  under_review: { label: "Under review", variant: "outline" },
+  submitted: { label: "Submitted", variant: "warning" },
+  under_review: { label: "Under review", variant: "gold" },
   approved: { label: "Approved", variant: "success" },
   rejected: { label: "Rejected", variant: "destructive" },
   // revisions
