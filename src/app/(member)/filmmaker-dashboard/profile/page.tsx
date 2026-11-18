@@ -18,6 +18,7 @@ export default async function FilmmakerDashboardPage() {
         <Eyebrow>Filmmaker dashboard</Eyebrow>
         <h1 className="type-display-lg mt-3">Your public profile</h1>
         <p className="mt-4 text-reading/65">Edit how you appear in the directory. Every change is reviewed by an administrator before it goes live.</p>
+        <p className="mt-6"><a href="/write" className="font-semibold text-gold underline underline-offset-4 hover:text-white">Write for the Journal &rarr;</a></p>
       </header>
       <ProfileEditor seedFilmmakers={filmmakers} seedApplications={applications} />
     </PageContainer>

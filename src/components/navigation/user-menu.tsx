@@ -17,7 +17,7 @@ import { canAccessAdmin, isAdmin, isVerifiedFilmmaker } from "@/lib/permissions"
 
 /** Session-aware header actions: guest CTAs or the member menu. */
 export function UserMenu() {
-  const { user, switchIdentity } = useSession();
+  const { user, signOut } = useSession();
 
   if (!user) {
     return (
@@ -67,9 +67,14 @@ export function UserMenu() {
           <Link href="/settings">Settings</Link>
         </DropdownMenuItem>
         {isVerifiedFilmmaker(user) ? (
-          <DropdownMenuItem asChild>
-            <Link href="/filmmaker-dashboard/profile">Manage filmmaker profile</Link>
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/filmmaker-dashboard/profile">Manage filmmaker profile</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/write">Write for the Journal</Link>
+            </DropdownMenuItem>
+          </>
         ) : (
           <DropdownMenuItem asChild>
             <Link href="/filmmaker-application">Apply as filmmaker</Link>
@@ -83,7 +88,7 @@ export function UserMenu() {
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => switchIdentity("guest")}>Sign out</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => signOut()}>Sign out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

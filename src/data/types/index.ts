@@ -127,7 +127,7 @@ export type FilmmakerProfileFields = Pick<
   | "yearsActive"
   | "credits"
   | "links"
->;
+> & { portraitUrl?: string };
 
 export type ProfileRevision = {
   id: string;
@@ -195,6 +195,7 @@ export type ApplicationDetails = {
   creativeBackground?: string;
   creativePhilosophy?: string;
   portfolioUrl?: string;
+  portraitUrl?: string;
   links: ExternalLink[];
   credits: FilmCredit[];
 };

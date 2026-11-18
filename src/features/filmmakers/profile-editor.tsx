@@ -18,6 +18,7 @@ import { FormField } from "@/components/shared/form-field";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { formatDate } from "@/lib/format";
 import { makeId } from "@/lib/persisted-store";
+import { PhotoPicker } from "@/components/shared/photo-picker";
 import type { Filmmaker, FilmmakerApplication, FilmmakerProfileFields } from "@/data/types";
 import { COUNTRIES, CREDIT_FORMATS, DISCIPLINES } from "@/features/applications/application-constants";
 import { approvedApplicationFor, useApplicationsState } from "@/features/applications/applications-store";
@@ -29,6 +30,7 @@ import { latestApprovedFields } from "./filmmaker-overlay";
 const year = z.string().regex(/^(19|20)\d{2}$/, "Enter a four-digit year, such as 2018.");
 const schema = z.object({
   name: z.string().trim().min(2, "Enter your professional name."),
+  portraitUrl: z.string().optional(),
   country: z.string().min(1, "Choose your country."),
   location: z.string().trim().max(60, "Keep this under 60 characters."),
   primaryDiscipline: z.string().min(1, "Choose your primary discipline."),
@@ -44,6 +46,7 @@ const useHydrated = () => useSyncExternalStore(() => () => {}, () => true, () =>
 
 const fromFields = (f: FilmmakerProfileFields): Values => ({
   name: f.name,
+  portraitUrl: f.portraitUrl ?? "",
   country: f.country,
   location: f.location ?? "",
   primaryDiscipline: f.primaryDiscipline,
@@ -56,6 +59,7 @@ const fromFields = (f: FilmmakerProfileFields): Values => ({
 
 const toFields = (v: Values): FilmmakerProfileFields => ({
   name: v.name,
+  portraitUrl: v.portraitUrl || undefined,
   country: v.country,
   location: v.location || undefined,
   primaryDiscipline: v.primaryDiscipline,
@@ -76,7 +80,7 @@ function publishedFor(
   if (f) {
     return {
       slug: f.slug,
-      fields: { name: f.name, country: f.country, location: f.location, primaryDiscipline: f.primaryDiscipline, biography: f.biography, creativePhilosophy: f.creativePhilosophy, yearsActive: f.yearsActive, credits: f.credits, links: f.links },
+      fields: { name: f.name, portraitUrl: f.portraitUrl, country: f.country, location: f.location, primaryDiscipline: f.primaryDiscipline, biography: f.biography, creativePhilosophy: f.creativePhilosophy, yearsActive: f.yearsActive, credits: f.credits, links: f.links },
     };
   }
   if (application) {
@@ -84,6 +88,7 @@ function publishedFor(
     return {
       fields: {
         name: d.fullName,
+        portraitUrl: d.portraitUrl,
         country: d.country,
         location: d.city,
         primaryDiscipline: d.primaryDiscipline,
@@ -95,7 +100,21 @@ function publishedFor(
       },
     };
   }
-  return null;
+  // Dummy starter content, so a new filmmaker can see the editor before a real profile exists.
+  return {
+    fields: {
+      name: "Dummy filmmaker",
+      portraitUrl: "",
+      country: "Nigeria",
+      location: "Lagos",
+      primaryDiscipline: "Director",
+      biography: "Dummy biography. Replace this with your own story, in your own words.",
+      creativePhilosophy: "",
+      yearsActive: "2024 to present",
+      credits: [],
+      links: [],
+    },
+  };
 }
 
 export function ProfileEditor({ seedFilmmakers }: { seedFilmmakers: Filmmaker[]; seedApplications?: FilmmakerApplication[] }) {
@@ -188,6 +207,9 @@ function Editor({ filmmakerId, published, slug }: { filmmakerId: string; publish
             toast.success("Revision submitted for review");
           })}
         >
+          <Controller control={control} name="portraitUrl" render={({ field }) => (
+            <PhotoPicker value={field.value ?? ""} onChange={field.onChange} label="Profile photo" hint="Shown on your filmmaker profile and in the directory." />
+          )} />
           <FormField id="pe-name" label="Professional name" error={errors.name?.message}>
             {(a) => <Input {...a} {...register("name")} />}
           </FormField>

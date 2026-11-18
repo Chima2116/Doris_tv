@@ -23,6 +23,7 @@ import { useSession } from "@/features/auth/session-provider";
 import { checkGate, isVerifiedFilmmaker } from "@/lib/permissions";
 import { makeId } from "@/lib/persisted-store";
 import { cn } from "@/lib/utils";
+import { PhotoPicker } from "@/components/shared/photo-picker";
 import { COUNTRIES, CREDIT_FORMATS, DISCIPLINES } from "./application-constants";
 import { applicationsFor, applicationsStore, emptyDetails, mergeApplications, useApplicationsState } from "./applications-store";
 
@@ -31,6 +32,7 @@ const url = z.string().trim().pipe(z.union([z.literal(""), z.url("Enter a full l
 
 const schema = z.object({
   fullName: z.string().trim().min(2, "Enter your full name."),
+  portraitUrl: z.string().optional(),
   email: z.email("Enter a valid email address."),
   country: z.string().min(1, "Choose your country."),
   city: z.string().trim().max(60, "Keep this under 60 characters."),
@@ -59,6 +61,7 @@ const STEPS = [
 
 const toValues = (d: ApplicationDetails, fallbackName: string): Values => ({
   fullName: d.fullName || fallbackName,
+  portraitUrl: d.portraitUrl ?? "",
   email: d.email,
   country: d.country,
   city: d.city ?? "",
@@ -75,6 +78,7 @@ const toValues = (d: ApplicationDetails, fallbackName: string): Values => ({
 
 const toDetails = (v: Partial<Values>): ApplicationDetails => ({
   fullName: v.fullName ?? "",
+  portraitUrl: v.portraitUrl || undefined,
   email: v.email ?? "",
   country: v.country ?? "",
   city: v.city || undefined,
@@ -283,6 +287,9 @@ function WizardForm({ userId, userName, draft, onSubmitted }: { userId: string; 
               <FormField id="ap-name" label="Full name" error={errors.fullName?.message}>
                 {(a) => <Input {...a} autoComplete="name" {...register("fullName")} />}
               </FormField>
+              <Controller control={control} name="portraitUrl" render={({ field }) => (
+                <PhotoPicker value={field.value ?? ""} onChange={field.onChange} label="Profile photo" hint="A clear head-and-shoulders photo. Shown on your filmmaker profile and in the directory." />
+              )} />
               <FormField id="ap-email" label="Email address" hint="Use the email on your DORIS TV account." error={errors.email?.message}>
                 {(a) => <Input {...a} type="email" autoComplete="email" {...register("email")} />}
               </FormField>

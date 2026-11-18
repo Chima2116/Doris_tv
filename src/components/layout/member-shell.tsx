@@ -4,10 +4,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/shared/page-container";
 import { Eyebrow } from "@/components/shared/eyebrow";
-import { NavLinks } from "@/components/navigation/nav-links";
+import { usePathname } from "next/navigation";
 import { useSession } from "@/features/auth/session-provider";
 import { isVerifiedFilmmaker } from "@/lib/permissions";
-import { FilmmakerCallout } from "@/features/members/filmmaker-callout";
 
 /**
  * Wraps member-area routes. Guests get an explanation and a next step rather than
@@ -15,15 +14,18 @@ import { FilmmakerCallout } from "@/features/members/filmmaker-callout";
  */
 export function MemberShell({ children }: { children: React.ReactNode }) {
   const { user } = useSession();
+  const pathname = usePathname();
+  // Other people's profiles are public: show them as they are, with no account tabs.
+  const ownOrPublicProfile = pathname.startsWith("/profile/") && (!user || pathname !== `/profile/${user.username}`);
+  if (ownOrPublicProfile) return <>{children}</>;
 
-  const items = user
+  const filmmaker = !!user && isVerifiedFilmmaker(user);
+  const tabs = user
     ? [
         { href: `/profile/${user.username}`, label: "Profile" },
         { href: "/saved", label: "Saved" },
         { href: "/following", label: "Following" },
-        isVerifiedFilmmaker(user)
-          ? { href: "/filmmaker-dashboard/profile", label: "Filmmaker profile" }
-          : { href: "/filmmaker-application", label: "Apply as filmmaker" },
+        ...(filmmaker ? [{ href: "/write", label: "My journals" }] : []),
         { href: "/settings", label: "Settings" },
       ]
     : [];
@@ -55,19 +57,35 @@ export function MemberShell({ children }: { children: React.ReactNode }) {
     <>
       <div className="border-b border-border">
         <PageContainer>
-          <nav aria-label="Member" className="-mx-1">
-            <NavLinks
-              items={items}
-              className="flex flex-wrap items-center gap-x-6 gap-y-1 px-1 sm:flex-nowrap"
-              linkClassName="py-4"
-            />
+          <nav aria-label="Your account" className="border-b border-border">
+            <TabRow items={tabs} />
           </nav>
         </PageContainer>
       </div>
-      <PageContainer>
-        <FilmmakerCallout />
-      </PageContainer>
       {children}
     </>
+  );
+}
+
+/** A row of tabs. The current page is underlined so people always know where they are. */
+function TabRow({ items }: { items: { href: string; label: string }[] }) {
+  const pathname = usePathname();
+  return (
+    <ul className="-mb-px flex gap-7 overflow-x-auto">
+      {items.map((item) => {
+        const active = pathname === item.href || pathname.startsWith(item.href + "/");
+        return (
+          <li key={item.href}>
+            <Link
+              href={item.href}
+              aria-current={active ? "page" : undefined}
+              className={`inline-block whitespace-nowrap border-b-2 py-4 text-sm font-semibold transition-colors duration-200 ${active ? "border-gold text-reading" : "border-transparent text-reading/60 hover:text-reading"}`}
+            >
+              {item.label}
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

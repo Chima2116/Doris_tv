@@ -5,7 +5,7 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { CheckCircle2, CircleAlert } from "lucide-react";
+import { ArrowLeft, CheckCircle2, CircleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,7 +36,19 @@ const profileSchema = z.object({
   location: z.string().trim().max(60, "Keep your location under 60 characters."),
 });
 
-function ProfileForm() {
+/** Returns to the member's own profile from the edit page. */
+export function BackToProfile() {
+  const { user } = useSession();
+  if (!user) return null;
+  return (
+    <Link href={`/profile/${user.username}`} className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-gold">
+      <ArrowLeft className="size-4" aria-hidden="true" />
+      Back to profile
+    </Link>
+  );
+}
+
+export function ProfileForm() {
   const { user } = useSession();
   const {
     register,
@@ -50,7 +62,7 @@ function ProfileForm() {
   if (!user) return null;
 
   return (
-    <Card title="Profile" description="How you appear to other members across DORIS TV.">
+    <Card title="Your details" description="How you appear to other members across DORIS TV.">
       <form
         noValidate
         className="grid gap-5"
@@ -237,7 +249,6 @@ function AccountForm() {
 export function SettingsForms() {
   return (
     <div className="grid gap-8">
-      <ProfileForm />
       <PrivacyForm />
       <AccountForm />
     </div>

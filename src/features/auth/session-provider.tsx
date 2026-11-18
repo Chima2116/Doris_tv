@@ -12,6 +12,8 @@ import {
 } from "@/features/applications/applications-store";
 import { applyMemberPatch, useMemberStore } from "@/features/members/member-store";
 import { sessionStore } from "./session-store";
+import { loadSupabaseMember } from "./supabase-member";
+import { getSupabase } from "@/lib/supabase/client";
 
 type PendingGate = {
   action: GateAction;
@@ -27,6 +29,8 @@ type SessionContextValue = {
   identity: DemoIdentityKey;
   /** Switch the simulated identity (dev switcher or simulated sign-in). */
   switchIdentity: (key: DemoIdentityKey) => void;
+  /** Sign out of the real account (and reset any demo identity). */
+  signOut: () => Promise<void>;
   /**
    * Run a member-gated action. If the current user isn't eligible, a contextual
    * prompt opens and the intended action is remembered so it can complete after
@@ -55,7 +59,27 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   );
   const [pendingGate, setPendingGate] = React.useState<PendingGate | null>(null);
   const { patches } = useMemberStore();
-  const baseUser = getDemoIdentity(identity).member;
+  // A real Supabase session takes precedence. Demo identities exist only in development.
+  const [realUser, setRealUser] = React.useState<Member | null>(null);
+  React.useEffect(() => {
+    const supabase = getSupabase();
+    if (!supabase) return;
+    let active = true;
+    const load = async (userId: string | null) => {
+      const member = userId ? await loadSupabaseMember(userId) : null;
+      if (active) setRealUser(member);
+    };
+    supabase.auth.getSession().then(({ data }) => load(data.session?.user.id ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      load(session?.user.id ?? null);
+    });
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+  const demoKey = process.env.NODE_ENV === "production" ? "guest" : identity;
+  const baseUser = realUser ?? getDemoIdentity(demoKey).member;
   const apps = useApplicationsState();
   let user = baseUser ? applyMemberPatch(baseUser, patches) : null;
   // Roles are additive: an approved filmmaker application grants the filmmaker role.
@@ -71,6 +95,11 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       user,
       identity,
       switchIdentity: (key) => sessionStore.set(key),
+      signOut: async () => {
+        await getSupabase()?.auth.signOut();
+        setRealUser(null);
+        sessionStore.set("guest");
+      },
       requestAction: (action, run) => {
         const result = checkGate(user, action);
         if (result.allowed) {
