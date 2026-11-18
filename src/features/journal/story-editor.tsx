@@ -5,7 +5,7 @@ import { Node, mergeAttributes } from "@tiptap/core";
 import { EditorContent, useEditor, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
-import { Bold, Code, ImagePlus, Italic, List, Maximize2, Minimize2, Strikethrough, Underline, Video } from "lucide-react";
+import { Bold, ChevronDown, Code, ImagePlus, Italic, List, Maximize2, Minimize2, Strikethrough, Underline, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { VIDEO_HOST_PATTERN, videoPlatform } from "@/lib/video";
@@ -97,10 +97,11 @@ export function StoryEditor({ value, onChange, invalid }: { value: string; onCha
 
   return (
     <div className={cn("border bg-[#131316]", invalid ? "border-[#ee8585]" : "border-white/20", expanded && "fixed inset-0 z-50 flex flex-col overflow-auto border-0 bg-background p-6 sm:p-10")}>
-      <div role="toolbar" aria-label="Story formatting" className="flex flex-wrap items-center gap-1 border-b border-white/15 p-2">
+      <div role="toolbar" aria-label="Story formatting" className="flex flex-wrap items-center gap-1 border-b border-white/15 px-3 py-2">
+        <div className="relative">
         <select
           aria-label="Text style"
-          className="h-9 border border-white/20 bg-transparent px-2 text-sm text-reading focus:border-gold focus:outline-none"
+          className="h-9 appearance-none border border-white/20 bg-transparent py-0 pl-3 pr-9 text-sm text-reading focus:border-gold focus:outline-none"
           value={editor.isActive("heading", { level: 2 }) ? "h2" : editor.isActive("blockquote") ? "quote" : "normal"}
           onChange={(e) => {
             const chain = editor.chain().focus();
@@ -113,6 +114,8 @@ export function StoryEditor({ value, onChange, invalid }: { value: string; onCha
           <option value="h2">Heading</option>
           <option value="quote">Quote</option>
         </select>
+        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-reading/60" aria-hidden="true" />
+        </div>
         <span className="mx-1 h-5 w-px bg-white/15" aria-hidden="true" />
         <button type="button" className={toolbarButton} data-active={editor.isActive("bold")} aria-label="Bold" onClick={() => editor.chain().focus().toggleBold().run()}>
           <Bold className="size-4" aria-hidden="true" />
