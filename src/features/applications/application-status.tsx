@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { ClipboardList } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { formatDate } from "@/lib/format";
 import type { ApplicationStatus, FilmmakerApplication } from "@/data/types";
 import { useSession } from "@/features/auth/session-provider";
 import { applicationsFor, applicationsStore, mergeApplications, useApplicationsState } from "./applications-store";
+import { getMyLatestApplication } from "./remote-applications";
 import { cn } from "@/lib/utils";
 
 const COPY: Record<ApplicationStatus, { title: string; body: string }> = {
@@ -98,10 +99,18 @@ export function ApplicationStatusView({ seed }: { seed: FilmmakerApplication[] }
   const { user } = useSession();
   const hydrated = useHydrated();
   const state = useApplicationsState();
+  // The application in Supabase is the source of truth; the browser copy is the fallback.
+  const [remote, setRemote] = useState<FilmmakerApplication | null>(null);
+  const userId = user?.id;
+  useEffect(() => {
+    if (!userId) return;
+    getMyLatestApplication().then(setRemote);
+  }, [userId]);
 
   if (!hydrated) return <div className="h-72 animate-pulse bg-surface" aria-hidden="true" />;
   const mine = user ? applicationsFor(user.id, mergeApplications(seed, state)) : [];
-  const [current, ...previous] = mine;
+  const current = remote ?? mine[0];
+  const previous = remote ? [] : mine.slice(1);
 
   if (!current) {
     return (

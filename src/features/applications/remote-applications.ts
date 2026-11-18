@@ -97,3 +97,16 @@ export async function startRemoteReview(remoteId: string): Promise<void> {
   const { error } = await supabase.rpc("start_application_review", { _application_id: remoteId.slice(REMOTE_PREFIX.length) });
   if (error) throw new Error(error.message);
 }
+
+/** The signed-in person's most recent application from Supabase, in the app's shape, or null. */
+export async function getMyLatestApplication(): Promise<FilmmakerApplication | null> {
+  const supabase = getSupabase();
+  if (!supabase) return null;
+  const { data } = await supabase
+    .from("filmmaker_applications")
+    .select("id, applicant_id, status, details, decision_reason, submitted_at, decided_at, created_at")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data ? toApplication(data as Row) : null;
+}
