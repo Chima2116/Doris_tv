@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
 import type { FilmmakerApplication } from "@/data/types";
 import { mergeApplications, useApplicationsState } from "@/features/applications/applications-store";
-import { approveRemoteApplication, declineRemoteApplication, isRemoteApplication, listRemoteApplications } from "@/features/applications/remote-applications";
+import { approveRemoteApplication, declineRemoteApplication, isRemoteApplication, listRemoteApplications, startRemoteReview } from "@/features/applications/remote-applications";
 import { applications as actions } from "./admin-actions";
 import { AdminPageHeader, AdminSkeleton, AdminTable, DetailCallout, DetailRows, DetailSection, DetailSheet, DetailTimeline, FilterBar, FilterSelect, ReasonDialog, SearchBox, Td, Th, fmt, fmtTime, useAdminReady } from "./ui";
 
@@ -98,7 +98,7 @@ export function ApplicationsAdmin({ seed }: { seed: FilmmakerApplication[] }) {
             <>
               <div>
                 {open.status === "submitted" && (
-                  <Button variant="ghost" onClick={() => { actions.markUnderReview(actor, open); toast.success("Moved to under review"); }}>
+                  <Button variant="ghost" onClick={async () => { try { if (isRemoteApplication(open.id)) { await startRemoteReview(open.id); await reload(); } else { actions.markUnderReview(actor, open); } toast.success("Moved to under review"); } catch (err) { toast.error(err instanceof Error ? err.message : "Couldn't start the review."); } }}>
                     Start review
                   </Button>
                 )}

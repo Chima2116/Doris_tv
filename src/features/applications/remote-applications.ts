@@ -89,3 +89,11 @@ export async function getMyLatestApplicationStatus(): Promise<ApplicationStatus 
     .maybeSingle();
   return data ? toStatus((data as { status: Row["status"] }).status) : null;
 }
+
+/** Marks a submitted application as being reviewed. */
+export async function startRemoteReview(remoteId: string): Promise<void> {
+  const supabase = getSupabase();
+  if (!supabase) return;
+  const { error } = await supabase.rpc("start_application_review", { _application_id: remoteId.slice(REMOTE_PREFIX.length) });
+  if (error) throw new Error(error.message);
+}
