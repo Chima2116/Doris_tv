@@ -149,18 +149,20 @@ export function SignUpForm() {
         <MailCheck className="size-8 text-[#6fd09b]" aria-hidden="true" />
         <h1 className="mt-4 font-display text-2xl font-black">Check your inbox</h1>
         <p className="mt-3 text-reading/80">
-          In the live product we&apos;d email a verification link to <strong>{sent}</strong>. You
-          need a verified email to take part in the Community.
+          {supabaseConfigured ? "We've sent a verification link to" : "In the live product we'd email a verification link to"}{" "}
+          <strong>{sent}</strong>. {supabaseConfigured ? "Open it to confirm your email, then sign in." : "You need a verified email to take part in the Community."}
         </p>
-        <Button
-          className="mt-6 w-full"
-          onClick={() => {
-            const back = signInAs("newMember");
-            router.push(back ?? "/");
-          }}
-        >
-          Demo: simulate email verification
-        </Button>
+        {!supabaseConfigured && (
+          <Button
+            className="mt-6 w-full"
+            onClick={() => {
+              const back = signInAs("newMember");
+              router.push(back ?? "/");
+            }}
+          >
+            Demo: simulate email verification
+          </Button>
+        )}
         <p className="mt-3 text-xs text-muted-foreground">{PROTOTYPE_NOTE}</p>
       </div>
     );
