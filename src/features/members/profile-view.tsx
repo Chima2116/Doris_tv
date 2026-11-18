@@ -1,11 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, Clock, Lock, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { initials } from "@/lib/utils";
+import { cn, initials } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
 import { TimeAgo } from "@/components/shared/time-ago";
 import { formatDate } from "@/lib/format";
@@ -52,6 +53,7 @@ export function ProfileView({
   filmmakers: Filmmaker[];
 }) {
   const { user } = useSession();
+  const [bioExpanded, setBioExpanded] = useState(false);
   const { patches } = useMemberStore();
   const community = useCommunityState();
 
@@ -92,8 +94,8 @@ export function ProfileView({
   return (
     <>
       <header className="border-b border-border">
-        <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-8 px-5 py-14 sm:px-6 md:flex-row md:items-end md:justify-between lg:px-8">
-          <div className="flex min-w-0 items-center gap-6 sm:gap-8">
+        <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-8 px-5 py-14 sm:px-6 md:flex-row md:items-start md:justify-between lg:px-8">
+          <div className="flex min-w-0 items-start gap-6 sm:gap-8">
             <Avatar className="size-24 shrink-0 sm:size-32">
               {photo && <AvatarImage src={photo} alt="" />}
               <AvatarFallback className="bg-elevated font-display text-3xl font-black">{initials(member.displayName)}</AvatarFallback>
@@ -126,6 +128,21 @@ export function ProfileView({
                   </>
                 )}
               </p>
+              {show("bio") && member.bio ? (
+                <div className="mt-6 max-w-[36rem]">
+                  <p className={cn("text-[1.0625rem] leading-[1.75] text-reading/75 sm:text-lg", !bioExpanded && "line-clamp-3")}>{member.bio}</p>
+                  {member.bio.length > 160 && (
+                    <button type="button" onClick={() => setBioExpanded((v) => !v)} className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground transition-colors duration-200 hover:text-gold">
+                      {bioExpanded ? "Show less" : "Read more"}
+                    </button>
+                  )}
+                </div>
+              ) : isOwner && show("bio") ? (
+                <p className="mt-6 text-sm text-muted-foreground">
+                  Add a short bio.{" "}
+                  <Link href="/edit-profile" className="font-semibold text-gold underline underline-offset-4">Write your bio</Link>
+                </p>
+              ) : null}
             </div>
           </div>
           <div className="shrink-0">
@@ -149,18 +166,7 @@ export function ProfileView({
         )}
 
         {filmmaker && (approved || isOwner) && (
-          <section aria-labelledby="filmmaker-heading" className="mb-16 grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-14">
-            <div className="relative aspect-[4/5] w-full max-w-[240px] overflow-hidden bg-elevated">
-              {filmmaker.portraitUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element -- a portrait chosen by the filmmaker
-                <img src={filmmaker.portraitUrl} alt="" className="size-full object-cover" />
-              ) : (
-                <span className="absolute inset-0 grid place-items-center font-display text-6xl font-black text-white/30" aria-hidden="true">
-                  {initials(filmmaker.name)}
-                </span>
-              )}
-            </div>
-
+          <section aria-labelledby="filmmaker-heading" className="mb-16 border-t border-border pt-10">
             <div className="flex min-w-0 flex-col">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <h2 id="filmmaker-heading" className="font-display text-2xl font-black tracking-[-0.01em] sm:text-3xl">
@@ -219,28 +225,8 @@ export function ProfileView({
             </Button>
           </section>
         )}
-        {!filmmaker && isOwner && !isFilmmaker && <FilmmakerCallout className="mb-16 border-t border-border pt-10" />}
 
-        <section aria-labelledby="bio-heading" className="mb-16 max-w-2xl">
-          <h2 id="bio-heading" className="sr-only">Biography</h2>
-          {show("bio") ? (
-            member.bio ? (
-              <p className="font-display text-xl leading-relaxed text-reading/90">
-                {member.bio}
-                {hiddenFromOthers("bio") && <Badge variant="outline" className="ml-2 align-middle">Only you</Badge>}
-              </p>
-            ) : isOwner ? (
-              <p className="text-sm text-muted-foreground">
-                You haven&apos;t written a bio yet.{" "}
-                <Link href="/edit-profile" className="text-gold underline">Add one</Link>
-              </p>
-            ) : null
-          ) : (
-            <Private name={firstName} what="biography" />
-          )}
-        </section>
-
-        <section aria-labelledby="activity-heading" className="border-t border-border pt-12">
+        <section aria-labelledby="activity-heading" className="pt-12">
           <h2 id="activity-heading" className="font-display text-2xl font-black sm:text-3xl">Activity</h2>
           <div className="mt-8">
             {!show("activity") ? (
@@ -267,6 +253,8 @@ export function ProfileView({
             )}
           </div>
         </section>
+
+        {!filmmaker && isOwner && !isFilmmaker && <FilmmakerCallout className="mt-16" />}
       </div>
     </>
   );

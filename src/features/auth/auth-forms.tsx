@@ -201,7 +201,7 @@ export function SignUpForm() {
             setSignUpError(
               authError.message.includes("already")
                 ? "An account with this email already exists. Try signing in."
-                : "We couldn't create your account. Check the details and try again.",
+                : `We couldn't create your account: ${authError.message}`,
             );
             return;
           }
