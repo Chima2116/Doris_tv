@@ -204,14 +204,17 @@ export function FilmmakersAdmin({ seed, seedApplications }: { seed: Filmmaker[];
         ] : undefined}
         footer={open ? (
           <div className="flex flex-wrap items-center gap-2">
-            {open.publicationStatus === "published" ? (
-              <Button variant="outline" onClick={() => setUnpublishOpen(true)}>Unpublish profile</Button>
-            ) : (
-              <Button onClick={() => { actions.setPublication(actor, open, "published"); toast.success(`${open.name} is published`); }}>Publish profile</Button>
-            )}
-            <Button variant="outline" onClick={() => { actions.setVerification(actor, open, open.verificationStatus !== "verified"); toast.success(open.verificationStatus === "verified" ? "Verification removed" : "Marked as verified"); }}>
-              {open.verificationStatus === "verified" ? "Remove verification" : "Verify"}
+            <Button variant="outline" onClick={() => { actions.setVerification(actor, open, open.verificationStatus !== "verified"); toast.success(open.verificationStatus === "verified" ? "Verification removed, and removed from the directory" : "Verified as a filmmaker"); }}>
+              {open.verificationStatus === "verified" ? "Remove verification" : "Verify filmmaker"}
             </Button>
+            {open.publicationStatus === "published" ? (
+              <Button variant="outline" onClick={() => setUnpublishOpen(true)}>Remove from directory</Button>
+            ) : (
+              <Button disabled={open.verificationStatus !== "verified"} onClick={() => { actions.setPublication(actor, open, "published"); toast.success(`${open.name} is listed in the directory`); }}>List in directory</Button>
+            )}
+            {open.verificationStatus !== "verified" && (
+              <p className="w-full text-xs text-muted-foreground">Verify this filmmaker before listing them in the directory.</p>
+            )}
             <Button asChild variant="ghost"><Link href={`/filmmakers/${open.slug}`} target="_blank">View public page</Link></Button>
           </div>
         ) : undefined}

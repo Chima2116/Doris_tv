@@ -46,8 +46,10 @@ export const filmmakers = {
     auditStore.log(actor, `filmmaker.${status}`, `${f.name}: profile ${status}`);
   },
   setVerification(actor: Actor, f: Filmmaker, verified: boolean) {
-    filmmakerAdminStore.patch(f.id, { verificationStatus: verified ? "verified" : "unverified" });
-    auditStore.log(actor, verified ? "filmmaker.verified" : "filmmaker.unverified", `${f.name}: ${verified ? "verified" : "verification removed"}`);
+    // Verification and the directory listing are separate decisions, but a listing needs verification.
+    // Removing verification therefore also removes the listing.
+    filmmakerAdminStore.patch(f.id, verified ? { verificationStatus: "verified" } : { verificationStatus: "unverified", publicationStatus: "unpublished" });
+    auditStore.log(actor, verified ? "filmmaker.verified" : "filmmaker.unverified", `${f.name}: ${verified ? "verified" : "verification removed, and removed from the directory"}`);
   },
 };
 
