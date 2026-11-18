@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { TimeAgo } from "@/components/shared/time-ago";
@@ -11,6 +11,7 @@ import { useSession } from "@/features/auth/session-provider";
 import { useHydrated } from "@/lib/use-hydrated";
 import { isVerifiedFilmmaker } from "@/lib/permissions";
 import { deleteDraft, loadDrafts, type StoryDraft } from "./drafts";
+import { listMyStories, type MyStory } from "./submit-story";
 
 const sectionLabel = "text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground";
 
@@ -18,6 +19,10 @@ const sectionLabel = "text-[0.6875rem] font-semibold uppercase tracking-[0.12em]
 export function WriteHub() {
   const { user } = useSession();
   const hydrated = useHydrated();
+  const [stories, setStories] = useState<MyStory[]>([]);
+  useEffect(() => {
+    if (user) listMyStories().then(setStories);
+  }, [user]);
   const [version, setVersion] = useState(0);
   const drafts: StoryDraft[] = useMemo(() => (hydrated ? loadDrafts() : []), [hydrated, version]);
 
@@ -32,7 +37,7 @@ export function WriteHub() {
   }
 
   // Sent stories are not stored yet, so this list stays empty until sign-in and the Studio connection exist.
-  const sent: { id: string; title: string; type: string; status: "submitted" | "under_review" | "approved" | "rejected" }[] = [];
+  const sent = stories;
 
   return (
     <section className="py-14 sm:py-20">
@@ -104,7 +109,10 @@ export function WriteHub() {
                   <p className="font-display text-lg font-bold">{s.title}</p>
                   <p className="mt-1 text-sm text-muted-foreground">{s.type}</p>
                 </div>
-                <StatusBadge status={s.status} />
+                <div className="text-right">
+                  <StatusBadge status={s.status === "pending" ? "pending" : s.status === "approved" ? "approved" : "rejected"} />
+                  {s.reviewNote && <p className="mt-2 max-w-xs text-sm text-muted-foreground">{s.reviewNote}</p>}
+                </div>
               </li>
             ))}
           </ul>

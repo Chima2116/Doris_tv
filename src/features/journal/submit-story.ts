@@ -43,3 +43,24 @@ export async function submitStory(story: StorySubmission): Promise<{ ok: true }>
 
 /** Plain-text length of a story, used for the character count. */
 export { storyText };
+
+export type MyStory = { id: string; title: string; type: string; status: "pending" | "approved" | "declined"; submittedAt: string; reviewNote?: string };
+
+/** The signed-in filmmaker's own stories, newest first. Row level security limits this to their own. */
+export async function listMyStories(): Promise<MyStory[]> {
+  const supabase = await sessionReady();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("journal_stories")
+    .select("id, title, type, status, submitted_at, review_note")
+    .order("submitted_at", { ascending: false });
+  if (error || !data) return [];
+  return data.map((r) => ({
+    id: r.id as string,
+    title: r.title as string,
+    type: r.type as string,
+    status: r.status as MyStory["status"],
+    submittedAt: r.submitted_at as string,
+    reviewNote: (r.review_note as string | null) ?? undefined,
+  }));
+}
