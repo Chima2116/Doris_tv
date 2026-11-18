@@ -12,6 +12,7 @@ import {
 } from "@/data/repositories/discussions";
 import { getFilmmakers } from "@/data/repositories/filmmakers";
 import { ProfileView } from "@/features/members/profile-view";
+import { getRemoteMemberByUsername } from "@/features/members/remote-profile";
 
 export async function generateStaticParams() {
   return (await getMembers()).map((m) => ({ username: m.username }));
@@ -19,7 +20,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(props: PageProps<"/profile/[username]">): Promise<Metadata> {
   const { username } = await props.params;
-  const m = await getMemberByUsername(username);
+  const m = (await getMemberByUsername(username)) ?? (await getRemoteMemberByUsername(username))?.member ?? null;
   // Private profiles stay discoverable but their bio is never put in metadata.
   return m ? { title: `${m.displayName} (@${m.username})` } : { title: "Member not found" };
 }
@@ -40,7 +41,10 @@ export default function ProfilePage(props: PageProps<"/profile/[username]">) {
 
 async function Profile({ params }: { params: PageProps<"/profile/[username]">["params"] }) {
   const { username } = await params;
-  const member = await getMemberByUsername(username);
+  const local = await getMemberByUsername(username);
+  // Members who signed up through Supabase are not in the local list, so look them up there.
+  const remote = local ? null : await getRemoteMemberByUsername(username);
+  const member = local ?? remote?.member;
   if (!member) notFound();
   const [discussions, replies, members, articles, filmmakers] = await Promise.all([
     getDiscussions(),
@@ -56,7 +60,7 @@ async function Profile({ params }: { params: PageProps<"/profile/[username]">["p
       seedReplies={replies}
       members={members}
       articles={articles}
-      filmmakers={filmmakers}
+      filmmakers={remote?.filmmaker ? [...filmmakers, remote.filmmaker] : filmmakers}
     />
   );
 }
