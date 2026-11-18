@@ -57,6 +57,8 @@ export function WriteStoryForm({ draftId }: { draftId?: string }) {
   const router = useRouter();
   const [submittedTitle, setSubmittedTitle] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [pastedCover, setPastedCover] = useState<string | null>(null);
+  const coverBoxRef = useRef<HTMLDivElement>(null);
   const idRef = useRef<string>(draftId ?? "");
   const form = useForm<Values>({
     resolver: zodResolver(schema),
@@ -172,20 +174,28 @@ export function WriteStoryForm({ draftId }: { draftId?: string }) {
       <div>
         <label htmlFor="coverImage" className={label}>Cover image <span className="font-normal text-reading/50">(optional, shown on the Journal)</span></label>
         <div
+          ref={coverBoxRef}
           tabIndex={0}
           aria-describedby="coverImage-help"
+          onClick={() => coverBoxRef.current?.focus()}
           onPaste={(e) => {
             const file = Array.from(e.clipboardData.files).find((f) => f.type.startsWith("image/"));
             if (!file) return;
             e.preventDefault();
-            const dt = new DataTransfer();
-            dt.items.add(file);
-            form.setValue("coverImage", dt.files, { shouldValidate: true });
+            setPastedCover(file.name);
+            try {
+              const dt = new DataTransfer();
+              dt.items.add(file);
+              form.setValue("coverImage", dt.files, { shouldValidate: true });
+            } catch {
+              // Some browsers can't build a file list; the pasted name still shows.
+            }
           }}
           className="mt-2 flex flex-wrap items-center gap-4 border border-dashed border-white/20 p-4 focus:border-gold focus:outline-none"
         >
-          <input id="coverImage" type="file" accept="image/jpeg,image/png,image/webp" className="block text-sm text-reading/80 file:mr-4 file:border file:border-white/20 file:bg-transparent file:px-4 file:py-2 file:text-reading" {...form.register("coverImage")} />
-          <span className="text-sm text-reading/50">or paste an image here</span>
+          <input id="coverImage" type="file" accept="image/jpeg,image/png,image/webp" className="block text-sm text-reading/80 file:mr-4 file:border file:border-white/20 file:bg-transparent file:px-4 file:py-2 file:text-reading" {...form.register("coverImage", { onChange: () => setPastedCover(null) })} />
+          <span className="text-sm text-reading/50">or click here and paste (Ctrl or ⌘ + V)</span>
+          {pastedCover && <span className="text-sm text-gold">Pasted: {pastedCover}</span>}
         </div>
         <p id="coverImage-help" className="mt-1.5 text-sm text-reading/50">JPG, PNG or WebP, up to 10 MB. Landscape works best.</p>
         {form.formState.errors.coverImage && <p className={error}>{String(form.formState.errors.coverImage.message)}</p>}
