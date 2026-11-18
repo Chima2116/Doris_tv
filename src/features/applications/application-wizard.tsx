@@ -25,7 +25,8 @@ import { makeId } from "@/lib/persisted-store";
 import { cn } from "@/lib/utils";
 import { PhotoPicker } from "@/components/shared/photo-picker";
 import { submitRemoteApplication } from "./remote-applications";
-import { COUNTRIES, CREDIT_FORMATS, DISCIPLINES } from "./application-constants";
+import { COUNTRIES, CREDIT_FORMATS, CREDIT_ROLES, DISCIPLINES, LINK_PLATFORMS } from "./application-constants";
+import { ChoiceWithOther } from "@/components/shared/choice-with-other";
 import { applicationsFor, applicationsStore, emptyDetails, mergeApplications, useApplicationsState } from "./applications-store";
 
 const year = z.string().regex(/^(19|20)\d{2}$/, "Enter a four-digit year, such as 2018.");
@@ -355,41 +356,94 @@ function WizardForm({ userId, userName, draft, onSubmitted }: { userId: string; 
                 {(a) => <Input {...a} type="url" placeholder="https://" {...register("portfolioUrl")} />}
               </FormField>
 
-              <fieldset className="grid gap-4">
-                <legend className="mb-1 text-sm font-semibold">Links <span className="font-normal text-muted-foreground">(optional, up to 4)</span></legend>
+              <section className="grid gap-5">
+                <div>
+                  <h3 className="text-sm font-semibold">Links</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">Up to four. Choose a platform, or add your own.</p>
+                </div>
                 {links.fields.map((f, i) => (
-                  <div key={f.id} className="grid gap-3 sm:grid-cols-[10rem_1fr_auto] sm:items-start">
-                    <FormField id={`ap-link-label-${i}`} label="Label" error={errors.links?.[i]?.label?.message}>
-                      {(a) => <Input {...a} placeholder="Instagram" {...register(`links.${i}.label`)} />}
+                  <div key={f.id} className="grid gap-5 border border-border p-5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">Link {i + 1}</span>
+                      <button
+                        type="button"
+                        aria-label={`Remove link ${i + 1}`}
+                        onClick={() => links.remove(i)}
+                        className="text-muted-foreground transition-colors duration-200 hover:text-gold"
+                      >
+                        <Trash2 className="size-4" aria-hidden="true" />
+                      </button>
+                    </div>
+                    <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]">
+                    <FormField id={`ap-link-label-${i}`} label="Platform" error={errors.links?.[i]?.label?.message}>
+                      {(a) => (
+                        <Controller control={control} name={`links.${i}.label`} render={({ field }) => (
+                          <ChoiceWithOther
+                            id={a.id}
+                            value={field.value ?? ""}
+                            onChange={field.onChange}
+                            options={LINK_PLATFORMS}
+                            placeholder="Choose a platform"
+                            invalid={Boolean(errors.links?.[i]?.label)}
+                          />
+                        )} />
+                      )}
                     </FormField>
                     <FormField id={`ap-link-url-${i}`} label="Link" error={errors.links?.[i]?.url?.message}>
                       {(a) => <Input {...a} type="url" placeholder="https://" {...register(`links.${i}.url`)} />}
                     </FormField>
-                    <Button type="button" variant="ghost" size="icon" className="sm:mt-7" aria-label={`Remove link ${i + 1}`} onClick={() => links.remove(i)}>
-                      <Trash2 />
-                    </Button>
+                    </div>
                   </div>
                 ))}
                 {links.fields.length < 4 && (
-                  <Button type="button" variant="outline" size="sm" className="w-fit" onClick={() => links.append({ label: "", url: "" })}>
+                  <Button type="button" variant="outline" className="w-fit" onClick={() => links.append({ label: "", url: "" })}>
                     <Plus aria-hidden="true" /> Add a link
                   </Button>
                 )}
-              </fieldset>
+              </section>
 
-              <fieldset className="grid gap-4">
-                <legend className="mb-1 text-sm font-semibold">Professional credits <span className="font-normal text-muted-foreground">(at least one)</span></legend>
+              <section className="grid gap-5">
+                <div>
+                  <h3 className="text-sm font-semibold">Professional credits</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">At least one. Choose your role, or add your own.</p>
+                </div>
                 {credits.fields.map((f, i) => (
-                  <div key={f.id} className="grid gap-3 border border-border p-4 sm:grid-cols-2">
-                    <FormField id={`ap-c-title-${i}`} label="Title" error={errors.credits?.[i]?.title?.message} className="sm:col-span-2">
+                  <div key={f.id} className="grid gap-5 border border-border p-5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">Credit {i + 1}</span>
+                      {credits.fields.length > 1 && (
+                        <button
+                          type="button"
+                          aria-label={`Remove credit ${i + 1}`}
+                          onClick={() => credits.remove(i)}
+                          className="text-muted-foreground transition-colors duration-200 hover:text-gold"
+                        >
+                          <Trash2 className="size-4" aria-hidden="true" />
+                        </button>
+                      )}
+                    </div>
+                    <FormField id={`ap-c-title-${i}`} label="Title" error={errors.credits?.[i]?.title?.message}>
                       {(a) => <Input {...a} {...register(`credits.${i}.title`)} />}
                     </FormField>
-                    <FormField id={`ap-c-year-${i}`} label="Year" error={errors.credits?.[i]?.year?.message}>
-                      {(a) => <Input {...a} inputMode="numeric" maxLength={4} {...register(`credits.${i}.year`)} />}
-                    </FormField>
-                    <FormField id={`ap-c-role-${i}`} label="Your role" error={errors.credits?.[i]?.role?.message}>
-                      {(a) => <Input {...a} placeholder="Director, Editor…" {...register(`credits.${i}.role`)} />}
-                    </FormField>
+                    <div className="grid gap-5 sm:grid-cols-2">
+                      <FormField id={`ap-c-year-${i}`} label="Year" error={errors.credits?.[i]?.year?.message}>
+                        {(a) => <Input {...a} inputMode="numeric" maxLength={4} {...register(`credits.${i}.year`)} />}
+                      </FormField>
+                      <FormField id={`ap-c-role-${i}`} label="Your role" error={errors.credits?.[i]?.role?.message}>
+                        {(a) => (
+                          <Controller control={control} name={`credits.${i}.role`} render={({ field }) => (
+                            <ChoiceWithOther
+                              id={a.id}
+                              value={field.value ?? ""}
+                              onChange={field.onChange}
+                              options={CREDIT_ROLES}
+                              placeholder="Choose a role"
+                              invalid={Boolean(errors.credits?.[i]?.role)}
+                            />
+                          )} />
+                        )}
+                      </FormField>
+                    </div>
                     <FormField id={`ap-c-format-${i}`} label="Format" error={errors.credits?.[i]?.format?.message}>
                       {(a) => (
                         <Controller control={control} name={`credits.${i}.format`} render={({ field }) => (
@@ -400,52 +454,69 @@ function WizardForm({ userId, userName, draft, onSubmitted }: { userId: string; 
                         )} />
                       )}
                     </FormField>
-                    {credits.fields.length > 1 && (
-                      <Button type="button" variant="ghost" size="sm" className="w-fit self-end" onClick={() => credits.remove(i)}>
-                        <Trash2 aria-hidden="true" /> Remove credit
-                      </Button>
-                    )}
                   </div>
                 ))}
                 {(errors.credits?.root?.message || (typeof errors.credits?.message === "string" && errors.credits.message)) && (
                   <p role="alert" className="text-sm text-[#ee8585]">{errors.credits?.root?.message ?? errors.credits?.message}</p>
                 )}
                 {credits.fields.length < 8 && (
-                  <Button type="button" variant="outline" size="sm" className="w-fit" onClick={() => credits.append({ title: "", year: "", role: "", format: "" })}>
+                  <Button type="button" variant="outline" className="w-fit" onClick={() => credits.append({ title: "", year: "", role: "", format: "" })}>
                     <Plus aria-hidden="true" /> Add a credit
                   </Button>
                 )}
-              </fieldset>
+              </section>
             </>
           )}
 
           {step === 4 && (
             <>
-              <p className="text-sm text-muted-foreground">Check your details. You can jump back to any step to make changes.</p>
-              <dl className="divide-y divide-border border-y border-border">
+              <div>
+                <p className="type-eyebrow text-gold">Almost there</p>
+                <h3 className="mt-3 font-display text-2xl font-black tracking-[-0.01em]">Review your application</h3>
+                <p className="mt-2 text-sm text-muted-foreground">Check everything below. Use Edit to change any section.</p>
+              </div>
+
+              <dl className="divide-y divide-border border-t border-border">
                 {[
-                  [0, "Applicant", `${all.fullName ?? ""} · ${all.email ?? ""} · ${[all.city, all.country].filter(Boolean).join(", ")}`],
-                  [1, "Professional identity", `${all.primaryDiscipline ?? ""}, active since ${all.activeFrom ?? ""}`],
-                  [2, "Biography", all.biography ?? ""],
-                  [3, "Portfolio and credits", `${(all.credits ?? []).filter((c) => c?.title).length} credit(s)${all.portfolioUrl ? ` · ${all.portfolioUrl}` : ""}${(all.links ?? []).length ? ` · ${(all.links ?? []).length} link(s)` : ""}`],
-                ].map(([i, label, value]) => (
-                  <div key={String(label)} className="flex items-start justify-between gap-6 py-4">
-                    <div className="min-w-0">
-                      <dt className="type-eyebrow text-gold">{label}</dt>
-                      <dd className="mt-1 line-clamp-3 text-sm text-reading/90">{String(value)}</dd>
-                    </div>
-                    <Button type="button" variant="ghost" size="xs" onClick={() => setStep(Number(i))}>Edit</Button>
+                  [0, "Applicant", [all.fullName ?? "", all.email ?? "", [all.city, all.country].filter(Boolean).join(", ")].filter(Boolean)],
+                  [1, "Identity", [all.primaryDiscipline ?? "", all.activeFrom ? `Active since ${all.activeFrom}` : ""].filter(Boolean)],
+                  [2, "Biography", [all.biography ?? ""]],
+                  [
+                    3,
+                    "Portfolio",
+                    [
+                      `${(all.credits ?? []).filter((c) => c?.title).length} credit(s)`,
+                      ...(all.portfolioUrl ? [all.portfolioUrl] : []),
+                      ...((all.links ?? []).length ? [`${(all.links ?? []).length} link(s): ${(all.links ?? []).map((l) => l.label).filter(Boolean).join(", ")}`] : []),
+                    ],
+                  ],
+                ].map(([i, label, lines]) => (
+                  <div key={String(label)} className="grid gap-4 py-6 sm:grid-cols-[9rem_minmax(0,1fr)_auto] sm:gap-8">
+                    <dt className="text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{label}</dt>
+                    <dd className="min-w-0 space-y-1.5 text-[0.9375rem] leading-relaxed text-reading/90">
+                      {(lines as string[]).map((line, n) => (
+                        <p key={n} className={n === 0 ? "font-semibold text-reading" : "text-reading/70"}>{line}</p>
+                      ))}
+                    </dd>
+                    <button
+                      type="button"
+                      onClick={() => setStep(Number(i))}
+                      className="w-fit text-sm font-semibold text-gold underline-offset-4 transition-colors duration-200 hover:underline"
+                    >
+                      Edit
+                    </button>
                   </div>
                 ))}
               </dl>
+
               <FormField id="ap-confirm" label="" error={errors.confirm?.message}>
                 {(a) => (
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-4 border border-border bg-surface p-5">
                     <Controller control={control} name="confirm" render={({ field }) => (
-                      <Checkbox id="ap-confirm" checked={field.value} onCheckedChange={(v) => field.onChange(v === true)} aria-invalid={a["aria-invalid"]} aria-describedby={a["aria-describedby"]} className="mt-1" />
+                      <Checkbox id="ap-confirm" checked={field.value} onCheckedChange={(v) => field.onChange(v === true)} aria-invalid={a["aria-invalid"]} aria-describedby={a["aria-describedby"]} className="mt-0.5" />
                     )} />
-                    <Label htmlFor="ap-confirm" className="font-normal leading-relaxed">
-                      I confirm the information is accurate and I understand my application will be reviewed by the DORIS TV team.
+                    <Label htmlFor="ap-confirm" className="font-normal leading-relaxed text-reading/85">
+                      I confirm the information is accurate, and I understand my application will be reviewed by the DORIS TV team.
                     </Label>
                   </div>
                 )}
