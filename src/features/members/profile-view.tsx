@@ -185,15 +185,15 @@ export function ProfileView({
                 </h2>
                 {isVerified && isListed ? (
                   <span className="inline-flex items-center gap-2 border border-gold/50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-gold">
-                    <CheckCircle2 className="size-3.5" aria-hidden="true" /> Listed in directory
+                    <CheckCircle2 className="size-3.5" aria-hidden="true" /> Live on DORIS TV
                   </span>
                 ) : isVerified ? (
                   <span className="inline-flex items-center gap-2 border border-border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-                    <CheckCircle2 className="size-3.5" aria-hidden="true" /> Verified, not listed
+                    <CheckCircle2 className="size-3.5" aria-hidden="true" /> Verified, not yet public
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-2 border border-border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-                    <Clock className="size-3.5" aria-hidden="true" /> Verification removed
+                    <Clock className="size-3.5" aria-hidden="true" /> Not verified
                   </span>
                 )}
               </div>
