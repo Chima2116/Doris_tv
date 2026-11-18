@@ -1,5 +1,5 @@
 import type { ApplicationDetails, ApplicationStatus, FilmmakerApplication } from "@/data/types";
-import { getSupabase } from "@/lib/supabase/client";
+import { getSupabase, sessionReady } from "@/lib/supabase/client";
 
 /**
  * Filmmaker applications stored in Supabase. The database decides who may submit, read and decide
@@ -48,7 +48,7 @@ export async function submitRemoteApplication(details: ApplicationDetails): Prom
 
 /** Every application an admin can see (or the applicant's own, for them). */
 export async function listRemoteApplications(): Promise<FilmmakerApplication[]> {
-  const supabase = getSupabase();
+  const supabase = await sessionReady();
   if (!supabase) return [];
   const { data, error } = await supabase
     .from("filmmaker_applications")
@@ -78,7 +78,7 @@ export async function declineRemoteApplication(remoteId: string, reason: string)
 
 /** The signed-in person's most recent application status from Supabase, or null if there is none. */
 export async function getMyLatestApplicationStatus(): Promise<ApplicationStatus | null> {
-  const supabase = getSupabase();
+  const supabase = await sessionReady();
   if (!supabase) return null;
   const { data } = await supabase
     .from("filmmaker_applications")
@@ -92,7 +92,7 @@ export async function getMyLatestApplicationStatus(): Promise<ApplicationStatus 
 
 /** Marks a submitted application as being reviewed. */
 export async function startRemoteReview(remoteId: string): Promise<void> {
-  const supabase = getSupabase();
+  const supabase = await sessionReady();
   if (!supabase) return;
   const { error } = await supabase.rpc("start_application_review", { _application_id: remoteId.slice(REMOTE_PREFIX.length) });
   if (error) throw new Error(error.message);

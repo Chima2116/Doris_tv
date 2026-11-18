@@ -22,3 +22,13 @@ export function getSupabase() {
   }
   return client;
 }
+
+/**
+ * The client once the signed-in session has loaded. Reads made before this can run as an anonymous
+ * visitor, and row level security then hides the person's own rows.
+ */
+export async function sessionReady() {
+  const supabase = getSupabase();
+  if (supabase) await supabase.auth.getSession();
+  return supabase;
+}

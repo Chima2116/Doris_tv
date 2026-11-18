@@ -1,5 +1,5 @@
 import type { Member, MemberRole } from "@/data/types";
-import { getSupabase } from "@/lib/supabase/client";
+import { getSupabase, sessionReady } from "@/lib/supabase/client";
 
 type ProfileRow = {
   id: string;
@@ -52,7 +52,7 @@ export async function loadSupabaseMember(userId: string): Promise<Member | null>
  * administrators and moderators; for anyone else it returns an empty list.
  */
 export async function listSupabaseMembers(): Promise<Member[]> {
-  const supabase = getSupabase();
+  const supabase = await sessionReady();
   if (!supabase) return [];
   const [profilesRes, rolesRes] = await Promise.all([
     supabase.from("profiles").select("id, username, display_name, bio, location, profile_visibility, created_at").order("created_at", { ascending: false }),
